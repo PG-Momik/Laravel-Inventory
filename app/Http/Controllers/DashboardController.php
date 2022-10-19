@@ -2,27 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
 use App\Models\User;
-use Cassandra\Custom;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
 
 
-    public function index():View
+    public function index(): View
     {
         return view('dashboard.index');
     }
 
 
-    public function users(Request $request)
-    {
-
-    }
+    public function users(Request $request) {}
 
     public function products()
     {
@@ -39,14 +33,14 @@ class DashboardController extends Controller
         $searchKeyword = $request['search-field'] ?? '';
 
         if ( empty($searchKeyword) ) {
-            $users = Customer::select('users.id', 'users.name', 'users.role_id')
+            $users = User::select('users.id', 'users.name', 'users.role_id')
                 ->withCount('transactions')
                 ->with('roles:id,name')
                 ->paginate(10);
-        }else{
-            $users = Customer::select('users.id', 'users.name', 'users.role_id')
-                ->where('users.name','LIKE', "%$searchKeyword%")
-                ->orWhere('users.email','LIKE', "%$searchKeyword%")
+        } else {
+            $users = User::select('users.id', 'users.name', 'users.role_id')
+                ->where('users.name', 'LIKE', "%$searchKeyword%")
+                ->orWhere('users.email', 'LIKE', "%$searchKeyword%")
                 ->with('roles:id,name')
                 ->withCount('transactions')
                 ->paginate(10);
@@ -56,7 +50,6 @@ class DashboardController extends Controller
 
         return view('dashboard.test')->with($data);
     }
-
 
 
 }

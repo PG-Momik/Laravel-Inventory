@@ -88,16 +88,23 @@
                                 <dt class="col-sm-3"></dt>
                                 <dd class="col-sm-9 row mx-0 px-0 justify-content-end">
                                     <div class="col-xl-4 col-md-6 col-12 row mx-0 g-2">
-                                            <a href="{{route('users.edit', ['id'=>$user->id])}}" class="no-underline">
-                                                <button class="btn btn-md bg-outline-blue text-blue col-12 round-this">
-                                                    <i class="fa-solid fa-pen"></i> Edit
-                                                </button>
-                                            </a>
-                                            <a href="{{route('users.delete', ['id'=>$user->id])}}" class="no-underline">
-                                                <button class="btn btn-md-3 bg-outline-yellow text-yellow col-12 round-this">
+                                        <a href="{{route('users.edit', ['user'=>$user])}}" class="no-underline">
+                                            <button class="btn btn-md bg-outline-blue text-blue col-12 round-this">
+                                                <i class="fa-solid fa-pen"></i> Edit
+                                            </button>
+                                        </a>
+                                        <a href="" class="no-underline">
+                                            <form action="{{route('users.destroy', ['user'=>$user->id])}}" method="post">
+                                                @csrf
+                                                @method('delete')
+                                                <button
+                                                    class="btn btn-md-3 bg-outline-yellow text-yellow col-12 round-this">
                                                     <i class="fa-solid fa-trash"></i> Trash
                                                 </button>
-                                            </a>
+
+                                            </form>
+                                        </a>
+
                                     </div>
                                 </dd>
 

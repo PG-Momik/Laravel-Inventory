@@ -143,14 +143,25 @@
 .active-this a{
     color:var(--pm-white);
 }
+#lilbro{
+    color: white;
+    background: none;
+}
+.hover-white:hover{
+    color: white;
+}
+
+.clean-icon{
+    border: 1px solid white;
+    outline: none;
+    background: white;
+}
 
 .grid-container{
     display: grid;
     grid-template-columns: 16vw 81vw;
     padding: 1vw;
     grid-column-gap: 1vw;
-
-
 }
 
 .grid-item{
@@ -203,6 +214,8 @@
 }
 .width-40{
     width: 40px;
+}
+.hover-white{
 }
 
 @media only screen and (max-width: 600px) {

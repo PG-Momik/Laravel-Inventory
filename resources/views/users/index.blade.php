@@ -42,7 +42,7 @@
                     <div class="row mx-0 d-flex gx-5">
                         <div class="col-xl-4 col-lg-6 row mx-0">
                             <div class="col-lg-6 col-md-12">
-                                <a href="{{route('users.create')}}" class="no-underline">
+                                <a href="{{route('users.index')}}" class="no-underline">
                                     <button class="btn btn-md bg-blue text-white col-12 round-this">
                                         <i class="fa-solid fa-plus"></i> Add
                                     </button>
@@ -99,18 +99,26 @@
                                         <td>{{$user->email}}</td>
                                         <td>{{$user->roles->name}}</td>
                                         <td>
-                                            <a href="{{route('users.transactions', ['id'=>$user->id])}}">
+                                            <a href="{{route('users.transactions', ['id'=>$user])}}">
                                                 {{$user->transactions_count}}
                                             </a>
                                         </td>
                                         <td class="d-flex" style="column-gap: 0.8vw">
-                                            <a href="{{route('users.show', ['id'=>$user->id])}}"
+                                            <a href="{{route('users.show', ['user'=>$user])}}"
                                                class="col btn btn-sm btn-outline-primary rounded-0 px-2">
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
-                                            <a href="{{route('users.delete', ['id'=>$user->id])}}"
-                                               class="col btn btn-sm btn-outline-warning rounded-0 px-2">
-                                                <i class="fa-solid fa-trash"></i>
+
+                                            <a href="" class="col no-underline">
+                                                <form action="{{route('users.destroy', ['user'=>$user->id])}}" method="post">
+                                                    @csrf
+                                                    @method('delete')
+                                                    <button
+                                                        class="btn bg-outline-yellow rounded-0 text-yellow col-12 ">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </button>
+
+                                                </form>
                                             </a>
                                         </td>
                                     </tr>

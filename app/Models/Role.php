@@ -19,7 +19,7 @@ class Role extends Model
      */
     public function users(): HasMany
     {
-        return $this->hasMany(Customer::class, 'user_id', 'id');
+        return $this->hasMany(User::class, 'user_id', 'id');
     }
 
 }

@@ -20,7 +20,7 @@ class TransactionSeeder extends Seeder
         $faker = Faker::create();
         for ($i=0;$i<20;$i++){
             $transaction = new Transaction;
-            $transaction->type = $faker->randomElement(['Add', 'Remove']);
+            $transaction->type = $faker->randomElement(['Added', 'Removed']);
             $transaction->user_id = $faker->numberBetween(1,5);
             $transaction->product_id = $faker->numberBetween(1,12);
             $transaction->quantity = $faker->numberBetween(1,5);

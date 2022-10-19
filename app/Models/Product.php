@@ -20,7 +20,7 @@ class Product extends Model
      */
     public function users(): BelongsTo
     {
-        return $this->belongsTo(Customer::class, 'registered_by', 'id');
+        return $this->belongsTo(User::class, 'registered_by', 'id');
     }
 
     /**
