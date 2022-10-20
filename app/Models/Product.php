@@ -18,15 +18,16 @@ class Product extends Model
     /**
      * @return BelongsTo
      */
-    public function users(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'registered_by', 'id');
+        return $this->belongsTo(User::class, 'registered_by', 'id')
+            ->withTrashed();
     }
 
     /**
      * @return BelongsTo
      */
-    public function categories(): BelongsTo
+    public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id', 'id');
     }
@@ -38,6 +39,12 @@ class Product extends Model
     {
         return $this->hasMany(Transaction::class, 'product_id', 'id');
     }
+
+
+//    public function registerer()
+//    {
+//        return $this->hasOne(User::class, 'id', 'registered_by');
+//    }
 
 
 }

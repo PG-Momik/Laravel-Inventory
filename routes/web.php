@@ -60,11 +60,22 @@ Route::middleware(['auth'])->group(
 
         Route::resource('users', UserController::class);
 
+
         Route::resource('roles', RoleController::class);
+
+
+
+        Route::match(['get', 'post'], '/products/trash', [ProductController::class, 'showTrash'])->name('products.trashed');
+
+        Route::get('/products/restore/{id}', [ProductController::class, 'restore'])->name('products.restore');
+
+        Route::get('/products/delete/{id}', [ProductController::class, 'hardDelete'])->name('products.delete');
 
         Route::resource('products', ProductController::class);
 
+
         Route::resource('categories', CategoryController::class);
+
 
         Route::resource('transactions', TransactionController::class);
 

@@ -3,87 +3,170 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+
     /**
      * Display a listing of the resource.
-     *
+     * @param Request $request
      * @return View
      */
-    public function index():View
+    public function index(Request $request): View
     {
-        //
-        return  view('products.index');
+        $searchKeyword = $request['search-field'] ?? '';
+
+        $products = Product::with('category')->paginate(10);
+
+        if ( !empty($searchKeyword) ) {
+            $products = Product::with('category')
+                ->where('products.name', 'LIKE', "%$searchKeyword%")
+                ->paginate(10);
+        }
+
+        return view('products.index')->with(compact('products', 'searchKeyword'));
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function create()
+    public function create(): View
     {
-        //
+        return view('products.add');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        //
+        try {
+            $request->validate(apply_validation_to(['']));
+
+        } catch ( Exception $e ) {
+        }
+
+        return redirect()->route('products.index');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Product  $product
+     * @param Product $product
      * @return View
      */
-    public function show(Product $product):View
+    public function show($id)
     {
-
-        dd("showing:".$product->id);
-        return view('products.product');
+        $product = Product::with('user')->with('category')->find($id);
+        return view('products.product')->with(compact('product'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return View
      */
     public function edit(Product $product)
     {
-        //
+        return view('products.edit')->with(compact('product'));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Product $product
+     * @return RedirectResponse
      */
     public function update(Request $request, Product $product)
     {
         //
     }
 
+
+    public function showTrash(Request $request): View
+    {
+        $searchKeyword = $request['search-field'] ?? '';
+        if ( empty($searchKeyword) ) {
+            $products = Product::onlyTrashed()->paginate(10);
+        } else {
+            $products = Product::onlyTrashed()
+                ->where('products.name', 'LIKE', "%$searchKeyword%")
+                ->paginate(10);
+        }
+
+        return view('products.trashed')->with(compact('products', 'searchKeyword'));
+    }
+
+
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return RedirectResponse
      */
     public function destroy(Product $product)
     {
-        //
+        try {
+            $product->delete();
+            session()->flash('warning', 'Product moved to trash');
+
+            return redirect()->back();
+        } catch ( Exception $e ) {
+            session()->flash('warning', 'Something went wrong. Try Again.');
+        }
+
+        return redirect()->route('product.trashed');
     }
+
+    /**
+     * Restore trashed user
+     * @param int $id
+     *
+     * @return RedirectResponse
+     */
+    public function restore( int $id ): RedirectResponse
+    {
+        try {
+            $user = Product::withTrashed()->find($id);
+            $user->restore();
+            session()->flash('success', "User restored");
+        } catch ( Exception $e ) {
+            session()->flash('warning', 'Something went wrong.');
+        }
+
+        return redirect()->back();
+    }
+
+
+    /**
+     * Remove product from db
+     * @param int $id
+     *
+     * @return RedirectResponse
+     */
+    public function hardDelete(int $id): RedirectResponse
+    {
+        try {
+            $product = Product::withTrashed()->find($id);
+            $product->forceDelete();
+            session()->flash('success', 'User record destroyed.');
+        } catch ( Exception $e ) {
+            session()->flash('warning', "Something went wrong. Try again.");
+        }
+
+        return redirect()->back();
+    }
+
+
 }
