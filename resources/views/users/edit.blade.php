@@ -65,8 +65,10 @@
                 <div class="b grad" style="height:350px; border-radius: 0 0 20px 20px">
                     <div style="width: 80%; margin: 0 auto;">
                         <div class="p-5 bg-white round-this shadow-this-down">
-                            <form action="{{route('users.update', ['id'=>$user->id])}}" method="post">
+                            <form action="{{route('users.update', ['user'=>$user->id])}}" method="post">
                                 @csrf
+                                @method('put')
+
                                 <div class="row my-2">
                                     <div class="col-md-6 position-relative">
                                         <x-input type="text" name="name" label="Name" id="name"
@@ -86,20 +88,18 @@
                                                  value="{{$user->role_id}}" :keyVal="$roles"/>
                                     </div>
                                     <div class="col-md-6 form-group">
-                                            <x-input type="checkbox" name="checkbox" id="checkbox" label="Verify Email?" checked="{{$user->email_verified_at??'false'}}"/>
+                                        <x-input type="checkbox" name="checkbox" id="checkbox" label="Verify Email?" checked="{{$user->email_verified_at?'true':'false'}}"/>
                                     </div>
                                 </div>
 
                                 <hr>
                                 <div class="col-12 row mx-0 px-0 justify-content-center">
                                     <div class="col-md-6 col-12 row mx-0 g-2">
-                                        <button class="btn btn-md bg-outline-green text-blue col-12 round-this">
+                                        <button type="submit" class="btn btn-md bg-outline-green text-blue col-12 round-this">
                                             <i class="fa-solid fa-pen"></i> Update
                                         </button>
                                     </div>
                                 </div>
-
-
                             </form>
                         </div>
                     </div>

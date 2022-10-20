@@ -44,11 +44,13 @@ class ProductController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
+     * @return View
      */
-    public function show(Product $product)
+    public function show(Product $product):View
     {
-        //
+
+        dd("showing:".$product->id);
+        return view('products.product');
     }
 
     /**

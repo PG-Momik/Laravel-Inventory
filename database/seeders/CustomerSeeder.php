@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
@@ -20,7 +20,7 @@ class CustomerSeeder extends Seeder
         //
         $faker = Faker::create();
         for ($i=0; $i<5; $i++){
-            $user = new Customer;
+            $user = new User;
             $user->name = $faker->name;
             $user->email = $faker->email;
             $user->role_id = $faker->numberBetween(1, 2);

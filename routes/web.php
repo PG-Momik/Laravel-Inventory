@@ -3,10 +3,11 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DemoController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -49,120 +50,25 @@ Route::middleware(['auth'])->group(
                 }
             );
 
-        Route::prefix('users')
-            ->controller(CustomerController::class)
-            ->name('users.')
-            ->group(
-                function () {
-                    Route::any('/', 'index')->name('index');
+        Route::get('/users/transactions/{id}', [UserController::class, 'showTransactions'])->name('users.transactions');
 
-                    Route::get('/add', 'create')->name('create');
-                    Route::post('/add', 'store')->name('save');
+        Route::match(['get', 'post'], '/users/trash', [UserController::class, 'showTrash'])->name('users.trashed');
 
-                    Route::get('/show', 'show')->name('show');
+        Route::get('/users/restore/{id}', [UserController::class, 'restore'])->name('users.restore');
 
-                    Route::get('/edit', 'edit')->name('edit');
+        Route::get('/users/delete/{id}', [UserController::class, 'hardDelete'])->name('users.delete');
 
-                    Route::post('/update', 'update')->name('update');
+        Route::resource('users', UserController::class);
 
-                    Route::get('/delete', 'delete')->name('delete');
+        Route::resource('roles', RoleController::class);
 
-                    Route::get('/transactions', 'showTransactions')->name('transactions');
-                }
-            );
+        Route::resource('products', ProductController::class);
 
-        Route::prefix('roles')
-            ->controller(RoleController::class)
-            ->name('roles.')
-            ->group(
-                function () {
-                    Route::get('/', 'index')->name('index');
+        Route::resource('categories', CategoryController::class);
 
-                    Route::get('/add', 'create')->name('create');
-                    Route::post('/add', 'save')->name('save');
+        Route::resource('transactions', TransactionController::class);
 
-                    Route::get('/show', 'show')->name('show');
-
-                    Route::get('/edit', 'edit')->name('edit');
-
-                    Route::put('/update', function () {
-                            return "hello world";
-                        }
-                    )->name('update');
-
-                    Route::get('delete', 'delete')->name('delete');
-                }
-            );
-
-        Route::prefix('products')
-            ->controller(ProductController::class)
-            ->name('products.')
-            ->group(
-                function () {
-                    Route::get('/', 'index')->name('index');
-
-                    Route::get('/add', 'create')->name('create');
-                    Route::post('/add', 'save')->name('save');
-
-                    Route::get('/show', 'show')->name('show');
-
-                    Route::get('/edit', 'edit')->name('edit');
-
-                    Route::get('/update', 'update')->name('update');
-
-                    Route::get('delete', 'delete')->name('delete');
-                }
-            );
-
-        Route::prefix('categories')
-            ->controller(CategoryController::class)
-            ->name('categories.')
-            ->group(
-                function () {
-                    Route::get('/', 'index')->name('index');
-
-
-                    Route::get('/add', 'create')->name('create');
-                    Route::post('/add', 'save')->name('save');
-
-                    Route::get('/show', 'show')->name('show');
-
-                    Route::get('/edit', 'edit')->name('edit');
-
-                    Route::get('/update', 'update')->name('update');
-
-                    Route::get('delete', 'delete')->name('delete');
-                }
-            );
-
-        Route::prefix('activities')
-            ->controller(TransactionController::class)
-            ->name('transactions.')
-            ->group(
-                function () {
-                    Route::get('/', 'index')->name('index');
-
-                    Route::get('/add', 'create')->name('create');
-                    Route::post('/add', 'save')->name('save');
-
-                    Route::get('/show', 'show')->name('show');
-
-                    Route::get('/edit', 'edit')->name('edit');
-
-                    Route::get('/update', 'update')->name('update');
-
-                    Route::get('delete', 'delete')->name('delete');
-                }
-            );
-
-        Route::prefix('profile')
-            ->controller(ProfileController::class)
-            ->name('profile.')
-            ->group(
-                function () {
-                    Route::get('/', 'index')->name('index');
-                }
-            );
+        Route::resource('profile', TransactionController::class);
     }
 );
 

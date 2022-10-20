@@ -57,7 +57,7 @@
                     <div class="row mx-0 d-flex gx-5">
                         <div class="col-xl-4 col-lg-6 row mx-0">
                             <div class="col-lg-6 col-md-12">
-                                <a href="{{route('users.create')}}" class="no-underline">
+                                <a href="{{route('users.index')}}" class="no-underline">
                                     <button class="btn btn-md bg-blue text-white col-12 round-this">
                                         <i class="fa-solid fa-plus"></i> Add
                                     </button>
@@ -112,7 +112,7 @@
                                     <li class="list-group-item d-flex justify-content-between align-items-center
                                         @if($transaction->type=="Added"){{'list-group-item-success'}}@else{{'list-group-item-danger'}}@endif col-12 row m-0">
                                         <div class="me-auto col-md-2 col-12">
-                                            <div class="fw-bold fs-4">{{$transaction->records->name}}</div>
+                                            <div class="fw-bold fs-4"><a href="{{route('products.show', ['product'=>$transaction->product_id])}}">{{$transaction->records->name}}</a></div>
                                             <span class="">{{$transaction->created_at}}</span>
                                         </div>
                                         <div class="col-md-10 col-12 d-flex justify-content-center text-center">

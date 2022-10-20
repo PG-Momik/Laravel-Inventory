@@ -1,10 +1,10 @@
 <?php
 
-if ( !function_exists('register_form_validation')) {
-    function registration_form_validation($params, $action): array
+if ( !function_exists('apply_validation_to')) {
+    function apply_validation_to($params, $requestFor='create'): array
     {
 
-        $allValidations = array(
+        $commonValidations = array(
             "name"             => "required",
             "email"            => "required|email|unique:users,email",
             "password"         => "required",
@@ -27,14 +27,14 @@ if ( !function_exists('register_form_validation')) {
             "date"             => 'required',
         );
 
-        if($action!='create'){
-            $allValidations['email'] = 'required';
+        if($requestFor!='create'){
+            $commonValidations['email'] = 'required';
         }
 
         $returnArray = array();
 
         foreach ( $params as $param ) {
-            $returnArray[$param] = $allValidations[$param];
+            $returnArray[$param] = $commonValidations[$param];
         }
 
         return $returnArray;
