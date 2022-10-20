@@ -13,11 +13,11 @@
                     <div class="row mx-0 d-flex gx-5  align-items-center">
 
                         <div class="col-xl-4 col-lg-4">
-                            <h1>Users</h1>
+                            <h1>Trashed Users</h1>
                         </div>
 
                         {{--Search Form--}}
-                        <form class="col-xl-8 col-lg-8 row mx-0 align-items-center" action="{{route('users.index')}}"
+                        <form class="col-xl-8 col-lg-8 row mx-0 align-items-center" action="{{route('users.trashed')}}"
                               method="post">
                             @csrf
                             <div class="col-xl-2 col-lg-2 col-0"></div>
@@ -42,9 +42,9 @@
                     <div class="row mx-0 d-flex gx-5">
                         <div class="col-xl-4 col-lg-6 row mx-0">
                             <div class="col-lg-6 col-md-12">
-                                <a href="{{route('users.create')}}" class="no-underline">
-                                    <button class="btn btn-md bg-blue text-white col-12 round-this">
-                                        <i class="fa-solid fa-plus"></i> Add
+                                <a href="{{route('users.index')}}" class="no-underline">
+                                    <button class="btn btn-md bg-dark text-white col-12 round-this">
+                                        <i class="fa-solid fa-list"></i> All
                                     </button>
                                 </a>
                             </div>
@@ -86,8 +86,7 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Email</th>
-                                    <th>Role</th>
-                                    <th>Activities</th>
+                                    <th>Trashed</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -97,28 +96,13 @@
                                     <tr>
                                         <td>{{$user->name}}</td>
                                         <td>{{$user->email}}</td>
-                                        <td>{{$user->roles->name}}</td>
-                                        <td>
-                                            <a href="{{route('users.transactions', ['id'=>$user->id])}}">
-                                                {{$user->transactions_count}}
-                                            </a>
-                                        </td>
+                                        <td>{{$user->deleted_at->diffForHumans()}}</td>
                                         <td class="d-flex" style="column-gap: 0.8vw">
-                                            <a href="{{route('users.show', ['user'=>$user])}}"
-                                               class="col btn btn-sm btn-outline-primary rounded-0 px-2">
-                                                <i class="fa-solid fa-eye"></i>
+                                            <a href="{{route('users.delete', ['id'=>$user->id])}}" class="col no-underline btn btn-sm rounded-0 bg-outline-red">
+                                                <i class="fa-solid fa-delete-left"></i>
                                             </a>
-
-                                            <a href="" class="col no-underline">
-                                                <form action="{{route('users.destroy', ['user'=>$user->id])}}" method="post">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <button
-                                                        class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 ">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                    </button>
-
-                                                </form>
+                                            <a href="{{route('users.restore', ['id'=>$user->id])}}" class="col no-underline btn btn-sm rounded-0 bg-outline-green">
+                                                <i class="fa-solid fa-rotate-left"></i>
                                             </a>
                                         </td>
                                     </tr>

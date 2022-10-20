@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -78,12 +78,13 @@ class UserController extends Controller
      * @param int $id
      * @return RedirectResponse| View
      */
-    public function show($id): RedirectResponse| View
+    public function show($id): RedirectResponse | View
     {
         $user = User::with('roles:id,name')
             ->with('products')
             ->withCount('transactions')
             ->find($id);
+
         if ( is_null($user) ) {
             return redirect('/users');
         }
@@ -138,24 +139,6 @@ class UserController extends Controller
         return redirect()->route('users.show', ['user' => $user->id]);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param int $id
-     * @return RedirectResponse
-     */
-    public function destroy(int $id): RedirectResponse
-    {
-        $user = User::find($id);
-
-        if ( !is_null($user) ) {
-            $user->delete();
-            session()->flash('warning', 'User moved to trash');
-        }
-
-        return redirect()->route('users.index');
-    }
-
 
     /**
      * @return View
@@ -167,7 +150,9 @@ class UserController extends Controller
 
 
     /**
+     * Shows User Transactions
      * @param Request $request
+     *
      * @return View
      */
     public function showTransactions(Request $request): View
@@ -175,6 +160,86 @@ class UserController extends Controller
         $user = User::with('transactions.records:id,name,price,discount')->find($request->id);
 
         return view('users.transactions')->with(compact('user'));
+    }
+
+    /**
+     * Shows Trashed Data
+     * @param Request $request
+     * @return View
+     */
+    public function showTrash(Request $request): View
+    {
+        $searchKeyword = $request['search-field'] ?? '';
+        if ( empty($searchKeyword) ) {
+            $users = User::onlyTrashed()->paginate(10);
+        } else {
+            $users = User::onlyTrashed()
+                ->where('users.name', 'LIKE', "%$searchKeyword%")
+                ->orWhere('users.email', 'LIKE', "%$searchKeyword%")
+                ->paginate(10);
+        }
+
+        return view('users.trashed')->with(compact('users', 'searchKeyword'));
+    }
+
+
+    /**
+     * Moves user to trash
+     * @param User $user
+     *
+     * @return RedirectResponse
+     */
+    public function destroy(User $user): RedirectResponse
+    {
+        try {
+            $user->delete();
+            session()->flash('warning', 'User moved to trash');
+
+            return redirect()->back();
+        } catch ( Exception $e ) {
+            session()->flash('warning', 'Something went wrong. Try Again.');
+        }
+
+        return redirect()->route('users.trashed');
+    }
+
+    /**
+     * Restore trashed user
+     * @param int $id
+     *
+     * @return RedirectResponse
+     */
+    public function restore(int $id): RedirectResponse
+    {
+        try {
+            $user = User::withTrashed()->find($id);
+            $user->restore();
+            session()->flash('success', "User restored");
+        } catch ( Exception $e ) {
+            session()->flash('warning', 'Something went wrong.');
+        }
+
+        return redirect()->back();
+    }
+
+
+    /**
+     * Remove user from db
+     * @param int $id
+     *
+     * @return RedirectResponse
+     */
+    public function hardDelete(int $id): RedirectResponse
+    {
+        try {
+            $user = User::withTrashed()->find($id);
+            $user->forceDelete();
+            session()->flash('success', 'User record destroyed.');
+        } catch ( Exception $e ) {
+            session()->flash('warning', "Something went wrong. Try again.");
+        }
+
+        return redirect()->back();
     }
 
 

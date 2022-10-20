@@ -59,7 +59,7 @@
                 {{--White Card goes here--}}
                 <div class="p-5">
                     {{--Register Form--}}
-                    <form action="" method="POST" class="container-fluid p-5 round-this bg-sm-grey  needs-validation">
+                    <form action="{{route('users.store')}}" method="post" class="container-fluid p-5 round-this bg-sm-grey  needs-validation">
                         @csrf
 
                         @if(Session()->has('success'))

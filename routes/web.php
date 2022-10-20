@@ -5,7 +5,6 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DemoController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
@@ -22,18 +21,22 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get(
+    '/',
+    function () {
         return view('welcome');
     }
 );
 
-Route::get('/home', function () {
+Route::get(
+    '/home',
+    function () {
         return redirect('dashboard');
     }
 )->name('home');
 
-Route::middleware(['auth'])->group(function () {
-
+Route::middleware(['auth'])->group(
+    function () {
         Route::prefix('dashboard')
             ->controller(DashboardController::class)
             ->name('dashboard.')
@@ -47,9 +50,17 @@ Route::middleware(['auth'])->group(function () {
                 }
             );
 
-        Route::resource('roles', RoleController::class);
+        Route::get('/users/transactions/{id}', [UserController::class, 'showTransactions'])->name('users.transactions');
+
+        Route::match(['get', 'post'], '/users/trash', [UserController::class, 'showTrash'])->name('users.trashed');
+
+        Route::get('/users/restore/{id}', [UserController::class, 'restore'])->name('users.restore');
+
+        Route::get('/users/delete/{id}', [UserController::class, 'hardDelete'])->name('users.delete');
 
         Route::resource('users', UserController::class);
+
+        Route::resource('roles', RoleController::class);
 
         Route::resource('products', ProductController::class);
 
@@ -58,8 +69,6 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('transactions', TransactionController::class);
 
         Route::resource('profile', TransactionController::class);
-
-        Route::get('users/transactions', [UserController::class, 'showTransactions'])->name('users.transactions');
     }
 );
 
