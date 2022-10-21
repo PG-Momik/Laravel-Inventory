@@ -1,9 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\DemoController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TransactionController;
@@ -72,6 +70,8 @@ Route::middleware(['auth'])->group(
         Route::get('/products/restore/{id}', [ProductController::class, 'restore'])->name('products.restore');
 
         Route::get('/products/delete/{id}', [ProductController::class, 'hardDelete'])->name('products.delete');
+
+        Route::post('/products/search', [ProductController::class, 'index'])->name('products.search');
 
         Route::resource('products', ProductController::class);
 

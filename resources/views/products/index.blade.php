@@ -17,15 +17,20 @@
                         </div>
 
                         {{--Search Form--}}
-                        <form action="{{route('products.index')}}" method="post"
+                        <form action="{{route('products.search')}}"
+                              method="post"
                               class="col-xl-8 col-lg-8 row mx-0 align-items-center">
                             @csrf
+                            @method('post')
+
                             <div class="col-xl-2 col-lg-2 col-0"></div>
+
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
                                 <input type="search" name="search-field"
                                        class="form-control round-this px-3 col border-0 height-40"
                                        placeholder="Search product" value="{{$searchKeyword}}" style="max-height: 50px">
                             </div>
+
                             <div class="col-xl-2 col-lg-2 col-md-4 col-4 row mx-0 justify-content-center">
                                 <button type="submit" class="btn bg-outline-dark round-button m-1 height-40 width-40">
                                     <i class="fa-solid fa-magnifying-glass"></i>
