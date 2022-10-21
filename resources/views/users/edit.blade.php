@@ -28,11 +28,12 @@
                             </span>
                         </div>
                         {{--                        Search Form--}}
-                        <form action="{{route('users.index')}}"
+                        <form action="{{route('users.search')}}"
                               method="post"
                               class="col-xl-8 col-lg-8 row mx-0 align-items-center">
-
                             @csrf
+                            @method('post')
+
                             <div class="col-xl-2 col-lg-2 col-0"></div>
 
                             <div class="col-8">
@@ -55,13 +56,6 @@
                 </div>
 
                 {{--White Card Goes Here--}}
-{{--                @php--}}
-{{--                if ($errors){--}}
-{{--                    var_dump($errors);--}}
-{{--                }--}}
-
-{{--                @endphp--}}
-{{--                </pre>--}}
                 <div class="b grad" style="height:350px; border-radius: 0 0 20px 20px">
                     <div style="width: 80%; margin: 0 auto;">
                         <div class="p-5 bg-white round-this shadow-this-down">

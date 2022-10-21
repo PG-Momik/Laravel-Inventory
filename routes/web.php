@@ -58,6 +58,8 @@ Route::middleware(['auth'])->group(
 
         Route::get('/users/delete/{id}', [UserController::class, 'hardDelete'])->name('users.delete');
 
+        Route::post('/users/search', [UserController::class, 'index'])->name('users.search');
+
         Route::resource('users', UserController::class);
 
 
