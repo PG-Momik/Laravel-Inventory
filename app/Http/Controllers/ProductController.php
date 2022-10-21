@@ -16,13 +16,12 @@ class ProductController extends Controller
 
     /**
      * Display a listing of the resource.
-     * @param Request $request
+     *
      * @return View
      */
     public function index(Request $request): View
     {
         $searchKeyword = $request['search-field'] ?? '';
-
         $products = Product::with('category')->paginate(10);
 
         if ( !empty($searchKeyword) ) {
@@ -63,14 +62,13 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Product $product
+     * @param $id
      * @return View
      */
-    public function show($id)
+    public function show($id): View
     {
         $product = Product::with('user')->with('category')->find($id);
 
-//        dd($product->toArray());
         return view('products.product')->with(compact('product'));
     }
 
@@ -80,7 +78,7 @@ class ProductController extends Controller
      * @param Product $product
      * @return View
      */
-    public function edit(Product $product)
+    public function edit(Product $product): View
     {
         $categories = Category::get();
 
@@ -94,7 +92,7 @@ class ProductController extends Controller
      * @param Product $product
      * @return RedirectResponse
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Product $product): RedirectResponse
     {
         //Request Validation goes
 
@@ -135,7 +133,7 @@ class ProductController extends Controller
             }
 
             $product->update();
-            session()->flash('success', "User info updated.");
+            session()->flash('success', "Product info updated.");
         } catch ( Exception $e ) {
             session()->flash('warning', "Something went wrong.");
 
@@ -149,8 +147,9 @@ class ProductController extends Controller
     public function showTrash(Request $request): View
     {
         $searchKeyword = $request['search-field'] ?? '';
+
         if ( empty($searchKeyword) ) {
-            $products = Product::onlyTrashed()->paginate(10);
+                $products = Product::onlyTrashed()->paginate(10);
         } else {
             $products = Product::onlyTrashed()
                 ->where('products.name', 'LIKE', "%$searchKeyword%")
@@ -167,22 +166,21 @@ class ProductController extends Controller
      * @param Product $product
      * @return RedirectResponse
      */
-    public function destroy(Product $product)
+    public function destroy(Product $product): RedirectResponse
     {
         try {
             $product->delete();
-            session()->flash('warning', 'Product moved to trash');
+            session()->flash('warning', 'Product moved to trash.');
 
-            return redirect()->back();
         } catch ( Exception $e ) {
             session()->flash('warning', 'Something went wrong. Try Again.');
         }
 
-        return redirect()->route('product.trashed');
+        return redirect()->back();
     }
 
     /**
-     * Restore trashed user
+     * Restore trashed product
      * @param int $id
      *
      * @return RedirectResponse
@@ -190,9 +188,9 @@ class ProductController extends Controller
     public function restore(int $id): RedirectResponse
     {
         try {
-            $user = Product::withTrashed()->find($id);
-            $user->restore();
-            session()->flash('success', "User restored");
+            $product = Product::withTrashed()->find($id);
+            $product->restore();
+            session()->flash('success', "Product restored.");
         } catch ( Exception $e ) {
             session()->flash('warning', 'Something went wrong.');
         }
@@ -212,7 +210,7 @@ class ProductController extends Controller
         try {
             $product = Product::withTrashed()->find($id);
             $product->forceDelete();
-            session()->flash('success', 'User record destroyed.');
+            session()->flash('error', 'Product record destroyed.');
         } catch ( Exception $e ) {
             session()->flash('warning', "Something went wrong. Try again.");
         }
