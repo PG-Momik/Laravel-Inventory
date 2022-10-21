@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
+use App\Models\Transaction;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -51,7 +54,6 @@ class ProductController extends Controller
     {
         try {
             $request->validate(apply_validation_to(['']));
-
         } catch ( Exception $e ) {
         }
 
@@ -67,6 +69,8 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::with('user')->with('category')->find($id);
+
+//        dd($product->toArray());
         return view('products.product')->with(compact('product'));
     }
 
@@ -78,7 +82,9 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        return view('products.edit')->with(compact('product'));
+        $categories = Category::get();
+
+        return view('products.edit')->with(compact('product', 'categories'));
     }
 
     /**
@@ -90,7 +96,53 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        //Request Validation goes
+
+        $changes = 0;
+        //To check if there's any change in quantity
+
+        $product->name        = $request->name;
+        $product->category_id = $request->category_id;
+        $product->price       = $request->price;
+        $product->discount    = $request->discount;
+        $product->description = $request->description;
+
+        $changes           = $request->quantity - $product->quantity;
+        $product->quantity = $request->quantity;
+
+        if ( $changes != 0 ) {
+            $transaction             = new Transaction();
+            $transaction->user_id    = Auth::user()->id;
+            $transaction->product_id = $product->id;
+            $transaction->type       = $changes > 0 ? $transaction::ADDED : $transaction::REMOVED;
+            $transaction->quantity   = abs($changes);
+
+            try {
+                $transaction->save();
+            } catch ( Exception $e ) {
+                //DO nothing for now
+                dd($e);
+            }
+        }
+
+        try {
+            $file = $request->file('productImage') ?? '';
+
+            if ( $file ) {
+                $newFilename = $request->productImage->getClientOriginalName();
+                $file->storeAs('public/images', $newFilename);
+                $product->image = $newFilename;
+            }
+
+            $product->update();
+            session()->flash('success', "User info updated.");
+        } catch ( Exception $e ) {
+            session()->flash('warning', "Something went wrong.");
+
+            return redirect()->route('products.show', ['product' => $product]);
+        }
+
+        return redirect()->route('products.show', ['product' => $product]);
     }
 
 
@@ -135,7 +187,7 @@ class ProductController extends Controller
      *
      * @return RedirectResponse
      */
-    public function restore( int $id ): RedirectResponse
+    public function restore(int $id): RedirectResponse
     {
         try {
             $user = Product::withTrashed()->find($id);

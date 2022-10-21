@@ -14,7 +14,8 @@ class Transaction extends Model
 
     protected $table      = "transactions";
     protected $primaryKey = "id";
-
+    public const ADDED = "Added";
+    public const REMOVED = "Removed";
     /**
      * @return BelongsTo
      */
