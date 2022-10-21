@@ -25,11 +25,12 @@
                             </span>
                         </div>
                         {{--                        Search Form--}}
-                        <form action="{{route('products.index')}}"
+                        <form action="{{route('products.search')}}"
                               method="post"
                               class="col-xl-8 col-lg-8 row mx-0 align-items-center">
-
                             @csrf
+                            @method('post')
+
                             <div class="col-xl-2 col-lg-2 col-0"></div>
 
                             <div class="col-8">

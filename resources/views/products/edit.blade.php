@@ -19,7 +19,7 @@
                                 class="d-inline-flex nice-white-shadow px-4 align-items-end pb-1">
                                 <a href="{{route('products.index')}}" class="text-decoration-none">
                                     <span class="fs-3 p-0 text-dark">
-                                        <b><u>products</u></b>
+                                        <b><u>Products</u></b>
                                     </span>
                                 </a>
                                     <span class="fs-3 ms-1 text-grey">/</span>
@@ -27,11 +27,12 @@
                             </span>
                         </div>
                         {{--                        Search Form--}}
-                        <form action="{{route('products.index')}}"
+                        <form action="{{route('products.search')}}"
                               method="post"
                               class="col-xl-8 col-lg-8 row mx-0 align-items-center">
-
                             @csrf
+                            @method('post')
+
                             <div class="col-xl-2 col-lg-2 col-0"></div>
 
                             <div class="col-8">

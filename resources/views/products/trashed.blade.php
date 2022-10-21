@@ -17,9 +17,12 @@
                         </div>
 
                         {{--Search Form--}}
-                        <form action="{{route('products.index')}}" method="post"
+                        <form action="{{route('products.trashed')}}"
+                              method="post"
                               class="col-xl-8 col-lg-8 row mx-0 align-items-center">
                             @csrf
+                            @method('post')
+
                             <div class="col-xl-2 col-lg-2 col-0"></div>
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
                                 <input type="search" name="search-field"
