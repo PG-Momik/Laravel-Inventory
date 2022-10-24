@@ -81,7 +81,7 @@ class UserController extends Controller
     public function show($id): RedirectResponse | View
     {
         $user = User::with('roles:id,name')
-            ->with('products')
+            ->with('productEntries')
             ->withCount('transactions')
             ->find($id);
 

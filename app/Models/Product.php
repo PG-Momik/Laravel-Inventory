@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -22,8 +23,7 @@ class Product extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'registered_by', 'id')
-            ->withTrashed();
+        return $this->belongsTo(User::class, 'registered_by', 'id')->withTrashed();
     }
 
     /**
@@ -42,11 +42,36 @@ class Product extends Model
         return $this->hasMany(Transaction::class, 'product_id', 'id');
     }
 
+    /**
+     * @return HasMany
+     */
+    public function purchasePrices(): HasMany
+    {
+        return $this->hasMany(Cost::class, 'product_id', 'id');
+    }
 
-//    public function registerer()
-//    {
-//        return $this->hasOne(User::class, 'id', 'registered_by');
-//    }
+    /**
+     * @return HasOne
+     */
+    public function latestPurchasePrice(): HasOne
+    {
+        return $this->hasOne(Cost::class, 'product_id', 'id')->latest();
+    }
 
 
+    /**
+     * @return HasMany
+     */
+    public function salesPrices(): HasMany
+    {
+        return $this->hasMany(Price::class, 'product_id', 'id');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function latestSalesPrice(): HasOne
+    {
+        return $this->hasOne(Price::class, 'product_id', 'id')->latest();
+    }
 }

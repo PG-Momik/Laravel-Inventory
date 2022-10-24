@@ -112,7 +112,7 @@ class ProductController extends Controller
             $transaction             = new Transaction();
             $transaction->user_id    = Auth::user()->id;
             $transaction->product_id = $product->id;
-            $transaction->type       = $changes > 0 ? $transaction::ADDED : $transaction::REMOVED;
+            $transaction->type       = $changes > 0 ? $transaction::PURCHASE : $transaction::SALE;
             $transaction->quantity   = abs($changes);
 
             try {
