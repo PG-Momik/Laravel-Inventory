@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Transaction extends Model
@@ -14,8 +15,10 @@ class Transaction extends Model
 
     protected $table      = "transactions";
     protected $primaryKey = "id";
-    public const ADDED = "Added";
-    public const REMOVED = "Removed";
+    public const PURCHASE = "Purchase";
+    public const SALE     = "Sale";
+
+
     /**
      * @return BelongsTo
      */
@@ -39,5 +42,31 @@ class Transaction extends Model
     {
         return $this->hasOne(Product::class, 'id', 'product_id');
     }
+
+    /**
+     * @return HasOne
+     */
+    public function productInfo(): HasOne
+    {
+        return $this->hasOne(Product::class, 'id', 'id');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function currentPurchasePrice(): HasOne
+    {
+        return $this->hasOne(Cost::class, 'id', 'cost_id');
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function currentSalesPrice(): HasOne
+    {
+        return $this->hasOne(Price::class, 'id', 'price_id');
+    }
+
+
 
 }
