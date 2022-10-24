@@ -69,7 +69,7 @@ class User extends Authenticatable
      * @return HasMany
      */
 
-    public function products(): HasMany
+    public function productEntries(): HasMany
     {
         return $this->hasMany(Product::class, 'registered_by', 'id');
     }
@@ -84,24 +84,25 @@ class User extends Authenticatable
     }
 
     /**
-     * Returns Transactions that increases inventory count.
+     * Returns all sales transactions of user
+     *
      * @return HasMany
      */
-    public function addedTransactions(): HasMany
+    public function sales(): HasMany
     {
         return $this->hasMany(Transaction::class, 'user_id', 'id')
-            ->where('type', '=', 'Add');
+            ->where('type', '=', Transaction::PURCHASE);
     }
 
     /**
+     *Returns all purchase transactions of user
      *
-     * Return Transactions that reduces inventory count.
      * @return HasMany
      */
-    public function subtractedTransaction(): HasMany
+    public function purchases(): HasMany
     {
         return $this->hasMany(Transaction::class, 'user_id', 'id')
-            ->where('type', '=', 'Remove');
+            ->where('type', '=', Transaction::SALE);
     }
 
 

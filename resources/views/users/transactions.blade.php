@@ -1,18 +1,3 @@
-{{--<pre>--}}
-
-{{--</pre>--}}
-{{--{{$user->name}}--}}
-{{--@foreach($user->transactions as $transaction)--}}
-{{--    {{$transaction->id}}--}}
-{{--    <br>--}}
-{{--    {{$transaction->type}}--}}
-{{--    <br>--}}
-{{--    {{$transaction->created_at}}--}}
-{{--    <br>--}}
-{{--    {{$transaction->product_id}}--}}
-{{--    <br>1--}}
-{{--@endforeach--}}
-
 @extends('layouts.main')
 @section('title', 'Users')
 @section('activeUsers', 'active-this')
@@ -115,7 +100,7 @@
                                 </li>
                                 @foreach($user->transactions as $transaction)
                                     <li class="list-group-item d-flex justify-content-between align-items-center
-                                        @if($transaction->type=="Added"){{'list-group-item-success'}}@else{{'list-group-item-danger'}}@endif col-12 row m-0">
+                                        @if($transaction->type==$transaction::PURCHASE){{'list-group-item-success'}}@else{{'list-group-item-danger'}}@endif col-12 row m-0">
                                         <div class="me-auto col-md-2 col-12">
                                             <div class="fw-bold fs-4"><a href="{{route('products.show', ['product'=>$transaction->product_id])}}">{{$transaction->records->name}}</a></div>
                                             <span class="">{{$transaction->created_at}}</span>

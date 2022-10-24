@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous" defer></script>
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
 
 
@@ -46,7 +47,7 @@
 <section class="grid-container">
 
 
-{{--    SIDEBAR--}}
+    {{--    SIDEBAR--}}
     <div id="side-bar" class="grid-item">
         <div class="">
             <ul id="dashboard-links" class="nav text-secondary pt-3 ps-2 bg-white nice-shadow"
@@ -55,6 +56,11 @@
                     <a href="{{route('dashboard.index')}}" class="m-0 my-1 nav-link d-lg-block text-purple">
                         <i class="fa-solid fa-chart-simple fs-4"></i><span
                             class="mx-2 d-none d-lg-inline">Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item  d-links fs-5 justify-content-lg-start justify-content-center text-center @yield('activeTransactions')">
+                    <a href="{{route('transactions.index')}}" class="m-0 my-1 nav-link text-purple">
+                        <i class="fa-solid fa-cash-register"></i><span class="mx-2 d-none d-lg-inline">Transaction</span>
                     </a>
                 </li>
                 <li class="nav-item d-links fs-5 justify-content-lg-start justify-content-center text-center @yield('activeProfile', '')">
@@ -81,11 +87,6 @@
                 <li class="nav-item  d-links fs-5 justify-content-lg-start justify-content-center text-center @yield('activeCategories', '')">
                     <a href="{{route('categories.index')}}" class="m-0 my-1 nav-link text-purple">
                         <i class="fa-solid fa-tags fs-4"></i><span class="mx-2 d-none d-lg-inline">Categories</span>
-                    </a>
-                </li>
-                <li class="nav-item  d-links fs-5 justify-content-lg-start justify-content-center text-center @yield('activeActivities')">
-                    <a href="{{route('transactions.index')}}" class="m-0 my-1 nav-link text-purple">
-                        <i class="fa-solid fa-people-carry-box fs-4"></i></i><span class="mx-2 d-none d-lg-inline">Activities</span>
                     </a>
                 </li>
 
