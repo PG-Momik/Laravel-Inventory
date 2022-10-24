@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
@@ -82,6 +83,9 @@ Route::middleware(['auth'])->group(
         Route::resource('transactions', TransactionController::class);
 
         Route::resource('profile', TransactionController::class);
+
+        Route::get('/ajax/category/{id}/products', [AjaxController::class, 'categoryProducts']);
+
     }
 );
 
