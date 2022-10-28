@@ -13,7 +13,7 @@
                     <div class="row mx-0 d-flex gx-5  align-items-center">
 
                         <div class="col-xl-4 col-lg-4">
-                            <h1>Users</h1>
+                            <h1>Users Transactions</h1>
                         </div>
 
                         {{--Search Form--}}
@@ -47,14 +47,14 @@
                     <div class="row mx-0 d-flex gx-5">
                         <div class="col-xl-4 col-lg-6 row mx-0">
                             <div class="col-lg-6 col-md-12">
-                                <a href="{{route('users.index')}}" class="no-underline">
+                                <a href="{{route('users.create')}}" class="no-underline">
                                     <button class="btn btn-md bg-blue text-white col-12 round-this">
                                         <i class="fa-solid fa-plus"></i> Add
                                     </button>
                                 </a>
                             </div>
                             <div class="col-lg-6 col-md-12">
-                                <a href="/customer/trashed" class="no-underline">
+                                <a href="{{route('users.trashed')}}" class="no-underline">
                                     <button class="btn btn-md-3 bg-yellow text-white col-12 round-this">
                                         <i class="fa-solid fa-trash"></i> Trashed
                                     </button>
@@ -99,25 +99,42 @@
                                     </div>
                                 </li>
                                 @foreach($user->transactions as $transaction)
-                                    <li class="list-group-item d-flex justify-content-between align-items-center
-                                        @if($transaction->type==$transaction::PURCHASE){{'list-group-item-success'}}@else{{'list-group-item-danger'}}@endif col-12 row m-0">
+
+                                    @php
+                                        $total    = 0;
+                                        $price    = 0;
+                                        $discount = 0;
+                                        $quantity = $transaction->quantity;
+                                        $alertClass = '';
+
+                                        if($transaction->type == $transaction::TYPE[0]){
+                                            $price = $transaction->purchasePriceDuringTransaction->value;
+                                            $alertClass = 'list-group-item-success';
+                                        }else{
+                                            $price = $transaction->salesPriceDuringTransaction->value;
+                                            $discount = $transaction->discount;
+                                            $alertClass = 'list-group-item-danger';
+                                        }
+                                        $beforeDiscount = $quantity*$price;
+                                        $total = $beforeDiscount - (($beforeDiscount/100) * $discount);
+                                    @endphp
+
+                                    <li class="list-group-item d-flex justify-content-between align-items-center {{$alertClass}} col-12 row m-0">
                                         <div class="me-auto col-md-2 col-12">
-                                            <div class="fw-bold fs-4"><a href="{{route('products.show', ['product'=>$transaction->product_id])}}">{{$transaction->records->name}}</a></div>
-                                            <span class="">{{$transaction->created_at}}</span>
+                                            <div class="fw-bold fs-4">
+                                                <a href="{{route('products.show', ['product'=>$transaction->product_id])}}">
+                                                    {{$transaction->product->name}}
+                                                </a>
+                                            </div>
+                                            <span class="">{{$transaction->created_at->diffForHumans()}}</span>
                                         </div>
                                         <div class="col-md-10 col-12 d-flex justify-content-center text-center">
                                             <span
-                                                class=" col-sm-6 col-md-3 col-12 py-1 fs-4">{{$transaction->records->price}}</span>
+                                                class=" col-sm-6 col-md-3 col-12 py-1 fs-4">{{$price}}</span>
                                             <span
-                                                class=" col-sm-6 col-md-3 col-12 py-1 fs-4">{{$transaction->records->discount}}</span>
+                                                class=" col-sm-6 col-md-3 col-12 py-1 fs-4">{{$discount}}</span>
                                             <span
-                                                class=" col-sm-6 col-md-3 col-12 py-1 fs-4">{{$transaction->quantity}} </span>
-                                            @php
-                                                $subTotal      = $transaction->quantity * $transaction->records->price ;
-                                                $discount      = ($transaction->records->discount / 100 ) * $transaction->records->price;
-                                                $discountTotal = $discount * $transaction->quantity;
-                                                $total         = $subTotal - $discountTotal;
-                                            @endphp
+                                                class=" col-sm-6 col-md-3 col-12 py-1 fs-4">{{$quantity}} </span>
                                             <span class=" col-sm-6 col-md-3 col-12 py-1 fs-4">
                                                 {{$total}}
                                             </span>

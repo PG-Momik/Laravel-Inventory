@@ -22,7 +22,7 @@ class ProductController extends Controller
     public function index(Request $request): View
     {
         $searchKeyword = $request['search-field'] ?? '';
-        $products = Product::with('category')->paginate(10);
+        $products      = Product::with('category')->paginate(10);
 
         if ( !empty($searchKeyword) ) {
             $products = Product::with('category')
@@ -67,7 +67,7 @@ class ProductController extends Controller
      */
     public function show($id): View
     {
-        $product = Product::with('user')->with('category')->find($id);
+        $product = Product::with('registrant')->with('category')->find($id);
 
         return view('products.product')->with(compact('product'));
     }
@@ -96,32 +96,40 @@ class ProductController extends Controller
     {
         //Request Validation goes
 
-        $changes = 0;
-        //To check if there's any change in quantity
+        if ( $request['transactionType'] ) {
+            $class                 = $request['transactionType'] == Transaction::TYPE[0] ? 'App\Models\PurchasePrice' : 'App\Models\SalesPrice';
+            $changedColumn         = $request['transactionType'] == Transaction::TYPE[0] ? 'purchase_price_id' : 'sales_price_id';
+            $unchangedColumn       = $request['transactionType'] == Transaction::TYPE[0] ? 'sales_price_id' : 'purchase_price_id';
+            $latestUnchangedColumn = $request['transactionType'] == Transaction::TYPE[0] ? 'latestSalesPrice' : 'latestPurchasePrice';
 
-        $product->name        = $request->name;
-        $product->category_id = $request->category_id;
-        $product->price       = $request->price;
-        $product->discount    = $request->discount;
-        $product->description = $request->description;
+            $changes = abs($request->quantity - $product->quantity);
 
-        $changes           = $request->quantity - $product->quantity;
-        $product->quantity = $request->quantity;
+            $product->load($latestUnchangedColumn);
 
-        if ( $changes != 0 ) {
-            $transaction             = new Transaction();
-            $transaction->user_id    = Auth::user()->id;
-            $transaction->product_id = $product->id;
-            $transaction->type       = $changes > 0 ? $transaction::PURCHASE : $transaction::SALE;
-            $transaction->quantity   = abs($changes);
+            $newChangedColumnValue             = new $class;
+            $newChangedColumnValue->product_id = $product->id;
+            $newChangedColumnValue->value      = $request['price'];
+            $newChangedColumnValue->save();
 
-            try {
-                $transaction->save();
-            } catch ( Exception $e ) {
-                //DO nothing for now
-                dd($e);
-            }
+            $transaction                   = new Transaction();
+            $transaction->user_id          = Auth::id();
+            $transaction->product_id       = $product->id;
+            $transaction->$changedColumn   = $newChangedColumnValue->id;
+            $transaction->$unchangedColumn = $product->$latestUnchangedColumn->id;
+            $transaction->type             = $request['transactionType'];
+            $transaction->quantity         = $changes;
+            $transaction->discount         = $request['discount'] ?? 0;
+
+            $transaction->save();
+
         }
+
+        $product->category_id = $request['category_id'];
+        $product->quantity    = $request['quantity'];
+        $product->discount    = $request['discount'] ?? $product->discount;
+        $product->name        = $request['name'];
+        $product->description = $request['description'];
+
 
         try {
             $file = $request->file('productImage') ?? '';
@@ -136,11 +144,9 @@ class ProductController extends Controller
             session()->flash('success', "Product info updated.");
         } catch ( Exception $e ) {
             session()->flash('warning', "Something went wrong.");
-
-            return redirect()->route('products.show', ['product' => $product]);
         }
 
-        return redirect()->route('products.show', ['product' => $product]);
+        return back();
     }
 
 
@@ -149,7 +155,7 @@ class ProductController extends Controller
         $searchKeyword = $request['search-field'] ?? '';
 
         if ( empty($searchKeyword) ) {
-                $products = Product::onlyTrashed()->paginate(10);
+            $products = Product::onlyTrashed()->paginate(10);
         } else {
             $products = Product::onlyTrashed()
                 ->where('products.name', 'LIKE', "%$searchKeyword%")

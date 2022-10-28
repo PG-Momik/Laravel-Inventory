@@ -35,8 +35,9 @@
                 @endguest
 
                 @auth
+
                     <li class="nav-item">
-                        <a class="nav-link fs-5 text-white" href="{{ route('dashboard.index') }}">Dashboard</a>
+                        <a class="nav-link fs-5 text-white" href="{{ route('profile.index') }}">Profile</a>
                     </li>
                 @endauth
             </ul>
@@ -61,11 +62,6 @@
                 <li class="nav-item  d-links fs-5 justify-content-lg-start justify-content-center text-center @yield('activeTransactions')">
                     <a href="{{route('transactions.index')}}" class="m-0 my-1 nav-link text-purple">
                         <i class="fa-solid fa-cash-register"></i><span class="mx-2 d-none d-lg-inline">Transaction</span>
-                    </a>
-                </li>
-                <li class="nav-item d-links fs-5 justify-content-lg-start justify-content-center text-center @yield('activeProfile', '')">
-                    <a href="{{route('profile.index')}}" class="m-0 my-1 nav-link text-purple">
-                        <i class="fa-solid fa-user fs-4"></i><span class="mx-2 d-none d-lg-inline">Profile</span>
                     </a>
                 </li>
                 <li class="nav-item d-links fs-4 justify-content-lg-start justify-content-center text-center @yield('activeUsers', '') ">

@@ -1,20 +1,18 @@
 <?php
 
-declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\Cost;
-use App\Models\Price;
 use App\Models\Product;
 use App\Models\Transaction;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
 
 class TransactionController extends Controller
 {
@@ -22,24 +20,30 @@ class TransactionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return View
+     * @return mixed
      */
-    public function index(): View
+    public function index(): mixed
     {
         $categories = Category::all();
 
-        $recentSales = Transaction::where('price_id', '!=', null)
-            ->with('productInfo')
-            ->with('currentSalesPrice')
-            ->latest()->take(5)
-            ->get();
-        $recentPurchases = Transaction::where('cost_id', '!=', null)
-            ->with('productInfo')
-            ->with('currentPurchasePrice')
-            ->latest()->take(5)
+        $tenRecentPurchases = Transaction::where('type', '=', Transaction::TYPE[0])
+            ->with('product')
+            ->with('salesPriceDuringTransaction')
+            ->with('purchasePriceDuringTransaction')
+            ->latest('created_at')
+            ->take(5)
             ->get();
 
-        return view('transactions.index')->with(compact('categories', 'recentSales', 'recentPurchases'));
+        $tenRecentSales = Transaction::where('type', '=', Transaction::TYPE[1])
+            ->with('product')
+            ->with('salesPriceDuringTransaction')
+            ->with('purchasePriceDuringTransaction')
+            ->latest('created_at')
+            ->take(5)
+            ->get();
+
+        return view('transactions.index')
+            ->with(compact('categories', 'tenRecentSales', 'tenRecentPurchases'));
     }
 
     /**
@@ -50,58 +54,64 @@ class TransactionController extends Controller
     public function create(): void {}
 
     /**
-     * Checks transaction type, inserts new entry depending on the transaction type
-     * Updates product table quantity, either + or -
-     * Creates record for transaction
+     * Check transaction type
+     * Check if change in purchase price or sales price with respect to latest of both
+     * Update the latest price if needed
+     * Update product quantity
+     * Save transaction
      *
      * @param Request $request
      * @return RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
+
+        $product = Product::with('latestPurchasePrice')->with('latestSalesPrice')->find($request['productId']);
+
         $transactionType = $request['transactionType'];
-        //validation goes here
+
+        $transaction                    = new Transaction();
+        $transaction->type              = $transactionType == 1 ? $transaction::TYPE[0] : $transaction::TYPE[1];
+        $transaction->user_id           = Auth::user()->id;
+        $transaction->product_id        = $product->id;
+        $transaction->sales_price_id    = $product->latestSalesPrice->id;
+        $transaction->purchase_price_id = $product->latestPurchasePrice->id;
+        $transaction->discount          = $request['discount'] ?? $product->discount;
+
+        $latest     = 'latestPurchasePrice';
+        $class      = 'App\Models\PurchasePrice';
+        $price      = 'purchasePrice';
+        $quantity   = 'purchaseQuantity';
+        $modifier   = 1;
+        $foreignKey = 'purchase_price_id';
+        $discount   = 0;
+
+        if ( $request['transactionType'] == 2 ) {
+            $latest     = 'latestSalesPrice';
+            $class      = 'App\Models\SalesPrice';
+            $price      = 'salesPrice';
+            $quantity   = 'salesQuantity';
+            $modifier   = -1;
+            $foreignKey = 'sales_price_id';
+            $discount   = $transaction->discount;
+        }
+
 
         try {
-            $product = Product::find($request['productId']);
+            $product->quantity = $product->quantity + ($modifier * $request[$quantity]);
+            if ( $product->$latest->value != $request[$price] ) {
+                $object             = new $class;
+                $object->product_id = $request['productId'];
+                $object->value      = $request[$price];
+                $object->save();
 
-            $transaction = new Transaction();
-
-            if ( $transactionType == 1 ) {
-
-                $price             = new Price();
-                $price->value      = $request['salesPrice'];
-                $price->product_id = $request['productId'];
-                $price->save();
-
-                $transaction->price_id = $price->id;
-                $transaction->quantity = $request['salesQuantity'];
-
-                $product->quantity  = $product->quantity - $request['salesQuantity'];
-
-
-            } else {
-
-                $cost             = new Cost();
-                $cost->value      = $request['purchasePrice'];
-                $cost->product_id = $request['productId'];
-                $cost->save();
-
-                $transaction->cost_id  = $cost->id;
-                $transaction->quantity = $request['purchaseQuantity'];
-
-                $product->quantity = $product->quantity + $request['purchaseQuantity'];
-
-
+                $product->$latest->id = $object->id;
             }
 
-            $transaction->type       = $transactionType == 1 ? Transaction::SALE : Transaction::PURCHASE;
-            $transaction->user_id    = Auth::user()->id;
-            $transaction->product_id = $request['productId'];
-            $transaction->discount   = $request['discount'] ?? 0;
-
+            $transaction->$foreignKey = $product->$latest->id;
+            $transaction->quantity    = $request[$quantity];
+            $transaction->discount    = $discount;
             $transaction->save();
-            $product->update();
 
             session()->flash('success', 'Transaction entry made.');
         } catch ( Exception $e ) {
@@ -109,28 +119,32 @@ class TransactionController extends Controller
         }
 
         return back();
+
+
     }
 
     /**
      * Display the specified resource.
      *
      * @param Transaction $transaction
-     * @return Response
+     * @return View
      */
-    public function show(Transaction $transaction): Response
+    public function show(Transaction $transaction): View
     {
-        //
+        $transaction->load('user', 'product.category', 'salesPriceDuringTransaction', 'purchasePriceDuringTransaction');
+
+        return view('transactions.transaction')->with(compact('transaction'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
      * @return Response
      */
-    public function edit($id): Response
+    public function edit(): Response
     {
         //
+        abort(404);
     }
 
     /**
@@ -154,6 +168,45 @@ class TransactionController extends Controller
     public function destroy($id): Response
     {
         //
+    }
+
+
+    /**
+     * Create and Show PDF
+     *
+     * @param Transaction $transaction
+     * @return Response
+     */
+    public function createPDF(Transaction $transaction): Response
+    {
+        abort_if(empty($transaction), 404);
+        $transaction->load(
+            'user',
+            'product.category',
+            'salesPriceDuringTransaction',
+            'purchasePriceDuringTransaction'
+        );
+        view()->share('transaction', $transaction);
+        $pdf = Pdf::loadView('transactions.transaction_pdf');
+
+        return $pdf->stream();
+    }
+
+    /**
+     * @param string $type
+     * @return view
+     */
+    public function showTransactions(string $type): view
+    {
+
+        $type         = ucfirst($type);
+        $transactions = Transaction::with('product')
+            ->where('type', '=', $type)
+            ->latest()
+            ->paginate(10);
+        $type         = $type . "s";
+
+        return view('transactions.typed_transactions')->with(compact('transactions', 'type'));
     }
 
 }
