@@ -15,57 +15,64 @@ class Transaction extends Model
 
     protected $table      = "transactions";
     protected $primaryKey = "id";
-    public const PURCHASE = "Purchase";
-    public const SALE     = "Sale";
+    public const TYPE = array('Purchase', 'Sale');
+
+
 
 
     /**
+     * Returns user who made the transaction.
      * @return BelongsTo
      */
-    public function users(): BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     /**
-     * @return BelongsTo
+     * Returns product detail of the transaction.
+     * @return HasOne
      */
-    public function products(): BelongsTo
+    public function product(): hasOne
     {
-        return $this->belongsTo(Product::class, 'product_id', 'id');
+        return $this->hasOne(Product::class, 'id', 'product_id')
+             ->select('id', 'category_id', 'registered_by', 'quantity', 'discount', 'name', 'description', 'image');
     }
 
     /**
+     * Returns purchase price during transaction of a product.
      * @return HasOne
      */
-    public function records(): HasOne
+    public function purchasePriceDuringTransaction(): HasOne
     {
-        return $this->hasOne(Product::class, 'id', 'product_id');
+        return $this->hasOne(PurchasePrice::class, 'id', 'purchase_price_id');
     }
 
     /**
+     * Returns sales price during transaction of a product.
      * @return HasOne
      */
-    public function productInfo(): HasOne
+    public function salesPriceDuringTransaction(): HasOne
     {
-        return $this->hasOne(Product::class, 'id', 'id');
+        return $this->hasOne(SalesPrice::class, 'id', 'sales_price_id');
     }
 
-    /**
-     * @return HasOne
-     */
-    public function currentPurchasePrice(): HasOne
-    {
-        return $this->hasOne(Cost::class, 'id', 'cost_id');
-    }
 
-    /**
-     * @return HasOne
-     */
-    public function currentSalesPrice(): HasOne
-    {
-        return $this->hasOne(Price::class, 'id', 'price_id');
-    }
+    //    /**
+//     * @return BelongsTo
+//     */
+//    public function products(): BelongsTo
+//    {
+//        return $this->belongsTo(Product::class, 'product_id', 'id');
+//    }
+//
+//    /**
+//     * @return HasOne
+//     */
+//    public function records(): HasOne
+//    {
+//        return $this->hasOne(Product::class, 'id', 'product_id');
+//    }
 
 
 

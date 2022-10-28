@@ -74,8 +74,8 @@ function showNextRow(index) {
         if (index === 2) {
             //hide anything no matter what is pressed. acts like a reset for next sibling.
             hideNextRows(index);
-            //show purchase row if purchase is clicked
-            document.getElementById('transactionTypeSelect').value == 2 ? index++ : '';
+            //show sales row if sales is clicked
+            document.getElementById('transactionTypeSelect').value == 1 ? index++ : '';
         }
         index++;
         let row = document.getElementsByClassName('form-row')[index];

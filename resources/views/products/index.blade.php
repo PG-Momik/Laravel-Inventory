@@ -91,22 +91,17 @@
                                 <tr>
                                     <th>Name
                                     <th>Category</th>
-                                    <th>In stock</th>
-                                    <th>Price</th>
-                                    <th>Discount</th>
-                                    <th>Action</th>
+                                    <th class="text-center">In stock</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-
                                 @foreach($products as $product)
                                     <tr>
                                         <td>{{$product->name}}</td>
                                         <th><a href="{{route('categories.show', ['category'=>$product->category->id])}}">{{$product->category->name}}</a></th>
-                                        <td>{{$product->quantity}}</td>
-                                        <td>{{$product->price}}</td>
-                                        <td>{{$product->discount}}</td>
-                                        <td class="d-flex" style="column-gap: 0.8vw">
+                                        <td class="text-center">{{$product->quantity}}</td>
+                                        <td class="d-flex text-center" style="column-gap: 0.8vw">
                                             <a href="{{route('products.show', ['product'=>$product])}}"
                                                class="col btn btn-sm btn-outline-primary rounded-0 px-2">
                                                 <i class="fa-solid fa-eye"></i>

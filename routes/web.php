@@ -4,6 +4,7 @@ use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
@@ -46,6 +47,7 @@ Route::middleware(['auth'])->group(
                     Route::get('/logout', 'logout')->name('logout');
 
                     Route::get('/test', 'test')->name('test');
+                    Route::post('/test', 'testValue')->name('testValue');
                 }
             );
 
@@ -80,9 +82,15 @@ Route::middleware(['auth'])->group(
         Route::resource('categories', CategoryController::class);
 
 
+        Route::get('transactions/show/{type}', [TransactionController::class, 'showTransactions'])->name('show-transactions');
+
+        Route::get('/generate-pdf/{transaction}', [TransactionController::class, 'createPDF'])->name('generate-pdf');
+
         Route::resource('transactions', TransactionController::class);
 
-        Route::resource('profile', TransactionController::class);
+
+
+        Route::resource('profile', ProfileController::class);
 
         Route::get('/ajax/category/{id}/products', [AjaxController::class, 'categoryProducts']);
 

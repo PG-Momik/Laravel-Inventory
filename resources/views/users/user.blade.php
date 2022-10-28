@@ -63,7 +63,7 @@
 
                                 <dt class="col-sm-3">Role</dt>
                                 <dd class="col-sm-9">
-                                    {{$user->roles->name}}
+                                    {{$user->role->name}}
                                 </dd>
                                 {{--                                {{dd($user)}}--}}
 
@@ -78,11 +78,11 @@
 
                                 <dt class="col-sm-3">Products Registered</dt>
                                 <dd class="col-sm-9 row">
-                                    @php($size = sizeof($user->products))
-                                    @foreach($user->products as $products)
+                                    @php($size = sizeof($user->registeredProducts))
+                                    @foreach($user->registeredProducts as $products)
                                         @php($col = ceil(12/$size))
                                         <span class="d-block col-12 col-md-{{$col}}">
-                                            <a href="">{{$products->name}}</a>
+                                            <a href="{{route('products.show', ['product'=>$products])}}">{{$products->name}}</a>
                                         </span>
                                     @endforeach
                                 </dd>

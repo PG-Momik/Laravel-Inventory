@@ -60,8 +60,11 @@
                             <dl class="row">
                                 <h3>{{$product['name']}}</h3>
                                 <div class="col-md-8 col-12 row mx-0">
-                                    <dt class="col-md-4 col-12"><i class="fa-solid fa-dollar-sign"></i> Price</dt>
-                                    <dd class="col-md-8 col-12"><b>Rs.</b>{{$product->price}}</dd>
+                                    <dt class="col-md-4 col-12"><i class="fa-solid fa-dollar-sign"></i> Purchase Price</dt>
+                                    <dd class="col-md-8 col-12"><b>Rs.</b>{{$product->latestPurchasePrice->value}}</dd>
+
+                                   <dt class="col-md-4 col-12"><i class="fa-solid fa-dollar-sign"></i> Sales Price</dt>
+                                    <dd class="col-md-8 col-12"><b>Rs.</b>{{$product->latestSalesPrice->value}}</dd>
 
                                     <dt class="col-md-4 col-12"><i class="fa-sharp fa-solid fa-tags"></i> Categories</dt>
                                     <dd class="col-md-8 col-12">
@@ -93,7 +96,7 @@
                                     <dt class="col-sm-4 ">
                                         <i class="fa-solid fa-person"></i> Products Registered By
                                     </dt>
-                                    <dd class="col-sm-8">{{$product->user->name}}</dd>
+                                    <dd class="col-sm-8">{{$product->registrant->name}}</dd>
                                     <dt class="col-sm-4 ">
                                         <i class="fa-solid fa-calendar-days"></i> Products Registered On
                                     </dt>

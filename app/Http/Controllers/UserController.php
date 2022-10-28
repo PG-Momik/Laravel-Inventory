@@ -24,13 +24,13 @@ class UserController extends Controller
         if ( empty($searchKeyword) ) {
             $users = User::select('users.id', 'users.name', 'users.role_id', 'users.email')
                 ->withCount('transactions')
-                ->with('roles:id,name')
+                ->with('role:id,name')
                 ->paginate(10);
         } else {
             $users = User::select('users.id', 'users.name', 'users.role_id')
                 ->where('users.name', 'LIKE', "%$searchKeyword%")
                 ->orWhere('users.email', 'LIKE', "%$searchKeyword%")
-                ->with('roles:id,name')
+                ->with('role:id,name')
                 ->withCount('transactions')
                 ->paginate(10);
         }
@@ -80,14 +80,10 @@ class UserController extends Controller
      */
     public function show($id): RedirectResponse | View
     {
-        $user = User::with('roles:id,name')
-            ->with('productEntries')
+        $user = User::with('role:id,name')
+            ->with('registeredProducts')
             ->withCount('transactions')
-            ->find($id);
-
-        if ( is_null($user) ) {
-            return redirect('/users');
-        }
+            ->findOrFail($id);
 
         return view('users.user')->with(compact('user'));
     }
@@ -157,7 +153,10 @@ class UserController extends Controller
      */
     public function showTransactions(Request $request): View
     {
-        $user = User::with('transactions.records:id,name,price,discount')->find($request->id);
+        $user = User::with('transactions.product')
+            ->with('transactions.salesPriceDuringTransaction')
+            ->with('transactions.purchasePriceDuringTransaction')
+            ->find($request['id']);
 
         return view('users.transactions')->with(compact('user'));
     }

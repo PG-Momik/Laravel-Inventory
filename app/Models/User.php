@@ -53,75 +53,53 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-
-
     /**
-     *
+     *Returns user role.
      * @return BelongsTo
      */
-    public function roles(): BelongsTo
+    public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 
     /**
-     * Returns Products
+     * Returns products registered by user.
      * @return HasMany
      */
-
-    public function productEntries(): HasMany
+    public function registeredProducts(): HasMany
     {
         return $this->hasMany(Product::class, 'registered_by', 'id');
     }
 
     /**
-     * Returns all Transactions
+     * Returns all user transactions.
      * @return HasMany
      */
     public function transactions(): HasMany
     {
-        return $this->hasMany(Transaction::class, 'user_id', 'id');
+        return $this->hasMany(Transaction::class, 'user_id', 'id')->latest();
     }
 
-    /**
-     * Returns all sales transactions of user
-     *
-     * @return HasMany
-     */
-    public function sales(): HasMany
-    {
-        return $this->hasMany(Transaction::class, 'user_id', 'id')
-            ->where('type', '=', Transaction::PURCHASE);
-    }
 
     /**
-     *Returns all purchase transactions of user
-     *
+     * Returns all user purchases.
      * @return HasMany
      */
     public function purchases(): HasMany
     {
         return $this->hasMany(Transaction::class, 'user_id', 'id')
-            ->where('type', '=', Transaction::SALE);
+            ->where('type', '=', Transaction::TYPE[0]);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * Returns all user sales.
+     * @return HasMany
+     */
+    public function sales(): HasMany
+    {
+        return $this->hasMany(Transaction::class, 'user_id', 'id')
+            ->where('type', '=', Transaction::TYPE[1]);
+    }
 
 
 }

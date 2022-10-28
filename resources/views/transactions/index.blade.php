@@ -1,4 +1,3 @@
-{{--{{dd($recentSales->toArray())}}--}}
 @extends('layouts.main')
 
 @section('title', "Transactions")
@@ -62,17 +61,17 @@
                                      aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
                                         <ul class="list-group">
-                                            @forelse($recentSales as $sale)
+                                            @forelse($tenRecentSales as $sale)
                                                 <li class="list-group-item bg-red border-light">
                                                     <a href="{{route('transactions.show', ['transaction'=>$sale])}}"
                                                        class="text-decoration-none text-dark">
                                                         <div class="row d-flex justify-content-between">
                                                             <div class="col-lg-6 text-dark">
-                                                                <strong>{{$sale->productInfo->name}}</strong></div>
+                                                                <strong>{{$sale->product->name}}</strong></div>
                                                             <div class="col-lg-6">x{{$sale->quantity}} Qty</div>
-                                                            <div class="col-lg-6">Rs.{{$sale->discount}} off</div>
+                                                            <div class="col-lg-6">{{$sale->discount}}% off</div>
                                                             <div class="col-lg-6">
-                                                                @Rs.{{$sale->currentSalesPrice->value}}
+                                                                @Rs.{{$sale->salesPriceDuringTransaction->value}}
                                                             </div>
                                                         </div>
                                                         <small class="text-dark">
@@ -89,6 +88,10 @@
                                     </div>
                                 </div>
                             </div>
+                            <p class="d-flex justify-content-end py-2 px-2">
+                                <a href="{{route('show-transactions', ['type'=>'sale'])}}">View all</a>
+                            </p>
+
                         </div>
 
                         <!--Recent Purchases-->
@@ -99,35 +102,33 @@
                                             data-bs-toggle="collapse"
                                             data-bs-target="#collapseTwo" aria-expanded="true"
                                             aria-controls="collapseTwo">
-                                        <i class="fa-solid fa-arrow-down mx-2"></i> Recent Purchases
+                                        <i class="fa-solid fa-arrow-up mx-2"></i> Recent Purchases
                                     </button>
                                 </h2>
                                 <div id="collapseTwo" class="accordion-collapse collapse"
                                      aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
                                         <ul class="list-group">
-                                            @forelse ($recentPurchases as $purchase)
+                                            @forelse($tenRecentPurchases as $purchase)
                                                 <li class="list-group-item bg-green border-light">
                                                     <a href="{{route('transactions.show', ['transaction'=>$purchase])}}"
                                                        class="text-decoration-none text-dark">
                                                         <div class="row d-flex justify-content-between">
-                                                            <div class="col-lg-4 col-12">
-                                                                <strong>{{$purchase->productInfo->name}}</strong>
-                                                            </div>
-                                                            <div class="col-lg-4 col-12">x{{$purchase->quantity}}
-                                                                Qty
-                                                            </div>
-                                                            <div class="col-lg-4 col-12">
-                                                                @Rs.{{$purchase->currentPurchasePrice->value}}
+                                                            <div class="col-lg-6 text-dark">
+                                                                <strong>{{$purchase->product->name}}</strong></div>
+                                                            <div class="col-lg-6">x{{$purchase->quantity}} Qty</div>
+                                                            <div class="col-lg-6">{{$purchase->discount}}% off</div>
+                                                            <div class="col-lg-6">
+                                                                @Rs.{{$purchase->salesPriceDuringTransaction->value}}
                                                             </div>
                                                         </div>
                                                         <small class="text-dark">
-                                                            {{$sale->created_at->format('l jS \of F')}}
+                                                            {{$purchase->created_at->format('l jS \of F')}}
                                                         </small>
                                                     </a>
                                                 </li>
                                             @empty
-                                                <li class="list-group-item bg-green border-light text-light">
+                                                <li class="list-group-item bg-red border-light text-light">
                                                     No Purchases yet.
                                                 </li>
                                             @endforelse
@@ -135,6 +136,9 @@
                                     </div>
                                 </div>
                             </div>
+                            <p class="d-flex justify-content-end py-2 px-2">
+                                <a href="{{route('show-transactions', ['type'=>'purchase'])}}">View all</a>
+                            </p>
                         </div>
 
                         <!-- Modal -->
@@ -204,9 +208,11 @@
                                                 <select name="transactionType" id="transactionTypeSelect"
                                                         class="form-select"
                                                         autocomplete="off">
-                                                    <option value="invalid" selected>Chose transaction type</option>
-                                                    <option value="1">Sales</option>
-                                                    <option value="2">Purchase</option>
+                                                    <option value="invalid" selected>
+                                                        Chose transaction type
+                                                    </option>
+                                                    <option value="1">Purchase</option>
+                                                    <option value="2">Sales</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -224,7 +230,7 @@
                                             </div>
                                             <div class="col-3">
                                                 <label for="salesDiscount">Discount</label>
-                                                <input type="number" name="salesDiscount" id='salesDiscount' min=0
+                                                <input type="number" name="discount" id='salesDiscount' min=0
                                                        class="form-control discount-field" autocomplete="off">
                                             </div>
                                         </div>

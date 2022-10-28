@@ -92,8 +92,8 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Role</th>
-                                    <th>Activities</th>
-                                    <th>Action</th>
+                                    <th class="text-center">Activities</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -102,13 +102,13 @@
                                     <tr>
                                         <td>{{$user->name}}</td>
                                         <td>{{$user->email}}</td>
-                                        <td>{{$user->roles->name}}</td>
-                                        <td>
+                                        <td>{{$user->role->name}}</td>
+                                        <td class="text-center">
                                             <a href="{{route('users.transactions', ['id'=>$user->id])}}">
                                                 {{$user->transactions_count}}
                                             </a>
                                         </td>
-                                        <td class="d-flex" style="column-gap: 0.8vw">
+                                        <td class="d-flex text-center" style="column-gap: 0.8vw">
                                             <a href="{{route('users.show', ['user'=>$user])}}"
                                                class="col btn btn-sm btn-outline-primary rounded-0 px-2">
                                                 <i class="fa-solid fa-eye"></i>
@@ -119,7 +119,7 @@
                                                     @csrf
                                                     @method('delete')
                                                     <button
-                                                        class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 ">
+                                                        class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 px-4">
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
 
