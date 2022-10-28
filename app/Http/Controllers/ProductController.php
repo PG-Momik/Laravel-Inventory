@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\PurchasePrice;
+use App\Models\SalesPrice;
 use App\Models\Transaction;
 use Exception;
 use Illuminate\Http\RedirectResponse;
@@ -40,7 +42,7 @@ class ProductController extends Controller
      */
     public function create(): View
     {
-        return view('products.add');
+        return view('products.add')->with(['categories'=>Category::get()]);
     }
 
     /**
@@ -52,9 +54,50 @@ class ProductController extends Controller
     public function store(Request $request): RedirectResponse
     {
         try {
-            $request->validate(apply_validation_to(['']));
-        } catch ( Exception $e ) {
+            $product                = new Product();
+            $product->category_id   = $request['category'];
+            $product->registered_by = Auth::id();
+            $product->quantity      = $request['quantity'];
+            $product->discount      = $request['discount'];
+            $product->name          = $request['name'];
+            $product->description   = $request['description'];
+
+
+            $file = $request->file('productImage') ?? '';
+
+            if ( $file ) {
+                $newFilename = $request->productImage->getClientOriginalName();
+                $file->storeAs('public/images', $newFilename);
+                $product->image = $newFilename;
+            }
+
+            $product->save();
+
+            $purchasePrice             = new PurchasePrice();
+            $purchasePrice->product_id = $product->id;
+            $purchasePrice->value      = $request['purchasePrice'];
+            $purchasePrice->save();
+
+            $salesPrice             = new SalesPrice();
+            $salesPrice->product_id = $product->id;
+            $salesPrice->value      = $request['salesPrice'];
+            $salesPrice->save();
+
+            $transaction                    = new Transaction();
+            $transaction->user_id           = Auth::id();
+            $transaction->product_id        = $product->id;
+            $transaction->sales_price_id    = $salesPrice->id;
+            $transaction->purchase_price_id = $purchasePrice->id;
+            $transaction->type              = $transaction::TYPE[0];
+            $transaction->quantity          = $request['quantity'];
+            $transaction->discount          = $request['discount'];
+
+            $transaction->save();
+            session()->flash('success', 'Product added.');
+        }catch(Exception $e){
+            session()->flash('warning', 'Something went wrong. Try again.');
         }
+
 
         return redirect()->route('products.index');
     }
