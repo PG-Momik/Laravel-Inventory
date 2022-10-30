@@ -51,4 +51,10 @@ if ( !function_exists('p') ) {
     }
 }
 
+if(!function_exists('isZero')){
+    function isZero($num): bool
+    {
+        return $num ==0;
+    }
+}
 
