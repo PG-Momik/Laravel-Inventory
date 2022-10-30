@@ -94,6 +94,8 @@ Route::middleware(['auth'])->group(
 
         Route::get('/ajax/category/{id}/products', [AjaxController::class, 'categoryProducts']);
 
+        Route::post('/ajax/products/filter', [AjaxController::class, 'filterProducts'])->name('filterProducts');
+
     }
 );
 
