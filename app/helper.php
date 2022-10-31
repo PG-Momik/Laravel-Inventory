@@ -58,3 +58,19 @@ if(!function_exists('isZero')){
     }
 }
 
+if(!function_exists('alert')){
+    function alert(): void
+    {
+        if(Session()->has('success')){
+            echo "<p class='alert alert-success'>".session()->get('success')."</p>";
+        }
+
+        if(Session()->has('warning')) {
+            echo "<p class='alert alert-warning'>".session()->get('warning')."</p>";
+        }
+        if(Session()->has('error')){
+            echo "<p class='alert alert-fail'>".session()->get('error')."</p>";
+        }
+
+    }
+}

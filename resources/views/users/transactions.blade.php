@@ -72,15 +72,7 @@
 
 
                             {{--                            Table--}}
-                            @if(Session()->has('success'))
-                                <p class="alert alert-success">{{session()->get('success')}}</p>
-                            @endif
-                            @if(Session()->has('warning'))
-                                <p class="alert alert-warning">{{session()->get('warning')}}</p>
-                            @endif
-                            @if(Session()->has('error'))
-                                <p class="alert alert-fail">{{session()->get('error')}}</p>
-                            @endif
+                            {{alert()}}
 
                             <div class="col-12 text-dark">
                                 {{--                                Pagination Fix here--}}
