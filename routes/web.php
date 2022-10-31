@@ -64,6 +64,9 @@ Route::middleware(['auth'])->group(
         Route::resource('users', UserController::class);
 
 
+        Route::get('roles/demote/{uid}', [RoleController::class, 'demote'])->name('roles.demote');
+        Route::get('roles/promote/{uid}', [RoleController::class, 'promote'])->name('roles.promote');
+
         Route::resource('roles', RoleController::class);
 
 
@@ -93,6 +96,8 @@ Route::middleware(['auth'])->group(
         Route::resource('profile', ProfileController::class);
 
         Route::get('/ajax/category/{id}/products', [AjaxController::class, 'categoryProducts']);
+
+
 
         Route::post('/ajax/products/filter', [AjaxController::class, 'filterProducts'])->name('filterProducts');
 

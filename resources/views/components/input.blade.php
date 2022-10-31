@@ -34,11 +34,12 @@
         @case('checkbox')
             <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
                 <input type="radio" class="btn-check" name="verifyEmail" id="btnradio1" autocomplete="off"
-                       {{$checked=='true'?"checked":''}} value=true>
+                       @checked(!empty($checked))  value=true>
+
                 <label class="btn btn-outline-primary" id="ratioBtnWrapper1" for="btnradio1">Verified</label>
 
                 <input type="radio" class="btn-check" name="verifyEmail" id="btnradio2" autocomplete="off"
-                       {{$checked=='false'?"checked":''}} value=false>
+                       @checked(empty($checked))  value=false>
                 <label class="btn btn-outline-danger" id="ratioBtnWrapper2" for="btnradio2">Not Verified</label>
 
             </div>
