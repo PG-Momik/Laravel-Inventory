@@ -82,7 +82,7 @@
                                                  value="{{$user->role_id}}" :keyVal="$roles"/>
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <x-input type="checkbox" name="checkbox" id="checkbox" label="Verify Email?" checked="{{$user->email_verified_at?'true':'false'}}"/>
+                                        <x-input type="checkbox" name="checkbox" id="checkbox" label="Verify Email?" checked="{{$user->email_verified_at}}"/>
                                     </div>
                                 </div>
 

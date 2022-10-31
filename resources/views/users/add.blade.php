@@ -63,15 +63,7 @@
                     <form action="{{route('users.store')}}" method="post" class="container-fluid p-5 round-this bg-sm-grey  needs-validation">
                         @csrf
 
-                        @if(Session()->has('success'))
-                            <p class="alert alert-success">{{session()->get('success')}}</p>
-                        @endif
-                        @if(Session()->has('warning'))
-                            <p class="alert alert-warning">{{session()->get('warning')}}</p>
-                        @endif
-                        @if(Session()->has('error'))
-                            <p class="alert alert-fail">{{session()->get('error')}}</p>
-                        @endif
+                        {{ alert() }}
 
 
                         <div class="row my-2">
