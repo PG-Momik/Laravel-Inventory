@@ -40,13 +40,12 @@
                                         <h2>Privileges</h2>
                                         <table class="table table-bordered w-equal text-center">
 
-                                            <tr class="table-dark">
+                                            <tr class="bg-dark text-white">
                                                 <th></th>
                                                 <th>Add</th>
                                                 <th>Edit</th>
                                                 <th>Delete</th>
                                             </tr>
-
 
                                             <tr>
                                                 <td>User</td>
@@ -105,15 +104,26 @@
                                         <hr>
                                         <div class="list-group">
                                             @forelse($role->users as $user)
-                                                <div class="list-group-item row d-flex justify-content-between">
+                                                <div
+                                                    class="list-group-item row mx-0 px-0 d-flex justify-content-between">
                                                     <span class="col-md-6 col-12">{{$user->name}}</span>
                                                     <span class="col-md-6 col-12 text-end">
+                                                        <a href="{{route('users.show', ['user'=>$user])}}"
+                                                            class="btn btn-sm btn-outline-primary rounded-0">
+                                                            <i class="fa-solid fa-eye px-4"></i>
+                                                        </a>
                                                         @if($role->id == 1)
-                                                            <button type="button" class="btn btn-sm btn-danger rounded-0"
-                                                                    onclick="demoteUser(this, {{$user->id}})">Demote</button>
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-outline-danger rounded-0"
+                                                                    onclick="demoteUser(this, {{$user->id}})">
+                                                                Demote
+                                                            </button>
                                                         @else
-                                                            <button type="button" class="btn btn-sm btn-success rounded-0"
-                                                                    onclick="promoteUser(this, {{$user->id}})">Promote</button>
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-outline-success rounded-0"
+                                                                    onclick="promoteUser(this, {{$user->id}})">
+                                                                Promote
+                                                            </button>
                                                         @endif
                                                     </span>
                                                 </div>
@@ -121,6 +131,13 @@
                                                 <div class="list-group-item">No User</div>
                                             @endforelse
                                         </div>
+                                        <br>
+                                        <br>
+                                        <hr>
+                                        <div class="text-light">
+                                            <canvas id="myChart" class="text-light"></canvas>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>
@@ -137,8 +154,18 @@
 
 
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" defer></script>
-    <script defer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+            integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+    <script>
+        let myChart = null;
+
+        $(document).ready(function () {
+            ajaxBarValues()
+        });
+
         function demoteUser(target, uid) {
             let parentSpan = target.parentNode;
             let parentWrapper = parentSpan.parentNode;
@@ -148,13 +175,15 @@
                 success: function (result) {
                     if (result) {
                         parentWrapper.classList.add('slowly-disappear');
-                        setTimeout(function(){
+                        setTimeout(function () {
                             parentWrapper.remove();
+                            ajaxBarValues();
                         }, 1000)
                     }
                 }
             });
         }
+
         function promoteUser(target, uid) {
             let parentSpan = target.parentNode;
             let parentWrapper = parentSpan.parentNode;
@@ -164,17 +193,119 @@
                 success: function (result) {
                     if (result) {
                         parentWrapper.classList.add('slowly-disappear');
-                        setTimeout(function(){
+                        setTimeout(function () {
                             parentWrapper.remove();
+                            ajaxBarValues();
                         }, 1000)
                     }
                 }
             });
         }
+
+        function ajaxBarValues() {
+            let url = "{{route('roles-stats')}}";
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (result) {
+                    drawBar(result)
+
+                }
+            })
+        }
+
+        function drawBar(result = '') {
+            if (myChart != null) {
+                myChart.destroy();
+            }
+            result = JSON.parse(result);
+            const ctx = document.getElementById('myChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: extractLabels(result),
+                    datasets: [
+                        {
+                            label: 'Role Population',
+                            barPercentage: 0.5,
+                            backgroundColor: colorArray(),
+                            data: extractData(result),
+                            hoverOffset: 16,
+                        }
+                    ]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                }
+
+            })
+        }
+
+        function colorArray(opacity = 0.6) {
+            return [
+                `rgba(146,34,245,${opacity})`,
+                `rgba(52,177,170,${opacity})`,
+                `rgba(245,166,35,${opacity})`,
+                `rgba(222,30,37,${opacity})`,
+                `rgba(25,135,84,${opacity})`,
+                `rgba(59,143,243,${opacity})`,
+            ]
+        }
+
+        function extractData(result, deeper = '') {
+            let arr = [];
+
+            for (let key in result) {
+                if (key === deeper) {
+                    for (let key in result[deeper]) {
+                        arr.push(result[deeper][key]);
+                    }
+                } else {
+                    arr.push(Number(result[key]));
+                }
+            }
+
+            return arr;
+        }
+
+        function extractLabels(result, deeper = '') {
+            let arr = [];
+            for (let key in result) {
+                if (key === deeper) {
+                    for (let key in result[deeper]) {
+                        arr.push(camelToSentence(key));
+                    }
+                } else {
+                    arr.push(camelToSentence(key));
+                }
+            }
+
+            return arr;
+        }
+
+
+        function camelToSentence(string) {
+            return string.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+
     </script>
     <style>
 
-        .slowly-disappear{
+        .slowly-disappear {
             visibility: hidden;
             transition: all 0.8s ease-out;
             opacity: 0

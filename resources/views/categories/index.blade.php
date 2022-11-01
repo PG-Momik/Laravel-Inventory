@@ -9,8 +9,8 @@
     <div class="grid-item">
 
         <div class="admin-grid">
-            <div style="min-height: 460px" class="a bg-purple round-this">
-                <div class="bg-purple px-5 pt-3 py-4" style="border-radius: 20px 20px 0 0">
+            <div style="min-height: 460px" class="a bg-purple round-this border-black">
+                <div class="bg-purple px-5 pt-3 py-4" style="border-radius: 20px">
                     <div class="row mx-0 d-flex gx-5  align-items-center">
                         <div class="col-xl-4 col-lg-4">
                             <h1>Categories</h1>
@@ -37,14 +37,14 @@
                     <div class="row mx-0 d-flex gx-5">
                         <div class="col-xl-4 col-lg-6 row mx-0">
                             <div class="col-lg-6 col-md-12">
-                                <a href="{{route('users.index')}}" class="no-underline">
+                                <a href="{{route('categories.create')}}" class="no-underline">
                                     <button class="btn btn-md bg-blue text-white col-12 round-this">
                                         <i class="fa-solid fa-plus"></i> Add
                                     </button>
                                 </a>
                             </div>
                             <div class="col-lg-6 col-md-12">
-                                <a href="/customer/trashed" class="no-underline">
+                                <a href="" class="no-underline">
                                     <button class="btn btn-md-3 bg-yellow text-white col-12 round-this">
                                         <i class="fa-solid fa-trash"></i> Trashed
                                     </button>
@@ -53,8 +53,30 @@
                         </div>
                     </div>
                 </div>
-                <div class="p-5">
-                    <img src="images/sampleDash.jpg" alt="" style="width: 100%">
+
+                <div class="p-5 grad" style="border-radius: 0 0 20px 20px;">
+                    <div class="" style="height:350px; border-radius: 0 0 20px 20px">
+                        <div style="width: 80%; margin: 0 auto;">
+                            <div class="p-5 bg-white round-this shadow-this-down">
+                                <table class="table table-hover table-md">
+
+                                    {{ alert() }}
+
+                                    <thead class="table-dark">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Created On</th>
+                                        <th>Products</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @each('layouts.iterative.category', $categories, 'category')
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

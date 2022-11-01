@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\Role;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +15,7 @@ class AjaxController extends Controller
 {
 
     /**
+     * Returns Categories as json for Products.edit.modal
      * @param int $categoryId
      * @return JsonResponse
      */
@@ -25,16 +27,20 @@ class AjaxController extends Controller
     }
 
 
-    public function filterProducts(Request $request)
+    /**
+     * @param Request $request
+     * @return mixed
+     */
+    public function filterProducts(Request $request): mixed
     {
-//            return Product::with('category')
-//                ->whereBetween('created_at', [$startDate, $endDate])
-//                ->orWhere('quantity', '=', $filterParams['quantity'])
-//                ->whereIn('category_id', $filterParams['category_ids'])
-//                ->get();
         return $this->filteredProducts($request['filterParams']);
     }
 
+    /**
+     * Returns Products after applying filter params
+     * @param $filterParams
+     * @return mixed
+     */
     function filteredProducts($filterParams): mixed
     {
         $startFormat     = 'Y-m-d';
@@ -65,6 +71,7 @@ class AjaxController extends Controller
             $products = $filterParams['quantity'] > 0
                 ? $products->where('quantity', '=', $filterParams['quantity'])
                 : $products;
+
             if ( !empty($filterParams['category_ids']) ) {
                 $products = $products->whereIn('category_id', $filterParams['category_ids']);
             }
@@ -89,6 +96,54 @@ class AjaxController extends Controller
         return $products;
     }
 
+
+    /**
+     * Returns  json value needed for categories.category doughnut graph
+     * @param int $id
+     * @param bool $detailed
+     * @return bool|string
+     */
+    function getCategoryBasedStats(int $id, bool $detailed = false): bool | string
+    {
+        $returnJson = array();
+
+        $total                = Product::sum('quantity');
+        $sumOfRelatedProducts = Product::where('category_id', '=', $id)->sum('quantity');
+        $sumOfOtherProducts   = $total - $sumOfRelatedProducts;
+
+        $returnJson['sumOfRelatedProducts'] = $sumOfRelatedProducts;
+        $returnJson['sumOfOtherProducts']   = $sumOfOtherProducts;
+
+        if ( $detailed ) {
+            $individualQuantities               = Product::where('category_id', '=', $id)->pluck('quantity', 'name');
+            $returnJson['individualQuantities'] = $individualQuantities;
+            unset($returnJson['sumOfRelatedProducts']);
+        }
+
+
+        return json_encode($returnJson);
+    }
+
+    /**
+     * Returns json value needed for roles.role bar graph
+     * @return bool| String
+     */
+    public function getRoleBasedStats(): bool | string
+    {
+
+        $numberOfAdmins     = Role::withCount('users')->find(1)->users_count;
+        $numberOfNonAdmin   = Role::withCount('users')->find(2)->users_count;
+        $totalNumberOfUsers = $numberOfAdmins + $numberOfNonAdmin;
+
+        return json_encode(
+            [
+                'totalNumberOfUsers' => $totalNumberOfUsers,
+                'numberOfAdmins'     => $numberOfAdmins,
+                'numberOfNonAdmin'   => $numberOfNonAdmin
+            ]
+        );
+
+    }
 
 }
 

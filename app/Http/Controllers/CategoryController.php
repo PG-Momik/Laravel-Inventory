@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -16,42 +18,53 @@ class CategoryController extends Controller
      * @return View
      *
      */
-    public function index()
+    public function index(): View
     {
         //
-        return view('categories.index');
+        return view('categories.index')->with(['categories' => Category::withCount('products')->get()]);
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return View
      */
-    public function create()
+    public function create(): View
     {
-        //
+        return view('categories.add');
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param Request $request
-     * @return Response
+     * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        //
+        try {
+            $category       = new Category();
+            $category->name = $request['name'];
+            $category->save();
+            session()->flash('success', 'Category added.');
+        } catch ( Exception $e ) {
+            session()->flash('warn', 'Something went wrong.');
+        }
+
+        return back();
     }
 
     /**
      * Display the specified resource.
      *
      * @param Category $category
-     * @return Response
+     * @return View
      */
-    public function show(Category $category)
+    public function show(Category $category): View
     {
-        //
+        $category->load('products.latestPurchasePrice', 'products.latestSalesPrice');
+
+        return view('categories.category')->with(['category' => $category]);
     }
 
     /**
