@@ -1,4 +1,4 @@
-<tr>
+<tr class="align-middle">
     <td class="fs-5">{{$role->name}}</td>
     <td class="fs-5">{{$role->users_count}}</td>
     <td>

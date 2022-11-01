@@ -95,12 +95,13 @@ Route::middleware(['auth'])->group(
 
         Route::resource('profile', ProfileController::class);
 
+
+
+
         Route::get('/ajax/category/{id}/products', [AjaxController::class, 'categoryProducts']);
-
-
-
         Route::post('/ajax/products/filter', [AjaxController::class, 'filterProducts'])->name('filterProducts');
-
+        Route::get('/ajax/getstats/category/{id}/{detailed?}', [AjaxController::class, 'getCategoryBasedStats'])->name('category-stats');
+        Route::get('/ajax/getstats/roles', [AjaxController::class, 'getRoleBasedStats'])->name('roles-stats');
     }
 );
 
