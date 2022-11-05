@@ -40,7 +40,7 @@
         $discount = 0;
         $quantity = $transaction->quantity;
 
-        if($transaction->type == $transaction::TYPE[0]){
+        if($transaction->type == $transaction::TYPE['purchase']){
             $price = $transaction->purchasePriceDuringTransaction->value;
         }else{
             $price = $transaction->salesPriceDuringTransaction->value;

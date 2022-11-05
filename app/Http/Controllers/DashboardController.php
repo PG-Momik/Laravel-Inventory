@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Transaction;
 use Carbon\Carbon;
+use Cassandra\Exception\DivideByZeroException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
@@ -29,13 +30,18 @@ class DashboardController extends Controller
             $yesterdaysTransactionQuantity = $this->getYesterdaysTransactionQuantity();
 
             $monthlyTransactionsArray          = $this->getMonthlyTransactionsAggregateQuantity('avg');
-            $monthlyTransactionQuantityAverage = $this->extractAverage($monthlyTransactionsArray);
+            try {
+                $monthlyTransactionQuantityAverage = $this->extractAverage($monthlyTransactionsArray);
+            }catch (DivideByZeroException $e){
+                $monthlyTransactionQuantityAverage = 0;
+            }
 
             $overallPurchaseTransactionQuantity = $this->getOverallPurchaseQuantity();
 
             $overallSalesTransactionQuantity = $this->getOverallSalesQuantity();
 
         } catch ( Exception $e ) {
+
         }
 
         $cardsValues = [
@@ -90,7 +96,7 @@ class DashboardController extends Controller
      */
     public function getOverallPurchaseQuantity(): int
     {
-        return Transaction::where('type', '=', Transaction::TYPE[0])
+        return Transaction::where('type', '=', Transaction::TYPE['purchase'])
             ->pluck('quantity')
             ->sum() ?? 0;
 
@@ -103,7 +109,7 @@ class DashboardController extends Controller
      */
     public function getOverallSalesQuantity(): int
     {
-        return Transaction::where('type', '=', Transaction::TYPE[1])
+        return Transaction::where('type', '=', Transaction::TYPE['sales'])
             ->pluck('quantity')
             ->sum();
     }
@@ -122,7 +128,7 @@ class DashboardController extends Controller
         return match ($type) {
             'overall' => $this->getOverallAnnualTransactions(),
             'annual' => $this->getOneYearsMonthlyTransactions(Carbon::now()->format('Y')),
-            default => $this->getOneMonthsDailyTransactions(2022, 10),
+            default => $this->getOneMonthsDailyTransactions(2022, Carbon::now()->format('m')),
         };
     }
 

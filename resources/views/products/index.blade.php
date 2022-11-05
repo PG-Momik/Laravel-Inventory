@@ -6,8 +6,8 @@
     <div class="grid-item">
 
         <div class="admin-grid">
-            <div style="min-height: 460px" class="a bg-purple round-this">
-                <div class="bg-purple px-5 pt-3 py-4" style="border-radius: 20px 20px 0 0">
+            <div style="min-height: 440px" class="a bg-purple round-this border-black">
+                <div class="bg-purple px-5 pt-3 pb-4" style="border-radius: 20px 20px 0 0">
 
                     {{--Top--}}
                     <div class="row mx-0 d-flex gx-5  align-items-center">
@@ -28,7 +28,9 @@
                             <div class="col-xl-8 col-lg-8 col-md-8 col-sm-8">
                                 <input type="search" name="search-field"
                                        class="form-control round-this px-3 col border-0 height-40"
-                                       placeholder="Search product" value="{{$searchKeyword}}" style="max-height: 50px">
+                                       placeholder="Search product"
+                                       value="{{$searchKeyword??''}}"
+                                       style="max-height: 50px">
                             </div>
 
                             <div class="col-xl-2 col-lg-2 col-md-4 col-4 row mx-0 justify-content-center">
@@ -39,6 +41,7 @@
                                     <i class="fa-sharp fa-solid fa-rotate-left"></i>
                                 </button>
                             </div>
+
                         </form>
 
                     </div>
@@ -62,6 +65,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
 
@@ -188,15 +192,8 @@
 
                             {{--Table--}}
                             <table class="table table-hover table-md">
-                                @if(Session()->has('success'))
-                                    <p class="alert alert-success">{{session()->get('success')}}</p>
-                                @endif
-                                @if(Session()->has('warning'))
-                                    <p class="alert alert-warning">{{session()->get('warning')}}</p>
-                                @endif
-                                @if(Session()->has('error'))
-                                    <p class="alert alert-error">{{session()->get('error')}}</p>
-                                @endif
+
+                                {{ alert() }}
 
                                 <thead class="table-dark">
                                 <tr>
@@ -209,19 +206,15 @@
                                 <tbody id="tableBody">
                                 @each('layouts.iterative.product', $products, 'product')
                                 </tbody>
+
                             </table>
+
                         </div>
                     </div>
-
-                    <div class="mt-5 round-this mx-4 h-100">
-                    </div>
-
                 </div>
-
 
             </div>
         </div>
-
 
     </div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
@@ -340,17 +333,17 @@
                                                 <form action=""
                                                       method="post">
                                                     @csrf
-                                                    @method('delete')
-                                                    <button
-                                                        class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 ">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                    </button>
+                            @method('delete')
+                            <button
+                                class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 ">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
 
-                                                </form>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                                `;
+                        </form>
+                    </a>
+                </td>
+            </tr>
+`;
                         }
                     }
                 }

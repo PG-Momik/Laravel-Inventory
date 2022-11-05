@@ -10,9 +10,9 @@
     <div class="grid-item">
 
         <div class="admin-grid">
-            <div style="min-height: 460px" class="a bg-purple round-this">
+            <div style="min-height: 460px" class="a grad round-this border-black">
 
-                <!--Active Page-->
+                {{--Top--}}
                 <div class="bg-purple px-5 pt-3 py-4" style="border-radius: 20px 20px 0 0">
                     <div class="row mx-0 d-flex gx-5  align-items-center">
                         <div class="col-xl-4 col-lg-4">
@@ -21,21 +21,13 @@
                     </div>
                 </div>
 
-                <!--White card-->
+                {{--White card goes here--}}
                 <div class="p-5">
                     <div class="row bg-white round-this  p-4 g-3">
 
-                        @if(Session()->has('success'))
-                            <p class="alert alert-success">{{session()->get('success')}}</p>
-                        @endif
-                        @if(Session()->has('warning'))
-                            <p class="alert alert-warning">{{session()->get('warning')}}</p>
-                        @endif
-                        @if(Session()->has('error'))
-                            <p class="alert alert-fail">{{session()->get('error')}}</p>
-                        @endif
+                        {{ alert() }}
 
-                        <!--Button trigger modal-->
+                        {{--Button trigger modal--}}
                         <div class="col-12 d-flex justify-content-center">
                             <ul class="col-lg-8 col-12 list-group gy-2">
 
@@ -46,7 +38,7 @@
                             </ul>
                         </div>
 
-                        <!--Recent Sales-->
+                        {{--Recent sales--}}
                         <div class="col-md-6 col-12">
                             <div class="accordion-item bg-red">
                                 <h2 class="accordion-header" id="headingOne">
@@ -94,7 +86,7 @@
 
                         </div>
 
-                        <!--Recent Purchases-->
+                        {{--Recent purchases--}}
                         <div class="col-md-6 col-12">
                             <div class="accordion-item bg-green">
                                 <h2 class="accordion-header" id="headingTwo">
@@ -102,7 +94,7 @@
                                             data-bs-toggle="collapse"
                                             data-bs-target="#collapseTwo" aria-expanded="true"
                                             aria-controls="collapseTwo">
-                                        <i class="fa-solid fa-arrow-up mx-2"></i> Recent Purchases
+                                        <i class="fa-solid fa-arrow-down mx-2"></i> Recent Purchases
                                     </button>
                                 </h2>
                                 <div id="collapseTwo" class="accordion-collapse collapse"
@@ -141,7 +133,7 @@
                             </p>
                         </div>
 
-                        <!-- Modal -->
+                        {{--Modal--}}
                         <div class="modal fade"
                              id="exampleModal"
                              tabindex="-1"

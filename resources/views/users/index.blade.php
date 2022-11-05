@@ -6,8 +6,8 @@
     <div class="grid-item">
 
         <div class="admin-grid">
-            <div style="min-height: 460px" class="a bg-purple round-this">
-                <div class="bg-purple px-5 pt-3 py-4" style="border-radius: 20px 20px 0 0">
+            <div style="min-height: 440px" class="a bg-purple round-this border-black">
+                <div class="bg-purple px-5 pt-3 pb-4" style="border-radius: 20px 20px 0 0">
 
                     {{--Top--}}
                     <div class="row mx-0 d-flex gx-5  align-items-center">
@@ -62,6 +62,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
 
@@ -70,15 +71,15 @@
                     <div style="width: 80%; margin: 0 auto;">
                         <div class="p-5 bg-white round-this shadow-this-down">
 
-                            {{--                            Pagination--}}
+                            {{--Pagination--}}
                             <div class="col-12 text-dark">
                                 {{$users->links("pagination::bootstrap-5")}}
                             </div>
 
-                            {{--                            Table--}}
+                            {{--Table--}}
                             <table class="table table-hover table-md">
 
-                                {{ alert()}}
+                                {{  alert() }}
 
                                 <thead class="table-dark">
                                 <tr>
@@ -108,7 +109,8 @@
                                             </a>
 
                                             <a href="" class="col no-underline">
-                                                <form action="{{route('users.destroy', ['user'=>$user->id])}}" method="post">
+                                                <form action="{{route('users.destroy', ['user'=>$user->id])}}"
+                                                      method="post">
                                                     @csrf
                                                     @method('delete')
                                                     <button
@@ -126,11 +128,7 @@
                         </div>
                     </div>
 
-                    <div class="mt-5 round-this mx-4 h-100">
-                    </div>
-
                 </div>
-
 
             </div>
         </div>

@@ -49,6 +49,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                                 <div class="col-lg-6 col-12 px-2 my-2">
                                     <div class="shadow p-3 rounded py-3">
                                         <h2>Products with this category:</h2>
@@ -66,6 +67,7 @@
                                                 </div>
                                                 <div class="col">Action</div>
                                             </div>
+
                                             @forelse($category->products as $product)
                                                 <div class="list-group-item row mx-0 d-flex justify-content-between">
                                                     <div class="col">{{$product->name}}</div>
@@ -86,11 +88,9 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
-                    </div>
-
-                    <div class="mt-5 round-this mx-4 h-100">
                     </div>
 
                 </div>

@@ -99,7 +99,7 @@
                                         $quantity = $transaction->quantity;
                                         $alertClass = '';
 
-                                        if($transaction->type == $transaction::TYPE[0]){
+                                        if($transaction->type == $transaction::TYPE['purchase']){
                                             $price = $transaction->purchasePriceDuringTransaction->value;
                                             $alertClass = 'list-group-item-success';
                                         }else{

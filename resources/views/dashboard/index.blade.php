@@ -9,33 +9,38 @@
     <div class="grid-item">
 
         <div class="admin-grid">
-            <div style="min-height: 460px" class="a bg-purple round-this">
+            <div style="min-height: 460px" class="a grad round-this border-black">
                 <div class="bg-purple px-5 pt-3 py-4" style="border-radius: 20px 20px 0 0">
 
+                    {{--Top--}}
                     <div class="row mx-0 d-flex gx-5  align-items-center">
-
                         <div class="col-xl-4 col-lg-4">
                             <h1>Dashboard</h1>
                         </div>
                     </div>
-                </div>
-                <div class="p-5">
-                    <div class="bg-sm-grey">
-                        <div class="row mx-0 px-4 py-5">
 
+                </div>
+
+                {{--White card goes here--}}
+                <div class="b-grad p-5 round-this">
+                    <div class="bg-sm-grey round-this">
+
+                        <div class="row mx-0 px-4 py-5">
                             @foreach($cardsValues  as $key=>$item)
                                 <div class="col-lg-3 col-md-6 col-12 px-2">
-                                    <div class="py-4 px-1 text-center shadow rounded-3  bg-white">
-                                        <div class="fs-1 text-secondary">{{$item}}</div>
+                                    <div class="py-4 px-1 my-1 text-center shadow rounded-3  bg-white">
+                                        <div
+                                            class="fs-1 text-secondary">{{gettype($item)=='integer'?$item:number_format($item, 2)}}</div>
                                         <span class="text-secondary">{{sentenceCase(ucwords($key))}}</span>
                                     </div>
                                 </div>
                             @endforeach
-
                         </div>
+
                         <div class="px-4">
                             <div class="row mx-0">
 
+                                {{--Line graph--}}
                                 <div class="col-md-8 col-12 p-3">
                                     <div class="round-3 shadow p-3 bg-light">
                                         <div class="d-flex justify-content-between my-2 align-middle">
@@ -57,6 +62,7 @@
                                     </div>
                                 </div>
 
+                                {{--Pie Chart--}}
                                 <div class="col-md-4 col-12">
                                     <div class="">
                                         <div class="d-flex justify-content-between my-2 py-3">
@@ -76,14 +82,15 @@
 
                             </div>
                         </div>
+
                     </div>
                 </div>
-            </div>
 
+            </div>
         </div>
 
-
     </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
             integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -213,7 +220,6 @@
                     labels: extractLabels(result, []),
                     datasets: [{
                         backgroundColor: colorArray(0.6, 30),
-                        borderColor: colorArray(1, 30),
                         data: extractData(result, []),
                         hoverOffset: 4,
                     }]
@@ -222,15 +228,6 @@
                     plugins: {
                         legend: {
                             position: 'right',
-                            labels: {
-                                generateLabels: (chart) => {
-                                    const datasets = chart.data.datasets;
-                                    return datasets[0].data.map((data, i) => ({
-                                        text: `${chart.data.labels[i]} : ${data}`,
-                                        fillStyle: datasets[0].backgroundColor[i],
-                                    }))
-                                },
-                            }
                         },
                     },
                 }

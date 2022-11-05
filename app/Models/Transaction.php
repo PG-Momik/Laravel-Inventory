@@ -2,11 +2,9 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Transaction extends Model
@@ -16,9 +14,10 @@ class Transaction extends Model
 
     protected $table      = "transactions";
     protected $primaryKey = "id";
-    public const TYPE = array('Purchase', 'Sale');
-
-
+    public const TYPE = array(
+        'purchase' => 'Purchase',
+        'sales'    => 'Sale'
+    );
 
 
     /**
@@ -37,7 +36,7 @@ class Transaction extends Model
     public function product(): hasOne
     {
         return $this->hasOne(Product::class, 'id', 'product_id')
-             ->select('id', 'category_id', 'registered_by', 'quantity', 'discount', 'name', 'description', 'image');
+            ->select('id', 'category_id', 'registered_by', 'quantity', 'discount', 'name', 'description', 'image');
     }
 
     /**
@@ -74,7 +73,6 @@ class Transaction extends Model
 //    {LI
 //        return $this->hasOne(Product::class, 'id', 'product_id');
 //    }
-
 
 
 }
