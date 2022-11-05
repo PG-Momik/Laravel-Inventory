@@ -62,7 +62,7 @@
                                 @csrf
                                 @method('post')
 
-                                <div  class="row">
+                                <div class="row">
                                     <div class="col-lg-6 col-12">
                                         <div class="mb-2">
                                             <label for="">Name</label>
@@ -114,15 +114,17 @@
                                                  id="imageUploadFacade">
                                                 <div class="text-center" id="imageWrapper">
 
+                                                    <div class="">
                                                         <div class="">
-                                                            <div class="">
-                                                                <img src="{{asset('images/camera.png')}}"
-                                                                     id="actualImage" alt="No Image Available" style="max-height:80px">
-                                                            </div>
-                                                            <input type="file" name="productImage" id="imageUploadField" class=""
-                                                                   style="opacity: 0">
-
+                                                            <img src="{{asset('images/camera.png')}}"
+                                                                 id="actualImage" alt="No Image Available"
+                                                                 style="max-height:80px">
                                                         </div>
+                                                        <input type="file" name="productImage" id="imageUploadField"
+                                                               class=""
+                                                               style="opacity: 0">
+
+                                                    </div>
 
                                                 </div>
                                             </div>
@@ -131,8 +133,14 @@
 
                                 </div>
                                 <div class="col-12 text-lg-end text-center">
-                                    <button type="reset" class="btn btn-outline-dark px-5 nice-round col-sm-12 col-lg-auto mb-2">Reset</button>
-                                    <button type="submit" class="btn btn-outline-primary px-5 nice-round col-sm-12 col-lg-auto mb-2">Add</button>
+                                    <button type="reset"
+                                            class="btn btn-outline-dark px-5 nice-round col-sm-12 col-lg-auto mb-2">
+                                        Reset
+                                    </button>
+                                    <button type="submit"
+                                            class="btn btn-outline-primary px-5 nice-round col-sm-12 col-lg-auto mb-2">
+                                        Add
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -152,6 +160,6 @@
             cursor: pointer;
         }
     </style>
-    <script src="{{asset('scripts/productEdit.js')}}" defer></script>
+
 @endsection
 

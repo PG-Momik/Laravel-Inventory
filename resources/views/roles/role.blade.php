@@ -151,155 +151,7 @@
 
 
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
-            integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-
-    <script>
-        let myChart = null;
-
-        $(document).ready(function () {
-            ajaxBarValues()
-        });
-
-        function demoteUser(target, uid) {
-            let parentSpan = target.parentNode;
-            let parentWrapper = parentSpan.parentNode;
-            $.ajax({
-                type: 'get',
-                url: `demote/${uid}`,
-                success: function (result) {
-                    if (result) {
-                        parentWrapper.classList.add('slowly-disappear');
-                        setTimeout(function () {
-                            parentWrapper.remove();
-                            ajaxBarValues();
-                        }, 1000)
-                    }
-                }
-            });
-        }
-
-        function promoteUser(target, uid) {
-            let parentSpan = target.parentNode;
-            let parentWrapper = parentSpan.parentNode;
-            $.ajax({
-                type: 'get',
-                url: `promote/${uid}`,
-                success: function (result) {
-                    if (result) {
-                        parentWrapper.classList.add('slowly-disappear');
-                        setTimeout(function () {
-                            parentWrapper.remove();
-                            ajaxBarValues();
-                        }, 1000)
-                    }
-                }
-            });
-        }
-
-        function ajaxBarValues() {
-            let url = "{{route('roles-stats')}}";
-
-            $.ajax({
-                url: url,
-                type: 'GET',
-                success: function (result) {
-                    drawBar(result)
-
-                }
-            })
-        }
-
-        function drawBar(result = '') {
-            if (myChart != null) {
-                myChart.destroy();
-            }
-            result = JSON.parse(result);
-            const ctx = document.getElementById('myChart').getContext('2d');
-            myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: extractLabels(result),
-                    datasets: [
-                        {
-                            label: 'Role Population',
-                            barPercentage: 0.5,
-                            backgroundColor: colorArray(),
-                            data: extractData(result),
-                            hoverOffset: 16,
-                        }
-                    ]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    },
-                }
-
-            })
-        }
-
-        function colorArray(opacity = 0.6) {
-            return [
-                `rgba(146,34,245,${opacity})`,
-                `rgba(52,177,170,${opacity})`,
-                `rgba(245,166,35,${opacity})`,
-                `rgba(222,30,37,${opacity})`,
-                `rgba(25,135,84,${opacity})`,
-                `rgba(59,143,243,${opacity})`,
-            ]
-        }
-
-        function extractData(result, deeper = '') {
-            let arr = [];
-
-            for (let key in result) {
-                if (key === deeper) {
-                    for (let key in result[deeper]) {
-                        arr.push(result[deeper][key]);
-                    }
-                } else {
-                    arr.push(Number(result[key]));
-                }
-            }
-
-            return arr;
-        }
-
-        function extractLabels(result, deeper = '') {
-            let arr = [];
-            for (let key in result) {
-                if (key === deeper) {
-                    for (let key in result[deeper]) {
-                        arr.push(camelToSentence(key));
-                    }
-                } else {
-                    arr.push(camelToSentence(key));
-                }
-            }
-
-            return arr;
-        }
-
-
-        function camelToSentence(string) {
-            return string.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())
-        }
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
-
-
-    </script>
     <style>
 
         .slowly-disappear {
@@ -309,5 +161,100 @@
         }
 
     </style>
+
+    @push('other-scripts')
+
+        <script src="{{asset('scripts/utilities.js')}}"></script>
+
+        <script>
+            let myChart = null;
+
+            $(document).ready(function () {
+                ajaxBarValues()
+            });
+
+            function demoteUser(target, uid) {
+                let parentSpan = target.parentNode;
+                let parentWrapper = parentSpan.parentNode;
+                $.ajax({
+                    type: 'get',
+                    url: `demote/${uid}`,
+                    success: function (result) {
+                        if (result) {
+                            parentWrapper.classList.add('slowly-disappear');
+                            setTimeout(function () {
+                                parentWrapper.remove();
+                                ajaxBarValues();
+                            }, 1000)
+                        }
+                    }
+                });
+            }
+
+            function promoteUser(target, uid) {
+                let parentSpan = target.parentNode;
+                let parentWrapper = parentSpan.parentNode;
+                $.ajax({
+                    type: 'get',
+                    url: `promote/${uid}`,
+                    success: function (result) {
+                        if (result) {
+                            parentWrapper.classList.add('slowly-disappear');
+                            setTimeout(function () {
+                                parentWrapper.remove();
+                                ajaxBarValues();
+                            }, 1000)
+                        }
+                    }
+                });
+            }
+
+            function ajaxBarValues() {
+                let url = "{{route('roles-stats')}}";
+
+                $.ajax({
+                    url: url,
+                    type: 'GET',
+                    success: function (result) {
+                        drawBar(result)
+
+                    }
+                })
+            }
+
+            function drawBar(result = '') {
+                if (myChart != null) {
+                    myChart.destroy();
+                }
+                result = JSON.parse(result);
+                const ctx = document.getElementById('myChart').getContext('2d');
+                myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: extractLabels(result, []),
+                        datasets: [
+                            {
+                                label: 'Role Population',
+                                barPercentage: 0.5,
+                                backgroundColor: colorArray(),
+                                data: extractData(result, []),
+                                hoverOffset: 16,
+                            }
+                        ]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        },
+                    }
+
+                })
+            }
+        </script>
+
+    @endpush
+
 @endsection
 

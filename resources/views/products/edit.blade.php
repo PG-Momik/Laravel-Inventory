@@ -230,6 +230,8 @@
             cursor: pointer;
         }
     </style>
-    <script src="{{asset('scripts/productEdit.js')}}" defer></script>
+    @push('other-scripts')
+        <script src="{{asset('scripts/productEdit.js')}}" defer></script>
+    @endpush
 @endsection
 

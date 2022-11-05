@@ -1,14 +1,3 @@
-document.onLoad = removeAlert();
-
-function removeAlert() {
-    setTimeout(function () {
-        alerts = document.getElementsByClassName('alert');
-        for (i = 0; i < alerts.length; i++) {
-            alerts[i].remove()
-        }
-    }, 3000);
-
-}
 
 radio1= document.getElementById('btnradio1');
 radio2= document.getElementById('btnradio2');
