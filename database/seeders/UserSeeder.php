@@ -23,7 +23,7 @@ class CustomerSeeder extends Seeder
             $user = new User;
             $user->name = $faker->name;
             $user->email = $faker->email;
-            $user->role_id = $faker->numberBetween(1, 2);
+            $user->role_id = 1;
             $user->password = Hash::make($faker->password);
             $user->save();
         }

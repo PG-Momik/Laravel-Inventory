@@ -38,16 +38,24 @@ Route::get(
 Route::middleware(['auth'])->group(
     function () {
         Route::prefix('dashboard')
-            ->controller(DashboardController::class)
             ->name('dashboard.')
             ->group(
                 function () {
-                    Route::get('/', 'index')->name('index');
+                    Route::get('/', [DashboardController::class, 'index'])->name('index');
 
-                    Route::get('/logout', 'logout')->name('logout');
+                    Route::get('/logout', [DashboardController::class, 'logout'])->name('logout');
 
-                    Route::get('/test', 'test')->name('test');
-                    Route::post('/test', 'testValue')->name('testValue');
+                    Route::get('/test', [DashboardController::class, 'test'])->name('test');
+
+                    Route::get(
+                        '/data-for-line-graph/{type?}',
+                        [DashboardController::class, 'getValuesForLineGraph']
+                    )->name('line-data');
+                    Route::get(
+                        '/data-for-pie-chart/{type?}',
+                        [DashboardController::class, 'getValuesForPieChart']
+                    )->name('pie-data');
+
                 }
             );
 
@@ -70,8 +78,9 @@ Route::middleware(['auth'])->group(
         Route::resource('roles', RoleController::class);
 
 
-
-        Route::match(['get', 'post'], '/products/trash', [ProductController::class, 'showTrash'])->name('products.trashed');
+        Route::match(['get', 'post'], '/products/trash', [ProductController::class, 'showTrash'])->name(
+            'products.trashed'
+        );
 
         Route::get('/products/restore/{id}', [ProductController::class, 'restore'])->name('products.restore');
 
@@ -85,22 +94,23 @@ Route::middleware(['auth'])->group(
         Route::resource('categories', CategoryController::class);
 
 
-        Route::get('transactions/show/{type}', [TransactionController::class, 'showTransactions'])->name('show-transactions');
+        Route::get('transactions/show/{type}', [TransactionController::class, 'showTransactions'])->name(
+            'show-transactions'
+        );
 
         Route::get('/generate-pdf/{transaction}', [TransactionController::class, 'createPDF'])->name('generate-pdf');
 
         Route::resource('transactions', TransactionController::class);
 
 
-
         Route::resource('profile', ProfileController::class);
-
-
 
 
         Route::get('/ajax/category/{id}/products', [AjaxController::class, 'categoryProducts']);
         Route::post('/ajax/products/filter', [AjaxController::class, 'filterProducts'])->name('filterProducts');
-        Route::get('/ajax/getstats/category/{id}/{detailed?}', [AjaxController::class, 'getCategoryBasedStats'])->name('category-stats');
+        Route::get('/ajax/getstats/category/{id}/{detailed?}', [AjaxController::class, 'getCategoryBasedStats'])->name(
+            'category-stats'
+        );
         Route::get('/ajax/getstats/roles', [AjaxController::class, 'getRoleBasedStats'])->name('roles-stats');
     }
 );
