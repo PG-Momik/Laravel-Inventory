@@ -26,7 +26,7 @@ class TransactionController extends Controller
     {
         $categories = Category::all();
 
-        $tenRecentPurchases = Transaction::where('type', '=', Transaction::TYPE[0])
+        $tenRecentPurchases = Transaction::where('type', '=', Transaction::TYPE['purchase'])
             ->with('product')
             ->with('salesPriceDuringTransaction')
             ->with('purchasePriceDuringTransaction')
@@ -34,7 +34,7 @@ class TransactionController extends Controller
             ->take(5)
             ->get();
 
-        $tenRecentSales = Transaction::where('type', '=', Transaction::TYPE[1])
+        $tenRecentSales = Transaction::where('type', '=', Transaction::TYPE['sales'])
             ->with('product')
             ->with('salesPriceDuringTransaction')
             ->with('purchasePriceDuringTransaction')
@@ -71,7 +71,7 @@ class TransactionController extends Controller
         $transactionType = $request['transactionType'];
 
         $transaction                    = new Transaction();
-        $transaction->type              = $transactionType == 1 ? $transaction::TYPE[0] : $transaction::TYPE[1];
+        $transaction->type              = $transactionType == 1 ? $transaction::TYPE['purchase'] : $transaction::TYPE['sales'];
         $transaction->user_id           = Auth::user()->id;
         $transaction->product_id        = $product->id;
         $transaction->sales_price_id    = $product->latestSalesPrice->id;
@@ -87,6 +87,12 @@ class TransactionController extends Controller
         $discount   = 0;
 
         if ( $request['transactionType'] == 2 ) {
+
+            if($request['salesQuantity']>$product->quantity){
+                session()->flash('warning', "Cannot make sales of $request->salesQuantity items. Check stock.");
+                return back();
+            }
+
             $latest     = 'latestSalesPrice';
             $class      = 'App\Models\SalesPrice';
             $price      = 'salesPrice';
@@ -99,7 +105,9 @@ class TransactionController extends Controller
 
         try {
             $product->quantity = $product->quantity + ($modifier * $request[$quantity]);
+
             if ( $product->$latest->value != $request[$price] ) {
+
                 $object             = new $class;
                 $object->product_id = $request['productId'];
                 $object->value      = $request[$price];
@@ -112,6 +120,8 @@ class TransactionController extends Controller
             $transaction->quantity    = $request[$quantity];
             $transaction->discount    = $discount;
             $transaction->save();
+
+            $product->save();
 
             session()->flash('success', 'Transaction entry made.');
         } catch ( Exception $e ) {

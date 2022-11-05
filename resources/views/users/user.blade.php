@@ -23,7 +23,8 @@
                                 <span class="fs-4 text-grey"><u>{{$user->name}}</u></span>
                             </span>
                         </div>
-                        {{--                        Search Form--}}
+
+                        {{--Search Form--}}
                         <form action="{{route('users.search')}}"
                               method="post"
                               class="col-xl-8 col-lg-8 row mx-0 align-items-center">
@@ -49,6 +50,7 @@
                             </div>
 
                         </form>
+
                     </div>
                 </div>
 
@@ -111,9 +113,6 @@
 
                             </dl>
                         </div>
-                    </div>
-
-                    <div class="mt-5 round-this mx-4 h-100">
                     </div>
 
                 </div>

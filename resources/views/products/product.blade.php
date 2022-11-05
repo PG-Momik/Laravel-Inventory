@@ -77,7 +77,7 @@
 
                                 <div class="row mx-0 col-md-4 col-12 d-flex justify-content-center align-items-center">
                                     @if($product->image)
-{{--                                        <img src="{{Storage::disk('localStorage')->url('axb.png')}}" alt="" width="300" height="200">--}}
+                                        {{--<img src="{{Storage::disk('localStorage')->url('axb.png')}}" alt="" width="300" height="200">--}}
                                         <img src="{{asset('storage/images/'.$product->image)}}" alt="" width="300" height="200">
                                     @else
                                         <div class="text-center"><i class="fa-solid fa-image fs-1"></i></div>
@@ -131,9 +131,6 @@
 
                             </dl>
                         </div>
-                    </div>
-
-                    <div class="mt-5 round-this mx-4 h-100">
                     </div>
 
                 </div>

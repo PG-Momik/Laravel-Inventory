@@ -78,7 +78,7 @@
                                         Rs. {{$transaction->purchasePriceDuringTransaction->value}}
                                     </dd>
 
-                                    @if($transaction->type == $transaction::TYPE[1])
+                                    @if($transaction->type == $transaction::TYPE['sales'])
                                         <hr>
                                         <dt class="col-lg-6 col-12">Sold For:</dt>
                                         <dd class="col-lg-6 col-12">
@@ -91,7 +91,7 @@
                                         {{$transaction->quantity}} units
                                     </dd>
 
-                                    @if($transaction->type == $transaction::TYPE[1])
+                                    @if($transaction->type == $transaction::TYPE['sales'])
                                         <dt class="col-lg-6 col-12">Applied Discount</dt>
                                         <dd class="col-lg-6 col-12">
                                             {{$transaction->discount}} %
@@ -107,7 +107,7 @@
                                             $discount = 0;
                                             $quantity = $transaction->quantity;
 
-                                            if($transaction->type == $transaction::TYPE[0]){
+                                            if($transaction->type == $transaction::TYPE['purchase']){
                                                 $price = $transaction->purchasePriceDuringTransaction->value;
                                             }else{
                                                 $price = $transaction->salesPriceDuringTransaction->value;

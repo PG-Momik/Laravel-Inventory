@@ -189,7 +189,7 @@
 
 .admin-grid{
     display: grid;
-    grid-template-rows: repeat(5, 1fr );
+    grid-template-rows: repeat(2, 1fr );
 }
 .a{
     grid-row: 1/3;

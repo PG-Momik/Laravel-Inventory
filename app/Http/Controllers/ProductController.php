@@ -88,7 +88,7 @@ class ProductController extends Controller
             $transaction->product_id        = $product->id;
             $transaction->sales_price_id    = $salesPrice->id;
             $transaction->purchase_price_id = $purchasePrice->id;
-            $transaction->type              = $transaction::TYPE[0];
+            $transaction->type              = $transaction::TYPE['purchase'];
             $transaction->quantity          = $request['quantity'];
             $transaction->discount          = $request['discount'];
 
@@ -140,10 +140,10 @@ class ProductController extends Controller
         //Request Validation goes
 
         if ( $request['transactionType'] ) {
-            $class                 = $request['transactionType'] == Transaction::TYPE[0] ? 'App\Models\PurchasePrice' : 'App\Models\SalesPrice';
-            $changedColumn         = $request['transactionType'] == Transaction::TYPE[0] ? 'purchase_price_id' : 'sales_price_id';
-            $unchangedColumn       = $request['transactionType'] == Transaction::TYPE[0] ? 'sales_price_id' : 'purchase_price_id';
-            $latestUnchangedColumn = $request['transactionType'] == Transaction::TYPE[0] ? 'latestSalesPrice' : 'latestPurchasePrice';
+            $class                 = $request['transactionType'] == Transaction::TYPE['purchase'] ? 'App\Models\PurchasePrice' : 'App\Models\SalesPrice';
+            $changedColumn         = $request['transactionType'] == Transaction::TYPE['purchase'] ? 'purchase_price_id' : 'sales_price_id';
+            $unchangedColumn       = $request['transactionType'] == Transaction::TYPE['purchase'] ? 'sales_price_id' : 'purchase_price_id';
+            $latestUnchangedColumn = $request['transactionType'] == Transaction::TYPE['purchase'] ? 'latestSalesPrice' : 'latestPurchasePrice';
 
             $changes = abs($request->quantity - $product->quantity);
 
