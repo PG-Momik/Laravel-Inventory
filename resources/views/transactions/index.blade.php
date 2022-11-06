@@ -271,5 +271,7 @@
 
     </div>
 
-    <script src="{{asset('scripts/transactionIndex.js')}}" defer></script>
+    @push('other-scripts')
+        <script src="{{asset('scripts/transactionIndex.js')}}" defer></script>
+    @endpush
 @endsection

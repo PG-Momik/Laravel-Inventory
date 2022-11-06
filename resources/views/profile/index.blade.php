@@ -52,13 +52,13 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="p-5">
                     <img src="images/sampleDash.jpg" alt="" style="width: 100%">
                 </div>
+
             </div>
-
         </div>
-
 
     </div>
 

@@ -1,20 +1,25 @@
-var imageUploadFacade = document.getElementById('imageUploadFacade');
+const imageUploadFacade = document.getElementById('imageUploadFacade');
 imageUploadFacade.addEventListener('click', function () {
-    var imageUploadField = document.getElementById('imageUploadField');
+
+    const imageUploadField = document.getElementById('imageUploadField');
     imageUploadField.click();
+
 })
-var imageUploadField = document.getElementById('imageUploadField');
+
+const imageUploadField = document.getElementById('imageUploadField');
 imageUploadField.addEventListener('change', function () {
-    var actualImage = document.getElementById('actualImage')
+
+    const actualImage = document.getElementById('actualImage');
     actualImage.src = URL.createObjectURL(event.target.files[0]);
     actualImage.onload = function () {
         URL.revokeObjectURL(actualImage.src) // free memory
     }
+
 })
 
 function add(i) {
-    calcField = document.getElementsByClassName('calcField')[i];
-    value = calcField.value;
+    let calcField = document.getElementsByClassName('calcField')[i];
+    let value = calcField.value;
     value++;
     calcField.value = value;
 
@@ -35,7 +40,6 @@ function subtract(i) {
 //For modal and all other new behaviour
 
 const initialQuantity = document.getElementById('productQuantity').value;
-console.log(initialQuantity);
 const updateBtn = document.getElementById('updateBtn');
 
 updateBtn.addEventListener('click', function () {
@@ -85,12 +89,15 @@ function resetModal() {
     document.getElementById('noChanges').textContent = "";
     document.getElementsByClassName('modal-body')[0].classList.remove('hidden');
     document.getElementsByClassName('modal-footer')[0].classList.remove('hidden');
+
     if (document.contains(document.getElementById("discountField"))) {
         document.getElementById("discountField").remove();
     }
+
 }
 
 function createDiscountField() {
+
     const discountField = document.createElement('input');
     discountField.setAttribute('type', 'number');
     discountField.setAttribute('name', 'discount');
@@ -99,10 +106,13 @@ function createDiscountField() {
     discountField.setAttribute('autocomplete', 'off');
     discountField.classList.add('form-control', 'my-3');
     discountField.id = "discountField"
+
     document.getElementsByClassName('modal-body')[0].appendChild(discountField);
+
 }
 
 function createHiddenFieldInModal(type) {
+
     if (document.contains(document.getElementById("hiddenTransactionTypeField"))) {
         document.getElementById("hiddenTransactionTypeField").remove();
     }

@@ -100,6 +100,6 @@
             cursor: pointer;
         }
     </style>
-    <script src="{{asset('scripts/productEdit.js')}}" defer></script>
+    
 @endsection
 
