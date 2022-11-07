@@ -70,12 +70,12 @@
                     <div style="width: 80%; margin: 0 auto;">
                         <div class="p-5 bg-white round-this shadow-this-down">
 
-                            {{--Pagination--}}
+                            {{--                            Pagination--}}
                             <div class="col-12 text-dark">
                                 {{$users->links("pagination::bootstrap-5")}}
                             </div>
 
-                            {{--Table--}}
+                            {{--                            Table--}}
                             <table class="table table-hover table-md">
 
                                 {{alert()}}
