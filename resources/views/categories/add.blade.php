@@ -26,7 +26,7 @@
                                 <span class="fs-4 text-grey"><u>Add</u></span>
                             </span>
                         </div>
-                        {{--                        Search Form--}}
+                        {{--Search Form--}}
                         <form action="{{route('products.search')}}"
                               method="post"
                               class="col-xl-8 col-lg-8 row mx-0 align-items-center">

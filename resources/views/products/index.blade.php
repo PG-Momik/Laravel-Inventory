@@ -204,7 +204,7 @@
                                 </tr>
                                 </thead>
                                 <tbody id="tableBody">
-                                @each('layouts.iterative.product', $products, 'product')
+                                @each('layouts.iterative.product', $products, 'product', 'no_product')
                                 </tbody>
 
                             </table>
