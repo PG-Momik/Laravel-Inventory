@@ -14,7 +14,7 @@ class PurchasePrice extends Model
     public $primaryKey = "id";
 
 
-    public function product():BelongsTo
+    public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class, 'product_id', 'id');
     }

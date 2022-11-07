@@ -10,7 +10,6 @@ use Illuminate\View\View;
 
 class RoleController extends Controller
 {
-
     /**
      * @return View
      */
@@ -22,12 +21,14 @@ class RoleController extends Controller
     }
 
 
-    public function create(): View {}
+    public function create(): View
+    {
+    }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return Response
      */
     public function store(Request $request)
@@ -38,7 +39,7 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Role $role
+     * @param  Role $role
      * @return View
      */
     public function show(Role $role): View
@@ -51,7 +52,7 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param  int $id
      * @return Response
      */
     public function edit($id)
@@ -62,8 +63,8 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param int $id
+     * @param  Request $request
+     * @param  int     $id
      * @return Response
      */
     public function update(Request $request, $id)
@@ -74,7 +75,7 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param  int $id
      * @return Response
      */
     public function destroy($id)

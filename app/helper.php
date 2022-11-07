@@ -1,6 +1,6 @@
 <?php
 
-if ( !function_exists('apply_validation_to') ) {
+if (!function_exists('apply_validation_to')) {
     function apply_validation_to($params, $requestFor = 'create'): array
     {
 
@@ -27,13 +27,13 @@ if ( !function_exists('apply_validation_to') ) {
             "date"             => 'required',
         );
 
-        if ( $requestFor != 'create' ) {
+        if ($requestFor != 'create') {
             $commonValidations['email'] = 'required';
         }
 
         $returnArray = array();
 
-        foreach ( $params as $param ) {
+        foreach ($params as $param) {
             $returnArray[$param] = $commonValidations[$param];
         }
 
@@ -42,7 +42,7 @@ if ( !function_exists('apply_validation_to') ) {
 }
 
 
-if ( !function_exists('p') ) {
+if (!function_exists('p')) {
     function p($arr): void
     {
         echo "<pre>";
@@ -51,36 +51,33 @@ if ( !function_exists('p') ) {
     }
 }
 
-if ( !function_exists('isZero') ) {
+if (!function_exists('isZero')) {
     function isZero($num): bool
     {
         return $num == 0;
     }
 }
 
-if ( !function_exists('alert') ) {
+if (!function_exists('alert')) {
     function alert(): void
     {
-        if ( Session()->has('success') ) {
+        if (Session()->has('success')) {
             echo "<p class='alert alert-success'>" . session()->get('success') . "</p>";
         }
 
-        if ( Session()->has('warning') ) {
+        if (Session()->has('warning')) {
             echo "<p class='alert alert-warning'>" . session()->get('warning') . "</p>";
         }
-        if ( Session()->has('error') ) {
+        if (Session()->has('error')) {
             echo "<p class='alert alert-fail'>" . session()->get('error') . "</p>";
         }
-
     }
 }
 
 
-if ( !function_exists('sentenceCase') ) {
+if (!function_exists('sentenceCase')) {
     function sentenceCase($string): string
     {
         return preg_replace('/(?!^)[A-Z]{2,}(?=[A-Z][a-z])|[A-Z][a-z]/', ' $0', $string);
     }
 }
-
-

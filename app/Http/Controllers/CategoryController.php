@@ -11,17 +11,26 @@ use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
+     * @param  Request $request
      * @return View
-     *
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        //
-        return view('categories.index')->with(['categories' => Category::withCount('products')->get()]);
+        $searchKeyword = $request['search-field'] ?? '';
+
+        $categories = Category::when(
+            !empty($searchKeyword),
+            function ($categories) use ($searchKeyword) {
+                return $categories->where('name', 'like', "%$searchKeyword%");
+            }
+        )
+            ->withCount('products')
+            ->paginate(10);
+
+        return view('categories.index')->with(compact('categories'));
     }
 
     /**
@@ -37,7 +46,7 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return RedirectResponse
      */
     public function store(Request $request): RedirectResponse
@@ -47,7 +56,7 @@ class CategoryController extends Controller
             $category->name = $request['name'];
             $category->save();
             session()->flash('success', 'Category added.');
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             session()->flash('warn', 'Something went wrong.');
         }
 
@@ -57,7 +66,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Category $category
+     * @param  Category $category
      * @return View
      */
     public function show(Category $category): View
@@ -70,7 +79,7 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param Category $category
+     * @param  Category $category
      * @return Response
      */
     public function edit(Category $category)
@@ -81,8 +90,8 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param Category $category
+     * @param  Request  $request
+     * @param  Category $category
      * @return Response
      */
     public function update(Request $request, Category $category)
@@ -93,12 +102,11 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Category $category
+     * @param  Category $category
      * @return Response
      */
     public function destroy(Category $category)
     {
         //
     }
-
 }

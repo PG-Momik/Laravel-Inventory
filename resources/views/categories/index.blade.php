@@ -20,7 +20,7 @@
                         </div>
 
                         {{--Search Form--}}
-                        <form action="{{route('users.index')}}"
+                        <form action="{{route('categories.search')}}"
                               method="post"
                               class="col-xl-8 col-lg-8 row mx-0 align-items-center">
                             @csrf
@@ -77,6 +77,13 @@
                     <div style="width: 80%; margin: 0 auto;">
                         <div class="p-5 bg-white round-this shadow-this-down">
 
+                            {{--Pagination--}}
+                            <div class="row  text-dark">
+                                <div class="col-lg-11">
+                                    {{$categories->links("pagination::bootstrap-5")}}
+                                </div>
+                            </div>
+
                             <table class="table table-hover table-md">
 
                                 {{ alert() }}
@@ -90,7 +97,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @each('layouts.iterative.category', $categories, 'category')
+                                @each('layouts.iterative.category', $categories, 'category', 'layouts.iterative.no_category')
                                 </tbody>
                             </table>
 

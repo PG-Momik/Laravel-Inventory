@@ -11,29 +11,25 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
+     * @param  Request $request
      * @return View
      */
+
     public function index(Request $request): View
     {
         $searchKeyword = $request['search-field'] ?? '';
 
-        if ( empty($searchKeyword) ) {
-            $users = User::select('users.id', 'users.name', 'users.role_id', 'users.email')
-                ->withCount('transactions')
-                ->with('role:id,name')
-                ->paginate(10);
-        } else {
-            $users = User::select('users.id', 'users.name', 'users.role_id')
-                ->where('users.name', 'LIKE', "%$searchKeyword%")
-                ->orWhere('users.email', 'LIKE', "%$searchKeyword%")
-                ->with('role:id,name')
-                ->withCount('transactions')
-                ->paginate(10);
-        }
+        $users = User::when(
+            !empty($searchKeyword),
+            function ($users) use ($searchKeyword) {
+                return $users->where('name', 'like', "%$searchKeyword%")->orWhere('email', 'like', "%$searchKeyword%");
+            }
+        )->withCount('transactions')
+         ->with('role')
+         ->paginate(10);
 
         return view('users.index')->with(compact('users', 'searchKeyword'));
     }
@@ -51,7 +47,7 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return RedirectResponse
      */
     public function store(Request $request): RedirectResponse
@@ -65,7 +61,7 @@ class UserController extends Controller
         try {
             $user->save();
             session()->flash('success', 'User added successfully.');
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             session()->flash('error', 'Something went wrong.');
         }
 
@@ -75,7 +71,7 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  int $id
      * @return RedirectResponse| View
      */
     public function show($id): RedirectResponse | View
@@ -91,7 +87,7 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param  int $id
      * @return View
      */
     public function edit(int $id): view
@@ -104,7 +100,8 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param  Request $request
+     * @param  int     $id
      * @return RedirectResponse
      */
     public function update(Request $request, int $id): RedirectResponse
@@ -116,16 +113,16 @@ class UserController extends Controller
         $user->email   = $request->email;
         $user->role_id = $request->role_id;
 
-        if ( $request->verifyEmail == "false" ) {
+        if ($request->verifyEmail == "false") {
             $user->email_verified_at = null;
         }
-//        if($user->email_verified_at == NULL){
-//            $user->email_verified_at = now()->format('Y:m:d H:i:s');
-//        }
+        //        if($user->email_verified_at == NULL){
+        //            $user->email_verified_at = now()->format('Y:m:d H:i:s');
+        //        }
 
         try {
             $user->update();
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             session()->flash('warning', "Something went wrong.");
 
             return redirect()->route('users.show', ['id' => $user->id]);
@@ -147,6 +144,7 @@ class UserController extends Controller
 
     /**
      * Shows User Transactions
+     *
      * @param Request $request
      *
      * @return View
@@ -163,13 +161,14 @@ class UserController extends Controller
 
     /**
      * Shows Trashed Data
-     * @param Request $request
+     *
+     * @param  Request $request
      * @return View
      */
     public function showTrash(Request $request): View
     {
         $searchKeyword = $request['search-field'] ?? '';
-        if ( empty($searchKeyword) ) {
+        if (empty($searchKeyword)) {
             $users = User::onlyTrashed()->paginate(10);
         } else {
             $users = User::onlyTrashed()
@@ -184,6 +183,7 @@ class UserController extends Controller
 
     /**
      * Moves user to trash
+     *
      * @param User $user
      *
      * @return RedirectResponse
@@ -195,7 +195,7 @@ class UserController extends Controller
             session()->flash('warning', 'User moved to trash');
 
             return redirect()->back();
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             session()->flash('warning', 'Something went wrong. Try Again.');
         }
 
@@ -204,6 +204,7 @@ class UserController extends Controller
 
     /**
      * Restore trashed user
+     *
      * @param int $id
      *
      * @return RedirectResponse
@@ -214,7 +215,7 @@ class UserController extends Controller
             $user = User::withTrashed()->find($id);
             $user->restore();
             session()->flash('success', "User restored");
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             session()->flash('warning', 'Something went wrong.');
         }
 
@@ -224,6 +225,7 @@ class UserController extends Controller
 
     /**
      * Remove user from db
+     *
      * @param int $id
      *
      * @return RedirectResponse
@@ -234,12 +236,10 @@ class UserController extends Controller
             $user = User::withTrashed()->find($id);
             $user->forceDelete();
             session()->flash('success', 'User record destroyed.');
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             session()->flash('warning', "Something went wrong. Try again.");
         }
 
         return redirect()->back();
     }
-
-
 }

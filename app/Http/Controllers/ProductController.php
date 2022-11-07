@@ -15,22 +15,25 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
+     * @param  Request $request
      * @return View
      */
     public function index(Request $request): View
     {
         $searchKeyword = $request['search-field'] ?? '';
-        $products      = Product::with('category')->paginate(10);
 
-        if ( !empty($searchKeyword) ) {
-            $products = Product::with('category')
-                ->where('products.name', 'LIKE', "%$searchKeyword%")
-                ->paginate(10);
-        }
+        $products = Product::with('category')
+            ->when(
+                !empty($searchKeyword),
+                function ($products) use ($searchKeyword) {
+                    return $products->where('name', 'like', "%$searchKeyword%")
+                        ->orWhere('description', 'like', "%$searchKeyword%");
+                }
+            )
+            ->paginate(10);
 
         return view('products.index')->with(compact('products', 'searchKeyword'));
     }
@@ -42,13 +45,13 @@ class ProductController extends Controller
      */
     public function create(): View
     {
-        return view('products.add')->with(['categories'=>Category::get()]);
+        return view('products.add')->with(['categories' => Category::get()]);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return RedirectResponse
      */
     public function store(Request $request): RedirectResponse
@@ -65,7 +68,7 @@ class ProductController extends Controller
 
             $file = $request->file('productImage') ?? '';
 
-            if ( $file ) {
+            if ($file) {
                 $newFilename = $request->productImage->getClientOriginalName();
                 $file->storeAs('public/images', $newFilename);
                 $product->image = $newFilename;
@@ -94,7 +97,7 @@ class ProductController extends Controller
 
             $transaction->save();
             session()->flash('success', 'Product added.');
-        }catch(Exception $e){
+        } catch (Exception $e) {
             session()->flash('warning', 'Something went wrong. Try again.');
         }
 
@@ -105,7 +108,7 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param $id
+     * @param  $id
      * @return View
      */
     public function show($id): View
@@ -118,7 +121,7 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param Product $product
+     * @param  Product $product
      * @return View
      */
     public function edit(Product $product): View
@@ -131,25 +134,33 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param Product $product
+     * @param  Request $request
+     * @param  Product $product
      * @return RedirectResponse
      */
     public function update(Request $request, Product $product): RedirectResponse
     {
         //Request Validation goes
 
-        if ( $request['transactionType'] ) {
-            $class                 = $request['transactionType'] == Transaction::TYPE['purchase'] ? 'App\Models\PurchasePrice' : 'App\Models\SalesPrice';
-            $changedColumn         = $request['transactionType'] == Transaction::TYPE['purchase'] ? 'purchase_price_id' : 'sales_price_id';
-            $unchangedColumn       = $request['transactionType'] == Transaction::TYPE['purchase'] ? 'sales_price_id' : 'purchase_price_id';
-            $latestUnchangedColumn = $request['transactionType'] == Transaction::TYPE['purchase'] ? 'latestSalesPrice' : 'latestPurchasePrice';
+        if ($request['transactionType']) {
+            $class                 = $request['transactionType'] == Transaction::TYPE['purchase']
+                ? 'App\Models\PurchasePrice'
+                : 'App\Models\SalesPrice';
+            $changedColumn         = $request['transactionType'] == Transaction::TYPE['purchase']
+                ? 'purchase_price_id'
+                : 'sales_price_id';
+            $unchangedColumn       = $request['transactionType'] == Transaction::TYPE['purchase']
+                ? 'sales_price_id'
+                : 'purchase_price_id';
+            $latestUnchangedColumn = $request['transactionType'] == Transaction::TYPE['purchase']
+                ? 'latestSalesPrice'
+                : 'latestPurchasePrice';
 
             $changes = abs($request->quantity - $product->quantity);
 
             $product->load($latestUnchangedColumn);
 
-            $newChangedColumnValue             = new $class;
+            $newChangedColumnValue             = new $class();
             $newChangedColumnValue->product_id = $product->id;
             $newChangedColumnValue->value      = $request['price'];
             $newChangedColumnValue->save();
@@ -164,7 +175,6 @@ class ProductController extends Controller
             $transaction->discount         = $request['discount'] ?? 0;
 
             $transaction->save();
-
         }
 
         $product->category_id = $request['category_id'];
@@ -177,7 +187,7 @@ class ProductController extends Controller
         try {
             $file = $request->file('productImage') ?? '';
 
-            if ( $file ) {
+            if ($file) {
                 $newFilename = $request->productImage->getClientOriginalName();
                 $file->storeAs('public/images', $newFilename);
                 $product->image = $newFilename;
@@ -185,7 +195,7 @@ class ProductController extends Controller
 
             $product->update();
             session()->flash('success', "Product info updated.");
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             session()->flash('warning', "Something went wrong.");
         }
 
@@ -197,7 +207,7 @@ class ProductController extends Controller
     {
         $searchKeyword = $request['search-field'] ?? '';
 
-        if ( empty($searchKeyword) ) {
+        if (empty($searchKeyword)) {
             $products = Product::onlyTrashed()->paginate(10);
         } else {
             $products = Product::onlyTrashed()
@@ -212,7 +222,7 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Product $product
+     * @param  Product $product
      * @return RedirectResponse
      */
     public function destroy(Product $product): RedirectResponse
@@ -220,8 +230,7 @@ class ProductController extends Controller
         try {
             $product->delete();
             session()->flash('warning', 'Product moved to trash.');
-
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             session()->flash('warning', 'Something went wrong. Try Again.');
         }
 
@@ -230,6 +239,7 @@ class ProductController extends Controller
 
     /**
      * Restore trashed product
+     *
      * @param int $id
      *
      * @return RedirectResponse
@@ -240,7 +250,7 @@ class ProductController extends Controller
             $product = Product::withTrashed()->find($id);
             $product->restore();
             session()->flash('success', "Product restored.");
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             session()->flash('warning', 'Something went wrong.');
         }
 
@@ -250,6 +260,7 @@ class ProductController extends Controller
 
     /**
      * Remove product from db
+     *
      * @param int $id
      *
      * @return RedirectResponse
@@ -260,12 +271,10 @@ class ProductController extends Controller
             $product = Product::withTrashed()->find($id);
             $product->forceDelete();
             session()->flash('error', 'Product record destroyed.');
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             session()->flash('warning', "Something went wrong. Try again.");
         }
 
         return redirect()->back();
     }
-
-
 }

@@ -204,7 +204,7 @@
                                 </tr>
                                 </thead>
                                 <tbody id="tableBody">
-                                @each('layouts.iterative.product', $products, 'product', 'no_product')
+                                @each('layouts.iterative.product', $products, 'product', 'layouts.iterative.no_product')
                                 </tbody>
 
                             </table>
@@ -217,7 +217,6 @@
         </div>
 
     </div>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <style>
         .strict-324 {
             width: 324px;
