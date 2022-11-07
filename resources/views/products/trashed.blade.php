@@ -68,22 +68,15 @@
                     <div style="width: 80%; margin: 0 auto;">
                         <div class="p-5 bg-white round-this shadow-this-down">
 
-                            {{--                            Pagination--}}
+                            {{--Pagination--}}
                             <div class="col-12 text-dark">
                                 {{$products->links("pagination::bootstrap-5")}}
                             </div>
 
-                            {{--                            Table--}}
+                            {{--Table--}}
                             <table class="table table-hover table-md">
-                                @if(Session()->has('success'))
-                                    <p class="alert alert-success">{{session()->get('success')}}</p>
-                                @endif
-                                @if(Session()->has('warning'))
-                                    <p class="alert alert-warning">{{session()->get('warning')}}</p>
-                                @endif
-                                @if(Session()->has('error'))
-                                    <p class="alert alert-fail">{{session()->get('error')}}</p>
-                                @endif
+
+                                {{ alert() }}
 
                                 <thead class="table-dark">
                                 <tr>
