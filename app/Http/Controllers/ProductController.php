@@ -7,7 +7,9 @@ use App\Models\Product;
 use App\Models\PurchasePrice;
 use App\Models\SalesPrice;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -203,6 +205,13 @@ class ProductController extends Controller
     }
 
 
+    /**
+     * Returns products.trashed view with products where deleted_at exists
+     *
+     * @param Request $request
+     *
+     * @return View
+     */
     public function showTrash(Request $request): View
     {
         $searchKeyword = $request['search-field'] ?? '';
@@ -223,6 +232,7 @@ class ProductController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  Product $product
+     *
      * @return RedirectResponse
      */
     public function destroy(Product $product): RedirectResponse
@@ -276,5 +286,76 @@ class ProductController extends Controller
         }
 
         return redirect()->back();
+    }
+
+    /**
+     * @param Request $request
+     *
+     * @return mixed
+     */
+    public function filterProducts(Request $request): mixed
+    {
+        return $this->filteredProducts($request['filterParams']);
+    }
+
+    /**
+     * Returns Products after applying filter param
+     *
+     * @param array $filterParams
+     *
+     * @return mixed
+     */
+    public function filteredProducts(array $filterParams): mixed
+    {
+        $startFormat     = 'Y-m-d';
+        $startDateString = implode(
+            '-',
+            [$filterParams['startYear'], $filterParams['startMonth'], $filterParams['startDay']]
+        );
+
+        if (isZero($filterParams['startYear'])) {
+            $startDateString = implode('-', [$filterParams['startMonth'], $filterParams['startDay']]);
+            $startFormat     = 'm-d';
+        }
+        $startDate     = Carbon::createFromFormat($startFormat, $startDateString)->startOfDay();
+
+        $endFormat     = 'Y-m-d';
+        $endDateString = implode('-', [$filterParams['endYear'], $filterParams['endMonth'], $filterParams['endDay']]);
+
+        if (isZero($filterParams['endYear'])) {
+            $endDateString = implode('-', [$filterParams['endMonth'], $filterParams['endDay']]);
+            $endFormat     = 'm-d';
+        }
+        $endDate = Carbon::createFromFormat($endFormat, $endDateString)->endOfDay();
+
+        try {
+            $products = Product::with('category');
+
+            $products = $filterParams['quantity'] > 0
+                ? $products->where('quantity', '=', $filterParams['quantity'])
+                : $products;
+
+            if (!empty($filterParams['category_ids'])) {
+                $products = $products->whereIn('category_id', $filterParams['category_ids']);
+            }
+
+            switch ([$startDateString == '0-0', $endDateString == '0-0']) {
+                case [false, true]:
+                    $products = $products->whereMonth('created_at', '>=', $startDate);
+                    break;
+                case [true, false]:
+                    $products = $products->whereMonth('created_at', '<=', $endDate);
+                    break;
+                case [false, false]:
+                    $products = $products->whereBetween('created_at', [$startDate, $endDate]);
+                    break;
+            }
+
+            $products = $products->get();
+        } catch (Exception $e) {
+            return false;
+        }
+
+        return $products;
     }
 }

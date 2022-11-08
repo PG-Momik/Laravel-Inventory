@@ -14,6 +14,8 @@ class Role extends Model
     protected $primaryKey = "id";
 
     /**
+     * Returns an array of user object with same role
+     *
      * @return HasMany
      */
     public function users(): HasMany

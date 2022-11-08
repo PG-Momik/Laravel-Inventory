@@ -14,6 +14,8 @@ class Category extends Model
     protected $primaryKey = "id";
 
     /**
+     * Returns an array of Product objects.
+     *
      * @return HasMany
      */
     public function products(): HasMany

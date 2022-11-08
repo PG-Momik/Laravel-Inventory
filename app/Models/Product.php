@@ -18,6 +18,8 @@ class Product extends Model
     protected $primaryKey = "id";
 
     /**
+     * Returns an object of User.
+     *
      * @return BelongsTo
      */
     public function registrant(): belongsTo
@@ -27,6 +29,8 @@ class Product extends Model
     }
 
     /**
+     * Returns an object of Category.
+     *
      * @return BelongsTo
      */
     public function category(): BelongsTo
@@ -43,6 +47,8 @@ class Product extends Model
     }
 
     /**
+     * Returns an array of PurchasePrice objects.
+     *
      * @return HasMany
      */
     public function purchasePrices(): HasMany
@@ -51,6 +57,8 @@ class Product extends Model
     }
 
     /**
+     * Returns a relevant SalesPrice object.
+     *
      * @return HasOne
      */
     public function latestPurchasePrice(): HasOne
@@ -61,6 +69,7 @@ class Product extends Model
     }
 
     /**
+     * Returns an array of SalesPrice objects.
      * @return HasMany
      */
     public function salesPrices(): HasMany
@@ -69,6 +78,8 @@ class Product extends Model
     }
 
     /**
+     * Returns a relevant SalesPrice object.
+     *
      * @return HasOne
      */
     public function latestSalesPrice(): HasOne
