@@ -217,6 +217,10 @@
         </div>
 
     </div>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2dc0c2aa42c14f6ff0103a308fc84dc349b08f2b
     <style>
         .strict-324 {
             width: 324px;
@@ -254,67 +258,63 @@
         }
     </style>
 
-    <script>
-        /* When the user clicks on the button,
-        toggle between hiding and showing the dropdown content */
-        dropdownBtnIcon = document.getElementById('dropdownBtnIcon')
-        dropdownBtnIcon.addEventListener('click', () => myFunction());
+    @push('other-scripts')
+        <script defer>
+            /* When the user clicks on the button,
+            toggle between hiding and showing the dropdown content */
+            function myFunction() {
+                document.getElementById("myDropdown").classList.toggle("show");
+            }
 
-        function myFunction() {
-            document.getElementById("myDropdown").classList.toggle("show");
-        }
-
-        // Close the dropdown if the user clicks out-side of it
-        window.onclick = function (event) {
-            if (!event.target.matches('.dropbtn')) {
-                var dropdowns = document.getElementsByClassName("dropdown-content");
-                var i;
-                for (i = 0; i < dropdowns.length; i++) {
-                    var openDropdown = dropdowns[i];
-                    if (openDropdown.classList.contains('show')) {
-                        openDropdown.classList.remove('show');
+            // Close the dropdown if the user clicks out-side of it
+            window.onclick = function (event) {
+                if (!event.target.matches('.dropbtn')) {
+                    const dropdowns = document.getElementsByClassName("dropdown-content");
+                    let i;
+                    for (i = 0; i < dropdowns.length; i++) {
+                        const openDropdown = dropdowns[i];
+                        if (openDropdown.classList.contains('show')) {
+                            openDropdown.classList.remove('show');
+                        }
                     }
                 }
             }
-        }
-    </script>
 
-    <script defer>
-        filterForm = document.getElementById('filterForm');
-        filterForm.addEventListener('change', function () {
-            const startYear = document.getElementById('startYearField').value || 0;
-            const startMonth = document.getElementById('startMonthField').value || 0;
-            const startDay = document.getElementById('startDayField').value || 0;
-            const endYear = document.getElementById('endYearField').value || 0;
-            const endMonth = document.getElementById('endMonthField').value || 0;
-            const endDay = document.getElementById('endDayField').value || 0;
-            const quantity = document.getElementById('quantityField').value || 0;
-            const checkedCategories = document.getElementsByClassName('categoryCheckbox');
-            let category_ids = [];
+            filterForm = document.getElementById('filterForm');
+            filterForm.addEventListener('change', function () {
+                const startYear = document.getElementById('startYearField').value || 0;
+                const startMonth = document.getElementById('startMonthField').value || 0;
+                const startDay = document.getElementById('startDayField').value || 0;
+                const endYear = document.getElementById('endYearField').value || 0;
+                const endMonth = document.getElementById('endMonthField').value || 0;
+                const endDay = document.getElementById('endDayField').value || 0;
+                const quantity = document.getElementById('quantityField').value || 0;
+                const checkedCategories = document.getElementsByClassName('categoryCheckbox');
+                let category_ids = [];
 
-            for (let i = 0; i < checkedCategories.length; i++) {
-                if (checkedCategories[i].checked)
-                    category_ids.push(checkedCategories[i].value);
-            }
-            let filterParams = {startYear, startMonth, startDay, endYear, endMonth, endDay, quantity, category_ids};
-            filterProducts(filterParams)
-        })
+                for (let i = 0; i < checkedCategories.length; i++) {
+                    if (checkedCategories[i].checked)
+                        category_ids.push(checkedCategories[i].value);
+                }
+                let filterParams = {startYear, startMonth, startDay, endYear, endMonth, endDay, quantity, category_ids};
+                filterProducts(filterParams)
+            })
 
-        function filterProducts(filterParams) {
-            let _token = "{{csrf_token()}}";
-            $.ajax({
-                type: 'post',
-                url: '{{route('filterProducts')}}',
-                data: {
-                    '_token': _token,
-                    'filterParams': filterParams
-                },
-                success: function (data) {
-                    if (data) {
-                        let tableBody = document.getElementById('tableBody');
-                        tableBody.innerHTML = '';
-                        for (let i = 0; i < data.length; i++) {
-                            tableBody.innerHTML = tableBody.innerHTML + `
+            function filterProducts(filterParams) {
+                let _token = "{{csrf_token()}}";
+                $.ajax({
+                    type: 'post',
+                    url: '{{route('filterProducts')}}',
+                    data: {
+                        '_token': _token,
+                        'filterParams': filterParams
+                    },
+                    success: function (data) {
+                        if (data) {
+                            let tableBody = document.getElementById('tableBody');
+                            tableBody.innerHTML = '';
+                            for (let i = 0; i < data.length; i++) {
+                                tableBody.innerHTML = tableBody.innerHTML + `
                                     <tr>
                                         <td>${data[i].name}</td>
                                         <td>
@@ -332,21 +332,24 @@
                                                 <form action=""
                                                       method="post">
                                                     @csrf
-                            @method('delete')
-                            <button
-                                class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 ">
-                                <i class="fa-solid fa-trash"></i>
-                            </button>
+                                @method('delete')
+                                <button
+                                    class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 ">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
 
-                        </form>
-                    </a>
-                </td>
-            </tr>
+                            </form>
+                        </a>
+                    </td>
+                </tr>
 `;
+                            }
                         }
                     }
-                }
-            });
-        }
-    </script>
+                });
+            }
+        </script>
+    @endpush
+
+
 @endsection
