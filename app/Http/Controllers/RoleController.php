@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
@@ -11,6 +12,7 @@ use Illuminate\View\View;
 class RoleController extends Controller
 {
     /**
+     * Returns role.index as view
      * @return View
      */
     public function index(): View
@@ -84,7 +86,14 @@ class RoleController extends Controller
     }
 
 
-    public function demote(int $uid)
+    /**
+     * Returns true if user is demoted
+     *
+     * @param int $uid
+     *
+     * @return mixed
+     */
+    public function demote(int $uid):bool
     {
         $user          = User::findOrFail($uid);
         $user->role_id = $user->role_id + 1;
@@ -92,11 +101,37 @@ class RoleController extends Controller
         return $user->update();
     }
 
-    public function promote(int $uid)
+    /**
+     * Returns true if user is promoted
+     * @param int $uid
+     *
+     * @return mixed
+     */
+    public function promote(int $uid): bool
     {
         $user          = User::findOrFail($uid);
         $user->role_id = $user->role_id - 1;
 
         return $user->update();
+    }
+
+    /**
+     * Returns json value needed for roles.role bar graph
+     *
+     * @return JsonResponse
+     */
+    public function getRoleBasedStats(): JsonResponse
+    {
+        $numberOfAdmins     = Role::withCount('users')->find(1)->users_count;
+        $numberOfNonAdmin   = Role::withCount('users')->find(2)->users_count;
+        $totalNumberOfUsers = $numberOfAdmins + $numberOfNonAdmin;
+
+        return response()->json(
+            [
+                'totalNumberOfUsers' => $totalNumberOfUsers,
+                'numberOfAdmins'     => $numberOfAdmins,
+                'numberOfNonAdmin'   => $numberOfNonAdmin
+            ]
+        );
     }
 }

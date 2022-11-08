@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -108,5 +109,34 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         //
+    }
+
+    /**
+     * Returns  json value needed for categories.category doughnut graph
+     *
+     * @param int  $id
+     * @param bool $detailed
+     *
+     * @return bool|string
+     */
+    public function getCategoryBasedStats(int $id, bool $detailed = false): bool | string
+    {
+        $returnJson = array();
+
+        $total                = Product::sum('quantity');
+        $sumOfRelatedProducts = Product::where('category_id', '=', $id)->sum('quantity');
+        $sumOfOtherProducts   = $total - $sumOfRelatedProducts;
+
+        $returnJson['sumOfRelatedProducts'] = $sumOfRelatedProducts;
+        $returnJson['sumOfOtherProducts']   = $sumOfOtherProducts;
+
+        if ($detailed) {
+            $individualQuantities               = Product::where('category_id', '=', $id)->pluck('quantity', 'name');
+            $returnJson['individualQuantities'] = $individualQuantities;
+            unset($returnJson['sumOfRelatedProducts']);
+        }
+
+
+        return json_encode($returnJson);
     }
 }

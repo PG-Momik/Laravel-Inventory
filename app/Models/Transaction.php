@@ -59,21 +59,4 @@ class Transaction extends Model
     {
         return $this->hasOne(SalesPrice::class, 'id', 'sales_price_id');
     }
-
-
-    //    /**
-    //     * @return BelongsTo
-    //     */
-    //    public function products(): BelongsTo
-    //    {
-    //        return $this->belongsTo(Product::class, 'product_id', 'id');
-    //    }
-    //
-    //    /**
-    //     * @return HasOne
-    //     */
-    //    public function records(): HasOne
-    //    {LI
-    //        return $this->hasOne(Product::class, 'id', 'product_id');
-    //    }
 }

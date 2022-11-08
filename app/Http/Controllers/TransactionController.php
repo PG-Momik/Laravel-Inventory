@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -220,5 +221,22 @@ class TransactionController extends Controller
         $type         = $type . "s";
 
         return view('transactions.typed_transactions')->with(compact('transactions', 'type'));
+    }
+
+    /**
+     * Returns Categories as json for Transaction, make transaction modal
+     * For ajax call
+     *
+     *
+     * @param int $categoryId
+     *
+     * @return JsonResponse
+     */
+    public function categoryProducts(int $categoryId): JsonResponse
+    {
+        $products = Product::where('category_id', '=', $categoryId)
+            ->get(['id', 'name']);
+
+        return response()->json(array('msg' => $products, 200));
     }
 }
