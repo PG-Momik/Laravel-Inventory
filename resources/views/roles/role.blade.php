@@ -226,7 +226,7 @@
                 if (myChart != null) {
                     myChart.destroy();
                 }
-                result = JSON.parse(result);
+
                 const ctx = document.getElementById('myChart').getContext('2d');
                 myChart = new Chart(ctx, {
                     type: 'bar',
