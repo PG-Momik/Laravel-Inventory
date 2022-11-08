@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-
     use HasFactory;
     use SoftDeletes;
 
@@ -24,7 +23,7 @@ class Product extends Model
     public function registrant(): belongsTo
     {
         return $this->belongsTo(User::class, 'registered_by', 'id')
-                    ->select('id', 'name', 'email', 'role_id');
+            ->select('id', 'name', 'email', 'role_id');
     }
 
     /**
@@ -57,10 +56,10 @@ class Product extends Model
     public function latestPurchasePrice(): HasOne
     {
         return $this->hasOne(PurchasePrice::class, 'product_id', 'id')
-                    ->select('id', 'product_id', 'value')
-                    ->latest('created_at');
+            ->select('id', 'product_id', 'value')
+            ->latest('created_at');
     }
-//
+
     /**
      * @return HasMany
      */
@@ -78,5 +77,4 @@ class Product extends Model
             ->select('id', 'product_id', 'value')
             ->latest('created_at');
     }
-
 }

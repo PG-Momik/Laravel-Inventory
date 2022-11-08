@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Transaction extends Model
 {
-
     use HasFactory;
 
     protected $table      = "transactions";
@@ -22,6 +21,7 @@ class Transaction extends Model
 
     /**
      * Returns user who made the transaction.
+     *
      * @return BelongsTo
      */
     public function user(): BelongsTo
@@ -31,6 +31,7 @@ class Transaction extends Model
 
     /**
      * Returns product detail of the transaction.
+     *
      * @return HasOne
      */
     public function product(): hasOne
@@ -41,6 +42,7 @@ class Transaction extends Model
 
     /**
      * Returns purchase price during transaction of a product.
+     *
      * @return HasOne
      */
     public function purchasePriceDuringTransaction(): HasOne
@@ -50,6 +52,7 @@ class Transaction extends Model
 
     /**
      * Returns sales price during transaction of a product.
+     *
      * @return HasOne
      */
     public function salesPriceDuringTransaction(): HasOne
@@ -59,20 +62,18 @@ class Transaction extends Model
 
 
     //    /**
-//     * @return BelongsTo
-//     */
-//    public function products(): BelongsTo
-//    {
-//        return $this->belongsTo(Product::class, 'product_id', 'id');
-//    }
-//
-//    /**
-//     * @return HasOne
-//     */
-//    public function records(): HasOne
-//    {LI
-//        return $this->hasOne(Product::class, 'id', 'product_id');
-//    }
-
-
+    //     * @return BelongsTo
+    //     */
+    //    public function products(): BelongsTo
+    //    {
+    //        return $this->belongsTo(Product::class, 'product_id', 'id');
+    //    }
+    //
+    //    /**
+    //     * @return HasOne
+    //     */
+    //    public function records(): HasOne
+    //    {LI
+    //        return $this->hasOne(Product::class, 'id', 'product_id');
+    //    }
 }
