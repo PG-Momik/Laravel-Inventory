@@ -204,11 +204,7 @@
                                 </tr>
                                 </thead>
                                 <tbody id="tableBody">
-<<<<<<< HEAD
-                                @each('layouts.iterative.product', $products, 'product')
-=======
                                 @each('layouts.iterative.product', $products, 'product', 'layouts.iterative.no_product')
->>>>>>> 81fb281 (- phpcs changes + more)
                                 </tbody>
 
                             </table>
@@ -221,10 +217,6 @@
         </div>
 
     </div>
-<<<<<<< HEAD
-
-=======
->>>>>>> 81fb281 (- phpcs changes + more)
     <style>
         .strict-324 {
             width: 324px;
