@@ -90,7 +90,7 @@ Route::middleware(['auth'])->group(
 
         Route::resource('products', ProductController::class);
 
-
+        Route::post('/categories/search', [CategoryController::class, 'index'])->name('categories.search');
         Route::resource('categories', CategoryController::class);
 
 
@@ -108,9 +108,8 @@ Route::middleware(['auth'])->group(
 
         Route::get('/ajax/category/{id}/products', [AjaxController::class, 'categoryProducts']);
         Route::post('/ajax/products/filter', [AjaxController::class, 'filterProducts'])->name('filterProducts');
-        Route::get('/ajax/getstats/category/{id}/{detailed?}', [AjaxController::class, 'getCategoryBasedStats'])->name(
-            'category-stats'
-        );
+        Route::get('/ajax/getstats/category/{id}/{detailed?}', [AjaxController::class, 'getCategoryBasedStats'])
+            ->name('category-stats');
         Route::get('/ajax/getstats/roles', [AjaxController::class, 'getRoleBasedStats'])->name('roles-stats');
     }
 );

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Role extends Model
 {
-
     use HasFactory;
 
     protected $table      = "roles";
@@ -21,5 +20,4 @@ class Role extends Model
     {
         return $this->hasMany(User::class, 'role_id', 'id');
     }
-
 }

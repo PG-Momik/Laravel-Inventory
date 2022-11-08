@@ -13,13 +13,15 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
 
     use HasFactory;
     use SoftDeletes;
 
     protected $table      = "users";
-    public    $primaryKey = "id";
+    public $primaryKey = "id";
 
     /**
      * The attributes that are mass assignable.
@@ -54,7 +56,8 @@ class User extends Authenticatable
     ];
 
     /**
-     *Returns user role.
+     * Returns user role.
+     *
      * @return BelongsTo
      */
     public function role(): BelongsTo
@@ -64,6 +67,7 @@ class User extends Authenticatable
 
     /**
      * Returns products registered by user.
+     *
      * @return HasMany
      */
     public function registeredProducts(): HasMany
@@ -73,6 +77,7 @@ class User extends Authenticatable
 
     /**
      * Returns all user transactions.
+     *
      * @return HasMany
      */
     public function transactions(): HasMany
@@ -83,6 +88,7 @@ class User extends Authenticatable
 
     /**
      * Returns all user purchases.
+     *
      * @return HasMany
      */
     public function purchases(): HasMany
@@ -93,6 +99,7 @@ class User extends Authenticatable
 
     /**
      * Returns all user sales.
+     *
      * @return HasMany
      */
     public function sales(): HasMany
@@ -100,6 +107,4 @@ class User extends Authenticatable
         return $this->hasMany(Transaction::class, 'user_id', 'id')
             ->where('type', '=', Transaction::TYPE['sales']);
     }
-
-
 }

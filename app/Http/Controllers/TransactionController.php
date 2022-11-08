@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Models\Category;
@@ -16,7 +15,6 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -51,7 +49,9 @@ class TransactionController extends Controller
      *
      * @return void
      */
-    public function create(): void {}
+    public function create(): void
+    {
+    }
 
     /**
      * Check transaction type
@@ -61,17 +61,19 @@ class TransactionController extends Controller
      * Save transaction
      *
      * @param Request $request
+     *
      * @return RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
-
         $product = Product::with('latestPurchasePrice')->with('latestSalesPrice')->find($request['productId']);
 
         $transactionType = $request['transactionType'];
 
         $transaction                    = new Transaction();
-        $transaction->type              = $transactionType == 1 ? $transaction::TYPE['purchase'] : $transaction::TYPE['sales'];
+        $transaction->type              = $transactionType == 1
+            ? $transaction::TYPE['purchase']
+            : $transaction::TYPE['sales'];
         $transaction->user_id           = Auth::user()->id;
         $transaction->product_id        = $product->id;
         $transaction->sales_price_id    = $product->latestSalesPrice->id;
@@ -86,10 +88,10 @@ class TransactionController extends Controller
         $foreignKey = 'purchase_price_id';
         $discount   = 0;
 
-        if ( $request['transactionType'] == 2 ) {
-
-            if($request['salesQuantity']>$product->quantity){
+        if ($request['transactionType'] == 2) {
+            if ($request['salesQuantity'] > $product->quantity) {
                 session()->flash('warning', "Cannot make sales of $request->salesQuantity items. Check stock.");
+
                 return back();
             }
 
@@ -106,9 +108,8 @@ class TransactionController extends Controller
         try {
             $product->quantity = $product->quantity + ($modifier * $request[$quantity]);
 
-            if ( $product->$latest->value != $request[$price] ) {
-
-                $object             = new $class;
+            if ($product->$latest->value != $request[$price]) {
+                $object             = new $class();
                 $object->product_id = $request['productId'];
                 $object->value      = $request[$price];
                 $object->save();
@@ -124,19 +125,18 @@ class TransactionController extends Controller
             $product->save();
 
             session()->flash('success', 'Transaction entry made.');
-        } catch ( Exception $e ) {
+        } catch (Exception $e) {
             session()->flash('error', 'Something went wrong. Transaction entry not made.');
         }
 
         return back();
-
-
     }
 
     /**
      * Display the specified resource.
      *
      * @param Transaction $transaction
+     *
      * @return View
      */
     public function show(Transaction $transaction): View
@@ -161,7 +161,8 @@ class TransactionController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param int $id
+     * @param int     $id
+     *
      * @return Response
      */
     public function update(Request $request, $id): Response
@@ -173,6 +174,7 @@ class TransactionController extends Controller
      * Remove the specified resource from storage.
      *
      * @param int $id
+     *
      * @return Response
      */
     public function destroy($id): Response
@@ -185,6 +187,7 @@ class TransactionController extends Controller
      * Create and Show PDF
      *
      * @param Transaction $transaction
+     *
      * @return Response
      */
     public function createPDF(Transaction $transaction): Response
@@ -204,11 +207,11 @@ class TransactionController extends Controller
 
     /**
      * @param string $type
+     *
      * @return view
      */
     public function showTransactions(string $type): view
     {
-
         $type         = ucfirst($type);
         $transactions = Transaction::with('product')
             ->where('type', '=', $type)
@@ -218,5 +221,4 @@ class TransactionController extends Controller
 
         return view('transactions.typed_transactions')->with(compact('transactions', 'type'));
     }
-
 }
