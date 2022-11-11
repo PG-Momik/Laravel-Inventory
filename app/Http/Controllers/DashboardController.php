@@ -228,8 +228,8 @@ class DashboardController extends Controller
      */
     public function getOneMonthsDailyTransactions($year, $month): JsonResponse
     {
-        $purchases      = $this->getOneMonthsDaily('Sale', $year, $month)->toArray();
-        $sales          = $this->getOneMonthsDaily('Purchase', $year, $month)->toArray();
+        $purchases      = $this->getOneMonthsDaily('Purchase', $year, $month)->toArray();
+        $sales          = $this->getOneMonthsDaily('Sale', $year, $month)->toArray();
         $dailyPurchases = [];
         $dailySales     = [];
 
@@ -376,101 +376,4 @@ class DashboardController extends Controller
 
         return $object;
     }
-
-    //-----------------------------------------------------------------
-
-    //
-    //    public function getValuesForLineGraph($type = '')
-    //    {
-    //        return match ($type) {
-    //            'annual' => $this->getAnnualTransactionSeperatedValues(),
-    //            default => $this->getMonthlyTransactionSeperatedValues(),
-    //        };
-    //    }
-    //
-    //
-    //    /**
-    //     * Returns json object of daily purchases and sales in a month .
-    //     * Returns an object with properties dailyPurchases and dailySales
-    //     * Both those property are a array of object with properties month, day and sum
-    //     * Used for getting transaction line graph data
-    //     *
-    //     * @return JsonResponse
-    //     */
-    //    public function getMonthlyTransactionSeperatedValues(): JsonResponse
-    //    {
-    //        return response()->json(
-    //            [
-    //                "dailyPurchases" => $this->getThisMonthsDailyPurchaseQuantity(),
-    //                "dailySales"     => $this->getThisMonthsDailySalesQuantity()
-    //            ]
-    //        );
-    //    }
-    //
-    //    /**
-    //     * @return JsonResponse
-    //     */
-    //    public function getAnnualTransactionSeperatedValues(): JsonResponse
-    //    {
-    //        return $this->getMonthlyTransactionsAggregateQuantity('sum');
-    //    }
-    //
-    //    /**
-    //     * Returns an array of objects of each product name, quanity and id
-    //     * Has properties name, quantity and id
-    //     *
-    //     * @return JsonResponse
-    //     */
-    //    public function getAllProductsQuantity(): JsonResponse
-    //    {
-    //        return response()->json(Product::get(['name', 'quantity', 'id']));
-    //
-    //    }
-    //
-    //    /**
-    //     *Returns an array of objects of sum of each product quantity belonging to a category
-    //     * Properties are id, name, products_sum_quantity
-    //     *
-    //     * @return JsonResponse
-    //     */
-    //    public function getCategoryBasedProductQuantity(): JsonResponse
-    //    {
-    //        $categories = Category::withSum('products', 'quantity')->get();
-    //        $categories = $this->sanitizeObjectArray($categories);
-    //
-    //        return response()->json($categories);
-    //    }
-    //
-    //
-    //    /**
-    //     * Returns an array of objects/collections that represent daily purchase quantity
-    //     * Properties are month, day and sum
-    //     * Used by getMonthlyTransactions
-    //     *
-    //     * @return Collection
-    //     */
-    //    public function getThisMonthsDailyPurchaseQuantity(): Collection
-    //    {
-    //        return DB::table('transactions')
-    //            ->select(DB::raw('MONTH(created_at) as month, DAY(created_at) as day, SUM(quantity) as sum'))
-    //            ->whereRaw("type='Purchase' AND MONTH(created_at) = " . (Carbon::now()->month - 1))
-    //            ->groupByRaw('MONTH(created_at), DAY(created_at)')
-    //            ->get();
-    //    }
-    //
-    //    /**
-    //     * Returns an array of objects/collections that represent daily sales quantity
-    //     * Properties are month, day and sum
-    //     * Used by getMonthlyTransactions()
-    //     *
-    //     * @return Collection
-    //     */
-    //    public function getThisMonthsDailySalesQuantity(): Collection
-    //    {
-    //        return DB::table('transactions')
-    //            ->select(DB::raw('MONTH(created_at) as month, DAY(created_at) as day, SUM(quantity) as sum'))
-    //            ->whereRaw("type='Sale' AND MONTH(created_at) = " . (Carbon::now()->month - 1))
-    //            ->groupByRaw('MONTH(created_at), DAY(created_at)')
-    //            ->get();
-    //    }
 }
