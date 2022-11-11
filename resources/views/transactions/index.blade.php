@@ -28,14 +28,23 @@
                         {{ alert() }}
 
                         {{--Button trigger modal--}}
-                        <div class="col-12 d-flex justify-content-center">
-                            <ul class="col-lg-8 col-12 list-group gy-2">
+                        <div class="col-12 row mx-0 px-0 justify-content-between">
+                            {{--QR Button--}}
+                            <button type="button"
+                                    class="btn btn-secondary col-2 fs-5"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#cameraModal">
+                                <i class="fa-solid fa-qrcode"></i> QR
+                            </button>
 
-                                <button type="button" class="btn btn-dark py-3 fs-5" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal">
-                                    <i class="fa-solid fa-plus mx-2"></i> Make Transaction
-                                </button>
-                            </ul>
+                            {{--Make Transaction Btn--}}
+                            <button type="button"
+                                    id="makeTransactionBtn"
+                                    class="btn btn-dark py-3 fs-5 col-10"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                <i class="fa-solid fa-plus mx-2"></i> Make Transaction
+                            </button>
                         </div>
 
                         {{--Recent sales--}}
@@ -263,6 +272,29 @@
                             </div>
                         </div>
 
+                        {{--Camera Modal--}}
+                        <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="cameraModalLabel">Scan QR code here</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body d-flex">
+                                        <video id="preview" class="border-black"></video>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Close
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
 
@@ -270,8 +302,15 @@
         </div>
 
     </div>
-
+    <style>
+        #preview {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
     @push('other-scripts')
         <script src="{{asset('scripts/transactionIndex.js')}}" defer></script>
+        <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+        <script src="{{asset('scripts/qrScripts.js')}}"></script>
     @endpush
 @endsection

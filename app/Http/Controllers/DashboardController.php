@@ -49,9 +49,9 @@ class DashboardController extends Controller
     }
 
 
-    public function test(): string
+    public function test(): view
     {
-        return "okok";
+        return view('dashboard.test');
     }
 
 
