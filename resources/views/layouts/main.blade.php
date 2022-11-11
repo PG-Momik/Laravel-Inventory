@@ -87,7 +87,6 @@
                         <i class="fa-solid fa-tags fs-4"></i><span class="mx-2 d-none d-lg-inline">Categories</span>
                     </a>
                 </li>
-
                 <li class="nav-item d-links fs-5 justify-content-lg-start justify-content-center text-center">
                     <a href="{{ route('dashboard.logout') }}" class="m-0 my-1 nav-link text-purple"
                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -96,6 +95,11 @@
                     <form id="logout-form" action="{{ route('logout') }}" method="POST">
                         @csrf
                     </form>
+                </li>
+                <li class="nav-item  d-links fs-5 justify-content-lg-start justify-content-center text-center @yield('activeCategories', '')">
+                    <a href="{{route('dashboard.test')}}" class="m-0 my-1 nav-link text-purple">
+                        <i class="fa-solid fa-tags fs-4"></i><span class="mx-2 d-none d-lg-inline">test qr</span>
+                    </a>
                 </li>
             </ul>
         </div>

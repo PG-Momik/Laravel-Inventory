@@ -86,7 +86,7 @@ function showNextRow(index) {
     }
 }
 
-function getProductsList(categoryId) {
+function getProductsList(categoryId, selectedId = '') {
     $.ajax({
         type: 'GET',
         url: `/ajax/category/${categoryId}/products`,
@@ -99,13 +99,13 @@ function getProductsList(categoryId) {
             let productSelect = document.getElementById('productSelect');
             productSelect.innerHTML = '';
 
-            makeSelectOption(result);
+            makeSelectOption(result, selectedId);
 
         }
     });
 }
 
-function makeSelectOption(products) {
+function makeSelectOption(products, selectedId = '') {
     const productSelect = document.getElementById('productSelect');
     productSelect.innerHTML = `<option selected value='invalid'>Select product.</option>`;
     if (products.length === 0) {
@@ -117,6 +117,9 @@ function makeSelectOption(products) {
         option.setAttribute('value', products[i].id);
         option.textContent = products[i].name;
         productSelect.appendChild(option)
+    }
+    if (selectedId.length !== 0) {
+        productSelect.value = selectedId;
     }
 }
 

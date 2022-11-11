@@ -83,6 +83,8 @@ Route::middleware(['auth'])->group(
             ->name('products.delete');
         Route::post('/products/search', [ProductController::class, 'index'])
             ->name('products.search');
+        Route::get('/products/details/{id}', [ProductController::class, 'productDetails'])
+            ->name('products.details');
         Route::resource('products', ProductController::class);
 
 

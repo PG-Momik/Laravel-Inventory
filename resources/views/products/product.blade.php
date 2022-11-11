@@ -60,13 +60,15 @@
                             <dl class="row">
                                 <h3>{{$product['name']}}</h3>
                                 <div class="col-md-8 col-12 row mx-0">
-                                    <dt class="col-md-4 col-12"><i class="fa-solid fa-dollar-sign"></i> Purchase Price</dt>
+                                    <dt class="col-md-4 col-12"><i class="fa-solid fa-dollar-sign"></i> Purchase Price
+                                    </dt>
                                     <dd class="col-md-8 col-12"><b>Rs.</b>{{$product->latestPurchasePrice->value}}</dd>
 
-                                   <dt class="col-md-4 col-12"><i class="fa-solid fa-dollar-sign"></i> Sales Price</dt>
+                                    <dt class="col-md-4 col-12"><i class="fa-solid fa-dollar-sign"></i> Sales Price</dt>
                                     <dd class="col-md-8 col-12"><b>Rs.</b>{{$product->latestSalesPrice->value}}</dd>
 
-                                    <dt class="col-md-4 col-12"><i class="fa-sharp fa-solid fa-tags"></i> Categories</dt>
+                                    <dt class="col-md-4 col-12"><i class="fa-sharp fa-solid fa-tags"></i> Categories
+                                    </dt>
                                     <dd class="col-md-8 col-12">
                                         {{$product->category->name}}
                                     </dd>
@@ -77,8 +79,8 @@
 
                                 <div class="row mx-0 col-md-4 col-12 d-flex justify-content-center align-items-center">
                                     @if($product->image)
-                                        {{--<img src="{{Storage::disk('localStorage')->url('axb.png')}}" alt="" width="300" height="200">--}}
-                                        <img src="{{asset('storage/images/'.$product->image)}}" alt="" width="300" height="200">
+{{--                                        <img src="{{Storage::disk('localStorage')->url('axb.png')}}" alt="" width="300" height="200">--}}
+                                        <img src="{{asset('storage/images/'.$product->image)}}" alt="" style="width: 180px ; height:200px">
                                     @else
                                         <div class="text-center"><i class="fa-solid fa-image fs-1"></i></div>
                                         <div class="text-center">No Image Available</div>
@@ -105,8 +107,17 @@
                                     </dd>
                                 </div>
 
-                                <dd class="col-12 row mx-0 px-0 justify-content-end">
-                                    <div class="col-xl-3 col-md-4 col-12 row mx-0 g-2">
+                                <dd class="col-12 row mx-0 px-0 justify-content-between">
+                                    <div class="col-lg-2 col-12 text-center">
+                                            {!! QrCode::size(160)->generate($product->id) !!}
+                                            <button id="downloadPNG"
+                                                    class="btn btn-md bg-outline-dark col-12 round-this my-2"
+                                                    onclick="drawToCanvas({{$product->id}})">
+                                                <i class="fa-solid fa-download"></i>QR
+                                            </button>
+                                            <canvas id="canvas" class=""></canvas>
+                                    </div>
+                                    <div class="col-lg-2 col-12 align-items-middle">
                                         <a href="{{route('products.edit', ['product'=>$product])}}"
                                            class="no-underline">
                                             <button class="btn btn-md bg-outline-blue text-blue col-12 round-this">
@@ -122,10 +133,8 @@
                                                     class="btn btn-md-3 bg-outline-yellow text-yellow col-12 round-this">
                                                     <i class="fa-solid fa-trash"></i> Trash
                                                 </button>
-
                                             </form>
                                         </a>
-
                                     </div>
                                 </dd>
 
@@ -141,5 +150,8 @@
 
     </div>
 
+    @push('other-scripts')
+        <script src="{{asset('scripts/qrDownload.js')}}"></script>
+    @endpush
 @endsection
 

@@ -146,7 +146,7 @@
                                                     <div>
                                                         <img src="{{asset('storage/images/'.$product->image)}}"
                                                              alt="Cannot render image."
-                                                             class="w-100"
+                                                             style="width: 180px"
                                                              id="actualImage"
                                                         >
                                                         <input type="file"
@@ -157,7 +157,7 @@
                                                     <div>
                                                         <div class="">
                                                             <img src="{{asset('images/camera.png')}}"
-                                                                 id="actualImage" alt="No Image Available">
+                                                                 id="actualImage" alt="No Image Available" style="width: 180px">
                                                         </div>
                                                         <div class="text-pm-grey" id="noImageText">No Image Available
                                                         </div>
