@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Models\User;
+use App\Notifications\AlmostOutOfStock;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Contracts\View\View;
@@ -12,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
@@ -124,6 +127,11 @@ class TransactionController extends Controller
             $transaction->save();
 
             $product->save();
+
+            if ($product->quantity <= AlmostOutOfStock::MINIMUM_COUNT) {
+                $users =  User::all();
+                Notification::send($users, new AlmostOutOfStock($product));
+            }
 
             session()->flash('success', 'Transaction entry made.');
         } catch (Exception $e) {
