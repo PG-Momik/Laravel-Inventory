@@ -4,8 +4,6 @@ namespace App\Notifications;
 
 use App\Models\Product;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 class AlmostOutOfStock extends Notification
@@ -21,13 +19,14 @@ class AlmostOutOfStock extends Notification
      */
     public function __construct(Product $product)
     {
-        $this->product =  $product;
+        $this->product = $product;
     }
 
     /**
      * Get the notification's delivery channels.
      *
-     * @param  mixed  $notifiable
+     * @param mixed $notifiable
+     *
      * @return array
      */
     public function via($notifiable)
@@ -37,6 +36,10 @@ class AlmostOutOfStock extends Notification
 
     public function toArray($notifiable)
     {
-        return "Product: ".$this->product->name." is running out of stock.";
+        if ( $this->product->quantity === 0 ) {
+            return "Product: " . $this->product->name . " is out of stock.";
+        }
+
+        return "Product: " . $this->product->name . " is running out of stock.";
     }
 }
