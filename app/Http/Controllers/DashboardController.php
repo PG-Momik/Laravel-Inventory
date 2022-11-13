@@ -6,7 +6,6 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Transaction;
 use Carbon\Carbon;
-use Cassandra\Exception\DivideByZeroException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
@@ -23,26 +22,25 @@ class DashboardController extends Controller
     public function index(): View
     {
         try {
-            $yesterdaysTransactionQuantity = $this->getYesterdaysTransactionQuantity();
+            $yesterdaysQty = $this->yesterdaysQtyFor(Transaction::TYPE['purchase'])
+                +
+                $this->yesterdaysQtyFor(Transaction::TYPE['sales']);
 
-            $monthlyTransactionsArray          = $this->getMonthlyTransactionsAggregateQuantity('avg');
-            try {
-                $monthlyTransactionQuantityAverage = $this->extractAverage($monthlyTransactionsArray);
-            } catch (DivideByZeroException $e) {
-                $monthlyTransactionQuantityAverage = 0;
-            }
+            $monthlyTransactionQtyAvg = $this->extractAverage(
+                $this->monthlyAverageQtyFor(Transaction::TYPE['purchase']),
+                $this->monthlyAverageQtyFor(Transaction::TYPE['sales'])
+            );
 
-            $overallPurchaseTransactionQuantity = $this->getOverallPurchaseQuantity();
-
-            $overallSalesTransactionQuantity = $this->getOverallSalesQuantity();
+            $overallPurchaseTransactionQty = $this->overallQtyFor(Transaction::TYPE['purchase']);
+            $overallSalesTransactionQty    = $this->overallQtyFor(Transaction::TYPE['sales']);
         } catch (Exception $e) {
         }
 
         $cardsValues = [
-            'yesterdaysTransactionQuantity'      => $yesterdaysTransactionQuantity ?? 0,
-            'monthlyTransactionQuantityAverage'  => $monthlyTransactionQuantityAverage ?? 0,
-            'overallPurchaseTransactionQuantity' => $overallPurchaseTransactionQuantity ?? 0,
-            'overallSalesTransactionQuantity'    => $overallSalesTransactionQuantity ?? 0
+            'yesterdaysTransactionQuantity'     => $yesterdaysQty ?? 0,
+            'monthlyTransactionQuantityAverage' => $monthlyTransactionQtyAvg ?? 0,
+            'totalPurchaseTransactionQuantity'  => $overallPurchaseTransactionQty ?? 0,
+            'totalSalesTransactionQuantity'     => $overallSalesTransactionQty ?? 0
         ];
 
         return view('dashboard.index')->with(compact('cardsValues'));
@@ -54,77 +52,6 @@ class DashboardController extends Controller
         return view('dashboard.test');
     }
 
-
-    /**
-     * Used in index() for getting number of transactions made yesterday (int)
-     *
-     * @return int
-     */
-    public function getYesterdaysTransactionQuantity(): int
-    {
-        return Transaction::whereDate('created_at', Carbon::yesterday())->pluck('quantity')->sum() ?? 0;
-    }
-
-    /**
-     * Used in index() for getting monthly transactions average
-     * Can return sum or average of transactions as a whole
-     *
-     * @param  $aggregate
-     * @return Collection
-     */
-    public function getMonthlyTransactionsAggregateQuantity($aggregate): Collection
-    {
-        $aggregateQuery = $aggregate == 'sum' ? "sum(quantity) as sum" : "avg(quantity) as avg";
-
-        return DB::table('transactions')
-            ->select(DB::raw("MONTH(created_at) as month, $aggregateQuery"))
-            ->groupByRaw('MONTH(created_at)')
-            ->get();
-    }
-
-    /**
-     * Used in index() for getting overall purchase
-     *
-     * @return int
-     */
-    public function getOverallPurchaseQuantity(): int
-    {
-        return Transaction::where('type', '=', Transaction::TYPE['purchase'])
-            ->pluck('quantity')
-            ->sum() ?? 0;
-    }
-
-    /**
-     * Used in index() for getting overall sales
-     *
-     * @return int
-     */
-    public function getOverallSalesQuantity(): int
-    {
-        return Transaction::where('type', '=', Transaction::TYPE['sales'])
-            ->pluck('quantity')
-            ->sum();
-    }
-
-    /**
-     * Returns values for dashboard line-graph based on the type of viewing mode(select option)
-     * Overall returns The total transaction quantity grouped by year
-     * Annual returns the annual transaction quantity grouped by month
-     * Default returns the monthly transaction quantity grouped by days (till 32)
-     *
-     * @param  $type
-     * @return JsonResponse
-     */
-    public function getValuesForLineGraph($type = ''): JsonResponse
-    {
-        return match ($type) {
-            'overall' => $this->getOverallAnnualTransactions(),
-            'annual' => $this->getOneYearsMonthlyTransactions(Carbon::now()->format('Y')),
-            default => $this->getOneMonthsDailyTransactions(2022, Carbon::now()->format('m')),
-        };
-    }
-
-
     /**
      * Returns collection of Transaction Model based on product id
      * Set $type = Purchase or Sales if Collection of Purchase or Sales transaction is needed
@@ -132,16 +59,17 @@ class DashboardController extends Controller
      * Set $aggregate = avg if average quantity per transaction is needed. Default behaviour is sum
      *
      * @param  $productId
-     * @param  $type
-     * @param  $quantity
-     * @param  $aggregate
+     * @param string $type
+     * @param bool $quantity
+     * @param string $aggregate
+     *
      * @return float|int|Collection
      */
     public function transactionDetails(
         $productId,
-        $type = '',
-        $quantity = false,
-        $aggregate = 'sum'
+        string $type = '',
+        bool $quantity = false,
+        string $aggregate = 'sum'
     ): float | int | Collection {
         $transactions = Transaction::query();
         $transactions->where('product_id', '=', $productId);
@@ -171,6 +99,7 @@ class DashboardController extends Controller
      * @param  $type
      * @param  $year
      * @param  $month
+     *
      * @return Collection
      */
     public function getOneMonthsDaily($type, $year, $month): Collection
@@ -189,6 +118,7 @@ class DashboardController extends Controller
      *
      * @param  $type
      * @param  $year
+     *
      * @return Collection
      */
     public function getOneYearsMonthly($type, $year): Collection
@@ -200,13 +130,13 @@ class DashboardController extends Controller
             ->pluck('sum', 'month');
     }
 
-
     /**
      * Returns annual purchase or sale transaction quantity as an assoc array,
      * [year => sumOfTransactionQuantityThatYear]
      * Used by getOverallAnnualTransactions()
      *
      * @param  $type
+     *
      * @return Collection
      */
     public function getOverallAnnual($type): Collection
@@ -219,11 +149,57 @@ class DashboardController extends Controller
     }
 
     /**
+     * Used in index() for getting overall purchase/sale
+     *
+     * @param string $type
+     *
+     * @return int
+     */
+    public function overallQtyFor(string $type): int
+    {
+        return Transaction::where('type', '=', $type)
+            ->sum('quantity') ?? 0;
+    }
+
+    /**
+     * Returns yesterday's purchase/sale quantity based on param
+     *
+     * @param string $type
+     *
+     * @return int
+     */
+    public function yesterdaysQtyFor(string $type): int
+    {
+        return Transaction::whereDate('created_at', Carbon::yesterday())
+            ->where('type', $type)
+            ->sum('quantity') ?? 0;
+    }
+
+    /**
+     * Returns monthly average quantity of purchase/sale based on param
+     *
+     * @param string $type
+     *
+     * @return float|int
+     */
+    public function monthlyAverageQtyFor(string $type): float | int
+    {
+        return Transaction::whereYear('created_at', Carbon::now()->year)
+                ->where('type', $type)
+                ->sum('quantity') / 12;
+    }
+
+    /**
+     * --------------------Ajax request methods--------------------
+     */
+
+    /**
      * Uses geOneMonthsDaily() for each type of transaction to return a json array of dailyPurchases and dailySales
      * Used by getValuesForLineGraph()
      *
      * @param  $year
      * @param  $month
+     *
      * @return JsonResponse
      */
     public function getOneMonthsDailyTransactions($year, $month): JsonResponse
@@ -251,6 +227,7 @@ class DashboardController extends Controller
      * Used by getValuesForLineGraph()
      *
      * @param  $year
+     *
      * @return JsonResponse
      */
     public function getOneYearsMonthlyTransactions($year): JsonResponse
@@ -277,36 +254,63 @@ class DashboardController extends Controller
      * Uses getOverallAnnual() for each year since inception to return a json array of annualPurchases and annualSales
      * Used by getValuesForLineGraph()
      *
+     * @param string $only
+     *
      * @return JsonResponse
      */
-    public function getOverallAnnualTransactions(): JsonResponse
+    public function getOverallAnnualTransactions(string $only = ''): JsonResponse
     {
-        $sales           = $this->getOverallAnnual('Sale')->toArray();
-        $purchases       = $this->getOverallAnnual('Purchase')->toArray();
+        $sales           = $this->getOverallAnnual(Transaction::TYPE['sales'])->toArray();
+        $purchases       = $this->getOverallAnnual(Transaction::TYPE['purchase'])->toArray();
         $annualPurchases = [];
         $annualSales     = [];
 
-        for ($i = 2020; $i <= 2023; $i++) {
+        for ($i = 2021; $i <= 2022; $i++) {
             $annualPurchases[$i] = array_key_exists($i, $purchases) ? $purchases[$i] : 0;
             $annualSales[$i]     = array_key_exists($i, $sales) ? $sales[$i] : 0;
         }
 
-        return response()->json(
-            [
-                "annualPurchases" => $annualPurchases,
-                "annualSales"     => $annualSales
-            ]
-        );
+        if (empty($only)) {
+            return response()->json(
+                [
+                    "annualPurchases" => $annualPurchases,
+                    "annualSales"     => $annualSales
+                ]
+            );
+        }
+
+        return $only == 'Purchase'
+            ? response()->json(['annualPurchases' => $annualPurchases])
+            : response()->json(['annualSales' => $annualSales]);
     }
 
-
     /**
-     * Returns total quantity of products in stock grouped by either category or product
+     * Returns values for dashboard line-graph based on the type of viewing mode(select option)
+     * Overall returns The total transaction quantity grouped by year
+     * Annual returns the annual transaction quantity grouped by month
+     * Default returns the monthly transaction quantity grouped by days (till 32)
      *
-     * @param  $type
+     * @param string $type
+     *
      * @return JsonResponse
      */
-    public function getValuesForPieChart($type = ''): JsonResponse
+    public function getValuesForLineGraph(string $type = ''): JsonResponse
+    {
+        return match ($type) {
+            'overall' => $this->getOverallAnnualTransactions(),
+            'annual' => $this->getOneYearsMonthlyTransactions(Carbon::now()->format('Y')),
+            default => $this->getOneMonthsDailyTransactions(2022, Carbon::now()->format('m')),
+        };
+    }
+
+    /**
+     * Returns total quantity of products in stock grouped by category/product based on param
+     *
+     * @param string $type
+     *
+     * @return JsonResponse
+     */
+    public function getValuesForPieChart(string $type = ''): JsonResponse
     {
         if ($type == 'Products') {
             return response()->json(Product::pluck('quantity', 'name'));
@@ -315,65 +319,65 @@ class DashboardController extends Controller
         return response()->json(Category::withSum('products', 'quantity')->pluck('products_sum_quantity', 'name'));
     }
 
-
-
-    //-------------Utility functions---------------------------
+    /**
+     * Returns extra values for card 0 to 3 on dashboard.index page
+     *
+     * @param int $cardNo
+     *
+     * @return JsonResponse
+     */
+    public function getValueForCard(int $cardNo): JsonResponse
+    {
+        return match ($cardNo) {
+            0 => response()->json(
+                [
+                    'yesterdaysPurchaseQuantity' => $this->yesterdaysQtyFor(Transaction::TYPE['purchase']),
+                    'yesterdaysSalesQuantity'    => $this->yesterdaysQtyFor(Transaction::TYPE['sales']),
+                ]
+            ),
+            1 => response()->json(
+                [
+                    'monthlyPurchaseQuantityAverage' => $this->monthlyAverageQtyFor(Transaction::TYPE['purchase']),
+                    'monthlySalesQuantityAverage'    => $this->monthlyAverageQtyFor(Transaction::TYPE['sales']),
+                ]
+            ),
+            2 => $this->getOverallAnnualTransactions(Transaction::TYPE['purchase']),
+            3 => $this->getOverallAnnualTransactions(Transaction::TYPE['sales']),
+            default => response()->json(['message' => 'Not found.'], 404),
+        };
+    }
 
     /**
-     * Extracts average from collection
+     * --------------------End of Ajax request methods--------------------
+     */
+
+    /**
+     * --------------------Utility functions--------------------
+     */
+
+    /**
+     * Extracts average from array
      * Used by $monthlyTransactionQuantityAverage
      *
      * @param  $array
+     *
      * @return float|int
      */
-    public function extractAverage($array): float | int
+    public function extractAverage(...$array): float | int
     {
         $sum = 0;
         foreach ($array as $item) {
-            $sum = $item->avg + $sum;
+            $sum = $item + $sum;
         }
 
-        return $sum / $array->count();
+        try {
+            return $sum / sizeof($array);
+        } catch (Exception $e) {
+            return 0;
+        }
     }
 
     /**
-     * For array of objects
-     * Removes created_at field and updated_at field
-     * Replaces null with zero if products_sum_quantity = 0
-     *
-     * @param  $array
-     * @return mixed
+     * --------------------End of Utility functions--------------------
      */
-    public function sanitizeObjectArray($array): mixed
-    {
-        foreach ($array as $key => $item) {
-            $item        = $this->sanitizeObject($item);
-            $array[$key] = $item;
-        }
-
-        return $array;
-    }
-
-    /**
-     * For single object
-     * Removes created_at field and updated_at field
-     * Replaces null with zero if products_sum_quantity = 0
-     *
-     * @param  $object
-     * @return mixed
-     */
-    public function sanitizeObject($object): mixed
-    {
-        if ($object->created_at) {
-            unset($object->created_at);
-        }
-        if ($object->updated_at) {
-            unset($object->updated_at);
-        }
-        if (is_null($object->products_sum_quantity)) {
-            $object->products_sum_quantity = 0;
-        }
-
-        return $object;
-    }
 }
