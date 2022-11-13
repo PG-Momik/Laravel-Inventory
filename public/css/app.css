@@ -253,7 +253,44 @@
     }
 }
 
-
 .hidden {
     display: none;
+}
+
+/*Dashboard */
+
+.curvy-sides {
+    border-right: 4px solid rgba(57, 173, 245, 0.6);
+    border-left: 4px solid rgba(255, 17, 17, 0.6);
+    border-radius: 0 20px 0 20px;
+}
+
+.shadow-on-hover {
+    transition: ease-in-out 500ms;
+}
+
+.shadow-on-hover:hover {
+    background: white;
+    border-left: 4px solid rgba(146, 34, 245, 0.8);
+    border-right: 4px solid rgba(146, 34, 245, 0.8);
+    border-radius: 0;
+    box-shadow: 0 0 10px #6b7280;
+}
+
+.expandable-row {
+    transition: ease 1100ms;
+}
+
+.expandable {
+    transition: ease 1100ms;
+}
+
+.over {
+    transform: rotate(-180deg);
+    transition: transform 800ms ease;
+}
+
+.out {
+    transform: rotate(-360deg);
+    transition: transform 800ms ease;
 }

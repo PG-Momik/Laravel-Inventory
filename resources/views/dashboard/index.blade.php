@@ -25,15 +25,31 @@
                 <div class="b-grad p-5 round-this">
                     <div class="bg-sm-grey round-this">
 
-                        <div class="row mx-0 px-4 py-5">
+                        <div class="row mx-0 p-4" id="expandable-row">
+                            @php($i=0)
                             @foreach($cardsValues  as $key=>$item)
-                                <div class="col-lg-3 col-md-6 col-12 px-2">
-                                    <div class="py-4 px-1 my-1 text-center shadow rounded-3  bg-white">
-                                        <div
-                                            class="fs-1 text-secondary">{{gettype($item)=='integer'?$item:number_format($item, 2)}}</div>
-                                        <span class="text-secondary">{{sentenceCase(ucwords($key))}}</span>
+                                <div id="card-{{$i}}"
+                                     class="row mx-0 col-lg-3 col-md-6 col-12 px-2 expandable card-{{$i}}">
+                                    <div class="px-1 my-2 text-center shadow rounded-3 bg-white">
+                                        <div>
+                                            <div class="justify-content-start d-flex my-0 py-0">
+                                                <button class="mx-0 btn link-secondary expand-card-btn px-2 out">
+                                                    <i class="fa-solid fa-arrow-right fs-5"></i>
+                                                </button>
+                                            </div>
+                                            <div class="row mx-0 my-3" id="wrapper-{{$i}}">
+                                                <a href="" class="text-center text-decoration-none
+                                                                  col shadow-on-hover curvy-sides mx-1">
+                                                    <div class="fs-1 text-secondary">
+                                                        {{gettype($item)=='integer'?$item:number_format($item, 2)}}
+                                                    </div>
+                                                    <span class="text-secondary">{{sentenceCase(ucwords($key))}}</span>
+                                                </a>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
+                                @php($i++)
                             @endforeach
                         </div>
 
@@ -66,8 +82,9 @@
                                 <div class="col-md-4 col-12">
                                     <div class="">
                                         <div class="d-flex justify-content-between my-2 py-3">
-                                            <span class="fs-4">In stock : <span
-                                                    id="pieChartSource">Category</span></span>
+                                            <span class="fs-4">In stock :
+                                                <span id="pieChartSource">Category</span>
+                                            </span>
                                             <span class="justify-text-middle pt-2">
                                                 <button class="btn" id="toggleChartSource">
                                                     <i class="fa-solid fs-5 fa-arrow-right-arrow-left"></i>
@@ -90,16 +107,6 @@
         </div>
 
     </div>
-
-    <style>
-        .red {
-            background: rgb(82, 126, 82);
-        }
-
-        .red-text {
-            color: rgb(255, 161, 207);
-        }
-    </style>
 
     @push('other-scripts')
         <script src="{{asset('scripts/dashboardIndex.js')}}"></script>

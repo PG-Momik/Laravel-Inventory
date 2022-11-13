@@ -51,6 +51,8 @@ Route::middleware(['auth'])->group(
                         ->name('line-data');
                     Route::get('/data-for-pie-chart/{type?}', [DashboardController::class, 'getValuesForPieChart'])
                         ->name('pie-data');
+                    Route::get('/detailed-data-for-card/{card}', [DashboardController::class, 'getValueForCard'])
+                        ->name('card-data');
                 }
             );
 
