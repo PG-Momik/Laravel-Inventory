@@ -79,8 +79,9 @@
 
                                 <div class="row mx-0 col-md-4 col-12 d-flex justify-content-center align-items-center">
                                     @if($product->image)
-{{--                                        <img src="{{Storage::disk('localStorage')->url('axb.png')}}" alt="" width="300" height="200">--}}
-                                        <img src="{{asset('storage/images/'.$product->image)}}" alt="" style="width: 180px ; height:200px">
+                                        {{--                                        <img src="{{Storage::disk('localStorage')->url('axb.png')}}" alt="" width="300" height="200">--}}
+                                        <img src="{{asset('storage/images/'.$product->image)}}" alt=""
+                                             style="width: 180px ; height:200px">
                                     @else
                                         <div class="text-center"><i class="fa-solid fa-image fs-1"></i></div>
                                         <div class="text-center">No Image Available</div>
@@ -107,34 +108,52 @@
                                     </dd>
                                 </div>
 
+                                <hr class="mt-2">
+
+                                {{--BOTTOM SECTION--}}
                                 <dd class="col-12 row mx-0 px-0 justify-content-between">
-                                    <div class="col-lg-2 col-12 text-center">
+                                    <div class="col-lg-8">
+                                        <div class="d-flex row align-items-bottom">
+                                            <div class="form col-11">
+                                                <label for="lookBackDays">Look back (n) days.</label>
+                                                <input type="text" id="lookBackDays"
+                                                       placeholder="Enter n days. Default(7)" class="form-control"
+                                                       value="7">
+                                            </div>
+                                            <button id="lookBackBtn" class="btn btn-outline-success col-1 mt-4">
+                                                <i class="fa-solid fa-search"></i>
+                                            </button>
+                                        </div>
+                                        <div>
+                                            <canvas id="myGraph"></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-12 align-items-middle">
+                                        <a href="{{route('products.edit', ['product'=>$product])}}"
+                                           class="btn btn-md bg-outline-blue text-blue col-12 round-this my-1">
+                                            <i class="fa-solid fa-pen"></i> Edit
+                                        </a>
+
+                                        <form action="{{route('products.destroy', ['product'=>$product->id])}}"
+                                              method="post"
+                                              class="my-1">
+                                            @csrf
+                                            @method('delete')
+                                            <button
+                                                class="btn btn-md-3 bg-outline-yellow text-yellow col-12 round-this">
+                                                <i class="fa-solid fa-trash"></i> Trash
+                                            </button>
+                                        </form>
+
+                                        <div class=text-center">
                                             {!! QrCode::size(160)->generate($product->id) !!}
                                             <button id="downloadPNG"
                                                     class="btn btn-md bg-outline-dark col-12 round-this my-2"
                                                     onclick="drawToCanvas({{$product->id}})">
                                                 <i class="fa-solid fa-download"></i>QR
                                             </button>
-                                            <canvas id="canvas" class=""></canvas>
-                                    </div>
-                                    <div class="col-lg-2 col-12 align-items-middle">
-                                        <a href="{{route('products.edit', ['product'=>$product])}}"
-                                           class="no-underline">
-                                            <button class="btn btn-md bg-outline-blue text-blue col-12 round-this">
-                                                <i class="fa-solid fa-pen"></i> Edit
-                                            </button>
-                                        </a>
-                                        <a href="" class="no-underline">
-                                            <form action="{{route('products.destroy', ['product'=>$product->id])}}"
-                                                  method="post">
-                                                @csrf
-                                                @method('delete')
-                                                <button
-                                                    class="btn btn-md-3 bg-outline-yellow text-yellow col-12 round-this">
-                                                    <i class="fa-solid fa-trash"></i> Trash
-                                                </button>
-                                            </form>
-                                        </a>
+                                            <canvas id="canvas" class="d-none"></canvas>
+                                        </div>
                                     </div>
                                 </dd>
 
@@ -152,6 +171,8 @@
 
     @push('other-scripts')
         <script src="{{asset('scripts/qrDownload.js')}}"></script>
+
+        <script src="{{asset('scripts/productPricesLineGraph.js')}}"></script>
     @endpush
 @endsection
 
