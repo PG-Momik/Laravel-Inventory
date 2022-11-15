@@ -11,7 +11,6 @@ function removeAlert() {
 
 }
 
-
 function extractData(result, skipables = false) {
     let arr = [];
     for (let key in result) {
@@ -73,4 +72,30 @@ function changeObjectNullToZero(result) {
         }
     })
     return result;
+}
+
+function setToBaseURL(url) {
+    url = url.split('/');
+    for (let i = 0; i < url.length; i++) {
+        if (url.length > max - 1) {
+            url.pop();
+        }
+    }
+    return url.join('/');
+}
+
+function extractQueryIfExists(currentUrlArray) {
+    let size = currentUrlArray.length
+    let query = '';
+    for (let i = 0; i < size; i++) {
+        if (currentUrlArray[i].includes("?page")) {
+            let startIndex = currentUrlArray[i].indexOf("?");
+            let endIndex = currentUrlArray[i].length;
+            query = currentUrlArray[i].substring(startIndex, endIndex)
+            currentUrlArray[i] = currentUrlArray[i].substring(0, startIndex)
+        }
+    }
+    currentUrlArray[size - 1] = currentUrlArray[size - 1] + query;
+
+    return currentUrlArray;
 }

@@ -142,7 +142,7 @@
                                     <div class="col-xl-4 col-md-6 col-12 row mx-0 g-2">
                                         <a href="{{route('generate-pdf', ['transaction'=>$transaction])}}"
                                            class="no-underline">
-                                            <button class="btn btn-md bg-outline-blue text-blue col-12 round-this">
+                                            <button class="btn btn-md btn-outline-dark col-12 round-this">
                                                 <i class="fa-solid fa-download"></i> Download Pdf
                                             </button>
                                         </a>

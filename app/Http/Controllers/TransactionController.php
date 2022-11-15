@@ -8,7 +8,9 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Notifications\AlmostOutOfStock;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Exception;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -44,8 +46,116 @@ class TransactionController extends Controller
             ->take(5)
             ->get();
 
+        $dropdownOptions = $this->dropdownOptions();
+
         return view('transactions.index')
-            ->with(compact('categories', 'tenRecentSales', 'tenRecentPurchases'));
+            ->with(
+                compact(
+                    'categories',
+                    'tenRecentSales',
+                    'tenRecentPurchases',
+                    'dropdownOptions'
+                )
+            );
+    }
+
+    /**
+     * Displays yesterday's purchases, sales or all transaction based on param
+     *
+     * @param string $type
+     *
+     * @return View
+     */
+    public function yesterdaysTransactions(string $type = ''): View
+    {
+        $transactions = Transaction::with('product:id,name')
+            ->with('purchasePriceDuringTransaction:id,value')
+            ->with('salesPriceDuringTransaction:id,value')
+            ->whereDate('created_at', Carbon::yesterday())
+            ->when(
+                !empty($type)
+                and in_array(ucfirst($type), Transaction::TYPE),
+                function ($transaction) use ($type) {
+                    return $transaction->where('type', $type);
+                }
+            )
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('transactions.yesterday')->with(compact('transactions', 'type'));
+    }
+
+    /**
+     * Displays any month's purchases, sales or all transaction based on param
+     *
+     * @param int $month
+     * @param string $type
+     *
+     * @return View
+     */
+    public function monthlyTransactions(int $month, string $type = ''): View
+    {
+        $transactions    = Transaction::with('product:id,name')
+            ->with('purchasePriceDuringTransaction:id,value')
+            ->with('salesPriceDuringTransaction:id,value')
+            ->whereMonth('created_at', $month)
+            ->when(
+                !empty($type),
+                function ($q) use ($type) {
+                    return $q->where('type', $type);
+                }
+            )
+            ->orderBy('created_at', 'desc')
+            ->paginate(15) ?? '';
+        $year            = Carbon::now()->format('Y');
+        $activeMonth     = $month;
+        $activeMonthText = Carbon::create($year, $month)->format('M');
+
+        return view('transactions.monthly')->with(
+            compact(
+                'transactions',
+                'type',
+                'year',
+                'activeMonth',
+                'activeMonthText',
+            )
+        );
+    }
+
+    /**
+     * Displays any year's purchases, sales or all transaction based on param
+     *
+     * @param int $year
+     * @param string $type
+     *
+     * @return View
+     */
+    public function yearlyTransactions(int $year, string $type = ''): View
+    {
+        $transactions = Transaction::with('product:id,name')
+            ->with('purchasePriceDuringTransaction:id,value')
+            ->with('salesPriceDuringTransaction:id,value')
+            ->whereYear('created_at', $year)
+            ->when(
+                !empty($type),
+                function ($q) use ($type) {
+                    return $q->where('type', $type);
+                }
+            )
+            ->orderBy('created_at', 'desc')
+            ->paginate(15) ?? '';
+
+        $oldestTransaction = Transaction::oldest()->first('created_at');
+        $oldestYear        = $oldestTransaction->created_at->format('Y');
+
+        return view('transactions.annual')->with(
+            compact(
+                'transactions',
+                'type',
+                'year',
+                'oldestYear'
+            )
+        );
     }
 
     /**
@@ -129,7 +239,7 @@ class TransactionController extends Controller
             $product->save();
 
             if ($product->quantity <= AlmostOutOfStock::MINIMUM_COUNT) {
-                $users =  User::all();
+                $users = User::all();
                 Notification::send($users, new AlmostOutOfStock($product));
             }
 
@@ -170,7 +280,7 @@ class TransactionController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param int     $id
+     * @param int $id
      *
      * @return Response
      */
@@ -246,5 +356,71 @@ class TransactionController extends Controller
             ->get(['id', 'name']);
 
         return response()->json(array('msg' => $products, 200));
+    }
+
+    /**
+     * Dropdown options to navigate Transaction views
+     * Return array with array of dropdown options where,
+     * Key = dropdown menu option
+     * Value = route to said menu option
+     *
+     * @return array[]
+     */
+    public function dropdownOptions(): array
+    {
+        return array(
+            //Dropdown option for yesterday
+            'yesterday' => array(
+                'all'       => route('yesterdays-transactions'),
+                'purchases' => route('yesterdays-transactions', array('type' => 'purchase')),
+                'sales'     => route('yesterdays-transactions', array('type' => 'sale')),
+            ),
+            //Dropdown option for monthly
+            'monthly'   => array(
+                'all'       => route(
+                    'monthly-transactions',
+                    array(
+                        'month' => Carbon::now()->format('m'),
+                    )
+                ),
+                'purchases' => route(
+                    'monthly-transactions',
+                    array(
+                        'month' => Carbon::now()->format('m'),
+                        'type'  => 'purchase'
+                    )
+                ),
+                'sale'      => route(
+                    'monthly-transactions',
+                    array(
+                        'month' => Carbon::now()->format('m'),
+                        'type'  => 'sale'
+                    )
+                ),
+            ),
+            //Dropdown option for yearly
+            'yearly'    => array(
+                'all'       => route(
+                    'yearly-transactions',
+                    array(
+                        'year' => Carbon::now()->format('Y'),
+                    )
+                ),
+                'purchases' => route(
+                    'yearly-transactions',
+                    array(
+                        'year' => Carbon::now()->format('Y'),
+                        'type' => 'purchase'
+                    )
+                ),
+                'sales'     => route(
+                    'yearly-transactions',
+                    array(
+                        'year' => Carbon::now()->format('Y'),
+                        'type' => 'sale'
+                    )
+                ),
+            ),
+        );
     }
 }

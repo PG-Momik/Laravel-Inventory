@@ -13,10 +13,19 @@
 
                 <!--Active Page-->
                 <div class="bg-purple px-5 pt-3 py-4" style="border-radius: 20px 20px 0 0">
-                    <div class="row mx-0 d-flex gx-5  align-items-center">
-                        <div class="col-xl-4 col-lg-4">
-                            <h1>Transactions/{{$type}}</h1>
-                        </div>
+                    <div class="col-xl-4 col-lg-4">
+                           <span class="d-inline-flex pb-1
+                                px-4 align-items-end">
+                                <a href="{{route('transactions.index')}}" class="text-decoration-none nice-white-shadow">
+                                    <span class="fs-3 p-0 text-dark">
+                                        <b><u>Transactions</u></b>
+                                    </span>
+                                </a>
+                                    <span class="fs-3 ms-1 text-grey">/</span>
+                                <a href="#" class="text-decoration-none nice-white-shadow">
+                                    <u class="fs-4 text-white">{{$type}}</u>
+                                </a>
+                            </span>
                     </div>
                 </div>
 

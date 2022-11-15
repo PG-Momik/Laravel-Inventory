@@ -23,15 +23,26 @@
 
                 {{--White card goes here--}}
                 <div class="p-5">
-                    <div class="row bg-white round-this  p-4 g-3">
+                    <div class="row bg-white round-this p-4 g-3">
 
                         {{ alert() }}
+
+                        {{--Navigation Button Group--}}
+                        <div class="row mt-1 mb-2 d-flex align-middle">
+
+                            <div class="col-lg-2 col-md-3 col-12 ">
+                                <span class="fs-4">Navigate:</span>
+                            </div>
+
+                            {{ showDropdownNavigation($dropdownOptions) }}
+
+                        </div>
 
                         {{--Button trigger modal--}}
                         <div class="col-12 row mx-0 px-0 justify-content-between">
                             {{--QR Button--}}
                             <button type="button"
-                                    class="btn btn-secondary col-2 fs-5"
+                                    class="btn btn-secondary col-2 fs-5 rounded-0"
                                     data-bs-toggle="modal"
                                     data-bs-target="#cameraModal">
                                 <i class="fa-solid fa-qrcode"></i> QR
@@ -40,7 +51,7 @@
                             {{--Make Transaction Btn--}}
                             <button type="button"
                                     id="makeTransactionBtn"
-                                    class="btn btn-dark py-3 fs-5 col-10"
+                                    class="btn btn-dark py-3 col-10 fs-5 rounded-0"
                                     data-bs-toggle="modal"
                                     data-bs-target="#exampleModal">
                                 <i class="fa-solid fa-plus mx-2"></i> Make Transaction
