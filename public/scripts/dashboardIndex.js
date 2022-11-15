@@ -236,6 +236,7 @@ function resetLayout() {
 }
 
 function fillCard(index, result) {
+
     if (index === 2 || index === 3) {
         /** Ajax response for card 2 and 3 are nested 1 lever deeper in object */
         let childKey = Object.keys(result)
@@ -246,10 +247,12 @@ function fillCard(index, result) {
     const size = Object.keys(result).length;
     const keys = Object.keys(result);
     const space = document.getElementById(`wrapper-${index}`);
+
     /** Create card for each value in result */
     for (let i = 0; i < size; i++) {
+        let url = buildURL(index, i, keys[i]);
         let anchorTag = document.createElement('a');
-        anchorTag.setAttribute("href", "#");
+        anchorTag.setAttribute("href", `${url}`);
         anchorTag.classList.add("text-center", "text-decoration-none",
             "col", "shadow-on-hover", "curvy-sides", "ajaxed-card", "mx-1");
 
@@ -266,6 +269,22 @@ function fillCard(index, result) {
         anchorTag.appendChild(div1);
         anchorTag.appendChild(span1);
         space.appendChild(anchorTag);
+    }
+
+    function buildURL(index, i, key) {
+        let transactionType = ['purchase', 'sale'];
+        let url = "transactions";
+        if (index === 0) {
+            url = `${url}/yesterday/${transactionType[i]}`
+        } else if (index === 1) {
+            url = `${url}/monthly/${transactionType[i]}`
+        } else if (index === 2) {
+            url = `${url}/year/${key}/${transactionType[0]}`
+        } else if (index === 3) {
+            url = `${url}/year/${key}/${transactionType[1]}`
+        }
+
+        return url;
     }
 }
 

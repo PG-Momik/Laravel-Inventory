@@ -3,7 +3,6 @@
 if (!function_exists('apply_validation_to')) {
     function apply_validation_to($params, $requestFor = 'create'): array
     {
-
         $commonValidations = array(
             "name"             => "required",
             "email"            => "required|email|unique:users,email",
@@ -79,5 +78,28 @@ if (!function_exists('sentenceCase')) {
     function sentenceCase($string): string
     {
         return preg_replace('/(?!^)[A-Z]{2,}(?=[A-Z][a-z])|[A-Z][a-z]/', ' $0', $string);
+    }
+}
+
+
+if (!function_exists('showDropdownNavigation')) {
+    function showDropdownNavigation($dropdownOptions): void
+    {
+        foreach ($dropdownOptions as $key => $menu) {
+            echo "<div class='my-1 col-lg-2 col-md-3 col-12 dropdown-center'>";
+            echo "<a class='col-12 btn btn-primary' href='#'
+                    role='button' data-bs-toggle='dropdown' aria-expanded='false'>";
+            echo ucfirst($key);
+            echo "</a>";
+            echo "<ul class='dropdown-menu'>";
+            foreach ($menu as $menuKey => $route) {
+                $menuKey = ucfirst($menuKey);
+                echo "<li>";
+                echo "<a class='dropdown-item' href='$route'>$menuKey</a>";
+                echo "</li>";
+            }
+            echo "</ul>";
+            echo "</div>";
+        }
     }
 }

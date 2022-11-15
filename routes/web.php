@@ -97,6 +97,12 @@ Route::middleware(['auth'])->group(
 
         Route::get('transactions/show/{type}', [TransactionController::class, 'showTransactions'])
             ->name('show-transactions');
+        Route::get('transactions/yesterday/{type?}', [TransactionController::class, 'yesterdaysTransactions'])
+            ->name('yesterdays-transactions');
+        Route::get('transactions/monthly/{month}/{type?}', [TransactionController::class, 'monthlyTransactions'])
+            ->name('monthly-transactions');
+        Route::get('transactions/year/{year}/{type?}', [TransactionController::class, 'yearlyTransactions'])
+            ->name('yearly-transactions');
         Route::get('/generate-pdf/{transaction}', [TransactionController::class, 'createPDF'])
             ->name('generate-pdf');
         Route::resource('transactions', TransactionController::class);
