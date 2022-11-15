@@ -36,14 +36,20 @@ class DashboardController extends Controller
         } catch (Exception $e) {
         }
 
-        $cardsValues = [
+        $cardsValues       = [
             'yesterdaysTransactionQuantity'     => $yesterdaysQty ?? 0,
             'monthlyTransactionQuantityAverage' => $monthlyTransactionQtyAvg ?? 0,
             'totalPurchaseTransactionQuantity'  => $overallPurchaseTransactionQty ?? 0,
             'totalSalesTransactionQuantity'     => $overallSalesTransactionQty ?? 0
         ];
+        $cardInitialRoutes = [
+            route('yesterdays-transactions'),
+            route('monthly-transactions', ['month' => Carbon::now()->format('M')]),
+            route('yearly-transactions', ['year' => Carbon::now()->format('Y'), 'type' => 'purchase']),
+            route('yearly-transactions', ['year' => Carbon::now()->format('Y'), 'type' => 'sale'])
+        ];
 
-        return view('dashboard.index')->with(compact('cardsValues'));
+        return view('dashboard.index')->with(compact('cardsValues', 'cardInitialRoutes'));
     }
 
 

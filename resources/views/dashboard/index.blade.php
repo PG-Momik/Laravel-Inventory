@@ -38,8 +38,9 @@
                                                 </button>
                                             </div>
                                             <div class="row mx-0 my-3" id="wrapper-{{$i}}">
-                                                <a href="" class="text-center text-decoration-none
-                                                                  col shadow-on-hover curvy-sides mx-1">
+                                                <a href="{{$cardInitialRoutes[$i]}}"
+                                                   class="text-center text-decoration-none
+                                                          col shadow-on-hover curvy-sides mx-1">
                                                     <div class="fs-1 text-secondary">
                                                         {{gettype($item)=='integer'?$item:number_format($item, 2)}}
                                                     </div>
