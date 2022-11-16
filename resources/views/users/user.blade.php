@@ -65,7 +65,7 @@
 
                                 <dt class="col-sm-3">Role</dt>
                                 <dd class="col-sm-9">
-                                    {{$user->role->name}}
+                                    {{$user->roles[0]->name}}
                                 </dd>
                                 {{--                                {{dd($user)}}--}}
 

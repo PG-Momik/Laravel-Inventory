@@ -15,10 +15,10 @@ class UserController extends Controller
      * Display a listing of the resource.
      *
      * @param  Request $request
-     * @return View
+     *
      */
 
-    public function index(Request $request): View
+    public function index(Request $request)
     {
         $searchKeyword = $request['search-field'] ?? '';
 
@@ -28,9 +28,8 @@ class UserController extends Controller
                 return $users->where('name', 'like', "%$searchKeyword%")->orWhere('email', 'like', "%$searchKeyword%");
             }
         )->withCount('transactions')
-         ->with('role')
+         ->with('roles')
          ->paginate(10);
-
         return view('users.index')->with(compact('users', 'searchKeyword'));
     }
 
@@ -52,14 +51,14 @@ class UserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate(apply_validation_to(['name', 'email', 'role_id', 'password']));
+        $request->validate(apply_validation_to(['name', 'email', 'password']));
         $user           = new User();
         $user->name     = $request['name'];
         $user->email    = $request['email'];
-        $user->role_id  = $request['role_id'];
         $user->password = $request['password'];
         try {
             $user->save();
+//            $user->a
             session()->flash('success', 'User added successfully.');
         } catch (Exception $e) {
             session()->flash('error', 'Something went wrong.');
@@ -76,7 +75,7 @@ class UserController extends Controller
      */
     public function show($id): RedirectResponse | View
     {
-        $user = User::with('role:id,name')
+        $user = User::with('roles:id,name')
             ->with('registeredProducts')
             ->withCount('transactions')
             ->findOrFail($id);

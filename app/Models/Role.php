@@ -4,11 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Spatie\Permission\Traits\HasPermissions;
 
 class Role extends Model
 {
     use HasFactory;
+    use HasPermissions;
 
     protected $table      = "roles";
     protected $primaryKey = "id";
@@ -16,10 +19,16 @@ class Role extends Model
     /**
      * Returns an array of user object with same role
      *
-     * @return HasMany
+     * @return BelongsToMany
      */
-    public function users(): HasMany
+    public function users(): BelongsToMany
     {
-        return $this->hasMany(User::class, 'role_id', 'id');
+        return $this->belongsToMany(
+            User::class,
+            'model_has_roles',
+            'role_id',
+            'model_id'
+        );
     }
+
 }
