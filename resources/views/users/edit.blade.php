@@ -67,7 +67,7 @@
                                     <div class="col-md-6 position-relative">
                                         <label for="name">Name</label>
                                         <div class="input-group">
-                                            <span  class="input-group-text">
+                                            <span class="input-group-text">
                                                 <i class="fa-solid fa-quote-left"></i>
                                             </span>
                                             <input type="text"
@@ -87,7 +87,7 @@
                                     <div class="col-md-6 form-group">
                                         <label for="email">Email</label>
                                         <div class="input-group">
-                                            <span  class="input-group-text">
+                                            <span class="input-group-text">
                                                 <i class="fa-solid fa-envelope"></i>
                                             </span>
                                             <input type="email"
@@ -110,51 +110,52 @@
                                         @php($roles = array('Choose Role.'=>'0', 'Admin'=>'1', 'Users'=>'2'))
                                         <label for="role">Role</label>
                                         <div class="input-group">
-                                            <span  class="input-group-text">
+                                            <span class="input-group-text">
                                                 <i class="fa-solid fa-user-tag"></i>
                                             </span>
                                             <select name="role" id="role"
                                                     class="form-select
                                                     @if($errors->has('role')) is-invalid @endif">
-                                                <option value="Invalid"
-                                                    @selected($user->roles[0] == '')>
+                                                <option value="Invalid" disabled>
                                                     Select role
                                                 </option>
                                                 <option value="Admin"
-                                                    @selected($user->roles[0] == 'Admin')>
+                                                    @selected($user->roles[0]->name == "Admin")>
                                                     Admin
                                                 </option>
                                                 <option value="User"
-                                                    @selected($user->roles[0] == 'User')>
+                                                    @selected($user->roles[0]->name == "User")>
                                                     User
                                                 </option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <label for="role">Role</label>
+                                        <label for="role">Email verification</label>
                                         <div class="input-group">
-                                            <span  class="input-group-text">
+                                            <span class="input-group-text">
                                                 <i class="fa-solid fa-question"></i>
                                             </span>
                                             <div class="btn-group" role="group"
                                                  aria-label="Basic radio toggle button group">
                                                 <input type="radio"
                                                        class="btn-check"
-                                                       name="verifyEmail"
+                                                       name="verified"
                                                        id="btnradio1"
+                                                       value="verified"
                                                        autocomplete="off"
-                                                       @checked(!empty($user->email_verified_at)) value=true>
+                                                    @checked(!empty($user->email_verified_at))>
                                                 <label class="btn btn-outline-primary"
                                                        id="ratioBtnWrapper1"
                                                        for="btnradio1">Verified</label>
 
                                                 <input type="radio"
                                                        class="btn-check"
-                                                       name="verifyEmail"
+                                                       name="verified"
                                                        id="btnradio2"
+                                                       value="unverified"
                                                        autocomplete="off"
-                                                       @checked(empty($user->email_verified_at)) value=false>
+                                                    @checked(empty($user->email_verified_at))>
                                                 <label class="btn btn-outline-danger" id="ratioBtnWrapper2"
                                                        for="btnradio2">Not Verified</label>
                                             </div>

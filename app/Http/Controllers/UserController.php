@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Customer;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -14,22 +15,26 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  Request $request
+     * @param Request $request
      *
+     * @return View
      */
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $searchKeyword = $request['search-field'] ?? '';
 
         $users = User::when(
             !empty($searchKeyword),
             function ($users) use ($searchKeyword) {
-                return $users->where('name', 'like', "%$searchKeyword%")->orWhere('email', 'like', "%$searchKeyword%");
+                return $users
+                    ->where('name', 'like', "%$searchKeyword%")
+                    ->orWhere('email', 'like', "%$searchKeyword%");
             }
         )->withCount('transactions')
-         ->with('roles')
-         ->paginate(10);
+            ->with('roles')
+            ->paginate(10);
+
         return view('users.index')->with(compact('users', 'searchKeyword'));
     }
 
@@ -46,31 +51,36 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request $request
+     * @param Request $request
+     *
      * @return RedirectResponse
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate(apply_validation_to(['name', 'email', 'password']));
+        $request->validate(apply_validation_to(['name', 'email', 'role']));
         $user           = new User();
         $user->name     = $request['name'];
         $user->email    = $request['email'];
-        $user->password = $request['password'];
+        $user->role     = $request['role'];
+        $user->password = $request['password'] ?? Hash::make('Password#123');
+
         try {
             $user->save();
-//            $user->a
+            $user->assignRole($request->role);
+
             session()->flash('success', 'User added successfully.');
         } catch (Exception $e) {
             session()->flash('error', 'Something went wrong.');
         }
 
-        return redirect()->route('users.create');
+        return redirect()->back();
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return RedirectResponse| View
      */
     public function show($id): RedirectResponse | View
@@ -86,12 +96,13 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return View
      */
     public function edit(int $id): view
     {
-        $user = User::find($id);
+        $user = User::with('roles:id,name')->find($id);
 
         return view('users.edit')->with(compact('user'));
     }
@@ -99,36 +110,38 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request $request
-     * @param  int     $id
+     * @param Request $request
+     * @param int $id
+     *
      * @return RedirectResponse
      */
     public function update(Request $request, int $id): RedirectResponse
     {
-        $request->validate(apply_validation_to(['name', 'email', 'role_id'], 'update'));
+        $request->validate(apply_validation_to(['name', 'email', 'role', 'verified'], 'update'));
+        $user        = User::find($id);
+        $user->name  = $request->name;
+        $user->email = $request->email;
 
-        $user          = User::find($id);
-        $user->name    = $request->name;
-        $user->email   = $request->email;
-        $user->role_id = $request->role_id;
+        //Removes user role.
+        //Since 1 user has only 1 role, first() captures the role.
+        $user->removeRole($user->roles->first());
+        $user->assignRole($request->role);
 
-        if ($request->verifyEmail == "false") {
+        if ($request->verified === "unverified") {
             $user->email_verified_at = null;
         }
-        //        if($user->email_verified_at == NULL){
-        //            $user->email_verified_at = now()->format('Y:m:d H:i:s');
-        //        }
+        if ($request->verified == "verified") {
+            $user->email_verified_at = Carbon::now()->format('Y-m-i H:m:s');
+        }
 
         try {
             $user->update();
         } catch (Exception $e) {
             session()->flash('warning', "Something went wrong.");
-
-            return redirect()->route('users.show', ['id' => $user->id]);
         }
         session()->flash('success', "User info updated.");
 
-        return redirect()->route('users.show', ['user' => $user->id]);
+        return redirect()->back();
     }
 
 
@@ -161,7 +174,8 @@ class UserController extends Controller
     /**
      * Shows Trashed Data
      *
-     * @param  Request $request
+     * @param Request $request
+     *
      * @return View
      */
     public function showTrash(Request $request): View

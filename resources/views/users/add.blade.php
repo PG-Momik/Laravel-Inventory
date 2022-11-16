@@ -120,9 +120,9 @@
                                     <select name="role" id="role"
                                             class="form-select
                                             @if($errors->has('role')) is-invalid @endif">
-                                        <option value="0">Select role</option>
-                                        <option value="1">Admin</option>
-                                        <option value="2">User</option>
+                                        <option value="Invalid">Select role</option>
+                                        <option value="Admin">Admin</option>
+                                        <option value="User">User</option>
                                     </select>
                                 </div>
                             </div>
@@ -133,12 +133,12 @@
                                     <span class="input-group-text">
                                         <i class="fa-solid fa-eye"></i>
                                     </span>
-                                    <input type="text"
+                                    <input type="password"
                                            class="form-control
                                            @if($errors->has('password')) is-invalid @endif"
-                                           name="password" value="{{old('password')??''}}"
+                                           name="password" placeholder="Default password (Password#123) if empty."
                                            id="password"
-                                           aria-describedby="password" required>
+                                           aria-describedby="password">
                                     <div class="invalid-feedback" id="password">
                                         @error('password')
                                         {{$message}}

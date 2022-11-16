@@ -16,7 +16,7 @@ if (!function_exists('apply_validation_to')) {
             "type"             => 'required|alpha',
             "id"               => 'required|numeric|gt:0',
             "user_id"          => 'required|numeric|gt:0',
-            "role_id"          => "required|numeric|gt:0",
+            "role"             => "required|in:Admin,User",
             "product_id"       => 'required|numeric|gt:0',
             "category_id"      => 'required|numeric|gt:0',
             "registered_by"    => 'required|numeric|gt:0',
@@ -24,6 +24,7 @@ if (!function_exists('apply_validation_to')) {
             "quantity"         => 'required|numeric|gt:0',
             "discount"         => 'required|numeric|gt:0',
             "date"             => 'required',
+            "verified"         => 'required|in:verified,unverified'
         );
 
         if ($requestFor != 'create') {
