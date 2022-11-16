@@ -6,9 +6,8 @@
     <div class="grid-item">
 
         <div class="admin-grid">
-            <div style="min-height: 460px" class="a round-this my-1k grad">
-                <div class="bg-purple px-5 pt-3 py-4" style="my-1us: 20px 20px 0 0">
-                    {{-- <div class="col-xl-12 col-lg-6 col-md-4 col-sm-3 col-2"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consectetur eaque nesciunt omnis porro possimus quis? Cupiditate dignissimos ipsa iste, iusto, non pariatur, possimus quasi quo reprehenderit sint suscipit veniam!</div>--}}
+            <div style="min-height: 460px" class="a round-this border-black grad">
+                <div class="bg-purple px-5 pt-3 py-4" style="border-radius: 20px 20px 0 0">
 
                     <div class="row mx-0 d-flex gx-5 align-items-center">
 
@@ -24,7 +23,7 @@
                                 <span class="fs-4 text-grey"><u>{{$product->name}}</u></span>
                             </span>
                         </div>
-                        {{--                        Search Form--}}
+                        {{--Search Form--}}
                         <form action="{{route('products.search')}}"
                               method="post"
                               class="col-xl-8 col-lg-8 row mx-0 align-items-center">
@@ -35,7 +34,7 @@
 
                             <div class="col-8">
                                 <input type="search" name="search-field"
-                                       class="form-control round-this px-3 col my-1ight-40"
+                                       class="form-control round-this px-3 col my-border-0 height-40"
                                        placeholder="Search product" value=""
                                        style="max-height: 50px">
                             </div>
@@ -54,7 +53,7 @@
                 </div>
 
                 {{--White Card Goes Here--}}
-                <div class="b grad" style="height:350px; my-1us: 0 0 20px 20px">
+                <div class="b grad" style="height:350px; border-radius: 0 0 20px 20px">
                     <div style="width: 80%; margin: 0 auto;">
                         <div class="p-5 bg-white round-this shadow-this-down">
                             <dl class="row">
@@ -77,11 +76,13 @@
                                     <dd class="col-md-8">{{$product->quantity}} Units</dd>
                                 </div>
 
-                                <div class="row mx-0 col-md-4 col-12 d-flex justify-content-center align-items-center">
+                                <div class="row col-md-4 col-12 d-flex
+                                justify-content-center align-items-center
+                                mx-0 px-0 my-3">
                                     @if($product->image)
-                                        {{--                                        <img src="{{Storage::disk('localStorage')->url('axb.png')}}" alt="" width="300" height="200">--}}
+                                        {{--<img src="{{Storage::disk('localStorage')->url('axb.png')}}" alt="" width="300" height="200">--}}
                                         <img src="{{asset('storage/images/'.$product->image)}}" alt=""
-                                             style="width: 180px ; height:200px">
+                                             style="width: 200px ; height:200px" class=" px-0">
                                     @else
                                         <div class="text-center"><i class="fa-solid fa-image fs-1"></i></div>
                                         <div class="text-center">No Image Available</div>
@@ -147,7 +148,7 @@
                                             </button>
                                         </form>
 
-                                        <div class=text-center">
+                                        <div class="text-center mt-2">
                                             {!! QrCode::size(160)->generate($product->id) !!}
                                             <button id="downloadPNG"
                                                     class="btn btn-md bg-outline-dark col-12 round-this my-2"
