@@ -53,6 +53,10 @@ function colorArray(opacity = 0.6, iteration = 15) {
 
 }
 
+function capitalizeWord(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 function camelToSentence(string) {
     return string.replace(/([A-Z])/g, ' $1').replace(/^./, (str) => str.toUpperCase())
 }

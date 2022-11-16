@@ -6,8 +6,8 @@
     <div class="grid-item">
 
         <div class="admin-grid">
-            <div style="min-height: 460px" class="a round-this border-black grad">
-                <div class="bg-purple px-5 pt-3 py-4" style="border-radius: 20px 20px 0 0">
+            <div style="min-height: 460px" class="a round-this my-1k grad">
+                <div class="bg-purple px-5 pt-3 py-4" style="my-1us: 20px 20px 0 0">
                     {{-- <div class="col-xl-12 col-lg-6 col-md-4 col-sm-3 col-2"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consectetur eaque nesciunt omnis porro possimus quis? Cupiditate dignissimos ipsa iste, iusto, non pariatur, possimus quasi quo reprehenderit sint suscipit veniam!</div>--}}
 
                     <div class="row mx-0 d-flex gx-5 align-items-center">
@@ -35,7 +35,7 @@
 
                             <div class="col-8">
                                 <input type="search" name="search-field"
-                                       class="form-control round-this px-3 col border-0 height-40"
+                                       class="form-control round-this px-3 col my-1ight-40"
                                        placeholder="Search product" value=""
                                        style="max-height: 50px">
                             </div>
@@ -54,7 +54,7 @@
                 </div>
 
                 {{--White Card Goes Here--}}
-                <div class="b grad" style="height:350px; border-radius: 0 0 20px 20px">
+                <div class="b grad" style="height:350px; my-1us: 0 0 20px 20px">
                     <div style="width: 80%; margin: 0 auto;">
                         <div class="p-5 bg-white round-this shadow-this-down">
                             <dl class="row">
@@ -125,7 +125,9 @@
                                             </button>
                                         </div>
                                         <div>
-                                            <canvas id="myGraph"></canvas>
+                                            <canvas id="myPurchaseGraph" class="my-1"></canvas>
+                                            <hr>
+                                            <canvas id="mySalesGraph" class="my-1"></canvas>
                                         </div>
                                     </div>
                                     <div class="col-lg-2 col-12 align-items-middle">

@@ -373,44 +373,31 @@ class ProductController extends Controller
     /**
      * For single product prices line graph ajax request
      *
+     * @param string $type
      * @param int $days
      *
      * @return JsonResponse
      */
-    public function getValuesForLineGraph(int $days = 7): JsonResponse
+    public function getValuesForLineGraph(string $type, int $days = 7): JsonResponse
     {
         $today  = Carbon::now()->endOfDay();
         $before = Carbon::now()->subDays($days)->startOfDay();
 
-        $purchasesTransactions = Transaction::with('purchasePriceDuringTransaction:id,value')
-            ->where('type', 'Purchase')
+        $neededRelationship = $type . 'PriceDuringTransaction';
+
+        $foreignKey   = $type . '_price_id';
+        $transactions = Transaction::with($neededRelationship . ":id,value")
+            ->where('type', Transaction::TYPE[$type])
             ->whereBetween('created_at', [$before, $today])
-            ->get(['id', 'purchase_price_id']);
+            ->get(['id', $foreignKey, 'created_at']);
 
-        $salesTransactions = Transaction::with('salesPriceDuringTransaction:id,value')
-            ->where('type', 'Sale')
-            ->whereBetween('created_at', [$before, $today])
-            ->get(['id', 'sales_price_id']);
+        $returnArray = [];
 
-
-        $purchases = [];
-        $sales     = [];
-        $maxSize   = max([sizeof($purchasesTransactions), sizeof($salesTransactions)]);
-
-        for ($i = 0; $i < $maxSize; $i++) {
-            $purchases[] = isset($purchasesTransactions[$i])
-                ? $purchasesTransactions[$i]->purchasePriceDuringTransaction->value
-                : 0;
-            $sales[]     = isset($salesTransactions[$i])
-                ? $salesTransactions[$i]->salesPriceDuringTransaction->value
-                : 0;
+        foreach ($transactions as $transaction) {
+            $arrIndex                 = $transaction->created_at->format('y-M-d');
+            $returnArray[][$arrIndex] = $transaction->$neededRelationship->value;
         }
 
-        return response()->json(
-            [
-                "purchases" => $purchases,
-                "sales"     => $sales
-            ]
-        );
+        return response()->json($returnArray);
     }
 }
