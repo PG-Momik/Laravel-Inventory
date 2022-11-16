@@ -87,6 +87,8 @@ Route::middleware(['auth'])->group(
             ->name('products.search');
         Route::get('/products/details/{id}', [ProductController::class, 'productDetails'])
             ->name('products.details');
+        Route::get('product-{type}-prices-line-graph/{days?}', [ProductController::class, 'getValuesForLineGraph'])
+            ->name('line-data');
         Route::resource('products', ProductController::class);
 
 

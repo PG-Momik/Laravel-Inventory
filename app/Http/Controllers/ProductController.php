@@ -9,6 +9,7 @@ use App\Models\SalesPrice;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Exception;
+use http\Env\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,7 +21,8 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param  Request $request
+     * @param Request $request
+     *
      * @return View
      */
     public function index(Request $request): View
@@ -53,7 +55,8 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request $request
+     * @param Request $request
+     *
      * @return RedirectResponse
      */
     public function store(Request $request): RedirectResponse
@@ -111,6 +114,7 @@ class ProductController extends Controller
      * Display the specified resource.
      *
      * @param  $id
+     *
      * @return View
      */
     public function show($id): View
@@ -123,7 +127,8 @@ class ProductController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Product $product
+     * @param Product $product
+     *
      * @return View
      */
     public function edit(Product $product): View
@@ -136,8 +141,9 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request $request
-     * @param  Product $product
+     * @param Request $request
+     * @param Product $product
+     *
      * @return RedirectResponse
      */
     public function update(Request $request, Product $product): RedirectResponse
@@ -231,7 +237,7 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Product $product
+     * @param Product $product
      *
      * @return RedirectResponse
      */
@@ -317,7 +323,7 @@ class ProductController extends Controller
             $startDateString = implode('-', [$filterParams['startMonth'], $filterParams['startDay']]);
             $startFormat     = 'm-d';
         }
-        $startDate     = Carbon::createFromFormat($startFormat, $startDateString)->startOfDay();
+        $startDate = Carbon::createFromFormat($startFormat, $startDateString)->startOfDay();
 
         $endFormat     = 'Y-m-d';
         $endDateString = implode('-', [$filterParams['endYear'], $filterParams['endMonth'], $filterParams['endDay']]);
@@ -362,5 +368,36 @@ class ProductController extends Controller
     public function productDetails($id)
     {
         return Product::find($id);
+    }
+
+    /**
+     * For single product prices line graph ajax request
+     *
+     * @param string $type
+     * @param int $days
+     *
+     * @return JsonResponse
+     */
+    public function getValuesForLineGraph(string $type, int $days = 7): JsonResponse
+    {
+        $today  = Carbon::now()->endOfDay();
+        $before = Carbon::now()->subDays($days)->startOfDay();
+
+        $neededRelationship = $type . 'PriceDuringTransaction';
+
+        $foreignKey   = $type . '_price_id';
+        $transactions = Transaction::with($neededRelationship . ":id,value")
+            ->where('type', Transaction::TYPE[$type])
+            ->whereBetween('created_at', [$before, $today])
+            ->get(['id', $foreignKey, 'created_at']);
+
+        $returnArray = [];
+
+        foreach ($transactions as $transaction) {
+            $arrIndex                 = $transaction->created_at->format('y-M-d');
+            $returnArray[][$arrIndex] = $transaction->$neededRelationship->value;
+        }
+
+        return response()->json($returnArray);
     }
 }
