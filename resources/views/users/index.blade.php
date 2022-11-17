@@ -214,7 +214,7 @@
                                     <tr>
                                         <td>{{$user->name}}</td>
                                         <td>{{$user->email}}</td>
-                                        <td>{{$user->role->name}}</td>
+                                        <td>{{$user->roles[0]->name}}</td>
                                         <td class="text-center">
                                             <a href="{{route('users.transactions', ['id'=>$user->id])}}">
                                                 {{$user->transactions_count}}

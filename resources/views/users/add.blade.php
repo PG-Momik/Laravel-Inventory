@@ -60,32 +60,91 @@
                 {{--White Card goes here--}}
                 <div class="p-5">
                     {{--Register Form--}}
-                    <form action="{{route('users.store')}}" method="post" class="container-fluid p-5 round-this bg-sm-grey  needs-validation">
+                    <form action="{{route('users.store')}}" method="post"
+                          class="container-fluid p-5 round-this bg-sm-grey  needs-validation">
                         @csrf
 
                         {{ alert() }}
 
 
                         <div class="row my-2">
-                            <div class="col-md-6 position-relative">
-                                <x-input type="text" name="name" label="Name" id="name"
-                                         value="{{$user->name??''}}"></x-input>
-                            </div>
                             <div class="col-md-6 form-group">
-                                <x-input type="email" name="email" label="Email" id="email"
-                                         value="{{$user->email??''}}"></x-input>
+                                <label for="name">Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa-solid fa-quote-left"></i>
+                                    </span>
+                                    <input type="text"
+                                           class="form-control
+                                           @if($errors->has('name')) is-invalid @endif"
+                                           name="name" value="{{old('name')??''}}"
+                                           id="name"
+                                           aria-describedby="name" required>
+                                    <div class="invalid-feedback" id="name">
+                                        @error('name')
+                                        {{$message}}
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
+
+                            <div class="col-md-6 form-group">
+                                <label for="email">Email</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa-solid fa-envelope"></i>
+                                    </span>
+                                    <input type="email"
+                                           class="form-control
+                                           @if($errors->has('email')) is-invalid @endif"
+                                           name="email" value="{{old('email')??''}}"
+                                           id="email"
+                                           aria-describedby="email" required>
+                                    <div class="invalid-feedback" id="email">
+                                        @error('email')
+                                        {{$message}}
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
 
                         <div class="row my-2">
                             <div class="col-md-6 form-group">
-                                @php($roles = array('Admin'=>'1', 'Users'=>'2'))
-                                <x-input type="select" name="role_id" label="Role" id=""
-                                         value="{{$user->select??''}}" :keyVal="$roles"></x-input>
+                                <label for="role">Role</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa-solid fa-user-tag"></i>
+                                    </span>
+                                    <select name="role" id="role"
+                                            class="form-select
+                                            @if($errors->has('role')) is-invalid @endif">
+                                        <option value="Invalid">Select role</option>
+                                        <option value="Admin">Admin</option>
+                                        <option value="User">User</option>
+                                    </select>
+                                </div>
                             </div>
+
                             <div class="col-md-6 form-group">
-                                <x-input type="password" name="password" label="Password" id="password"
-                                         value=""></x-input>
+                                <label for="password">Password</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </span>
+                                    <input type="password"
+                                           class="form-control
+                                           @if($errors->has('password')) is-invalid @endif"
+                                           name="password" placeholder="Default password (Password#123) if empty."
+                                           id="password"
+                                           aria-describedby="password">
+                                    <div class="invalid-feedback" id="password">
+                                        @error('password')
+                                        {{$message}}
+                                        @enderror
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

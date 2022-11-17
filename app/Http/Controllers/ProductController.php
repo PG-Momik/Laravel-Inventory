@@ -9,7 +9,6 @@ use App\Models\SalesPrice;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Exception;
-use http\Env\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -119,7 +118,7 @@ class ProductController extends Controller
      */
     public function show($id): View
     {
-        $product = Product::with('registrant')->with('category')->find($id);
+        $product = Product::with('registrant.roles')->with('category')->find($id);
 
         return view('products.product')->with(compact('product'));
     }

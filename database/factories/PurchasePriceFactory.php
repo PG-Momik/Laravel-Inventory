@@ -12,7 +12,6 @@ use Illuminate\Support\Carbon;
  */
 class PurchasePriceFactory extends Factory
 {
-
     /**
      * Define the model's default state.
      *
@@ -25,5 +24,4 @@ class PurchasePriceFactory extends Factory
             'value'      => 1200,
         ];
     }
-
 }

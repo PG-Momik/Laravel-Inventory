@@ -9,7 +9,6 @@ use Illuminate\Database\Seeder;
 
 class PurchasePriceSeeder extends Seeder
 {
-
     /**
      * Run the database seeds.
      *
@@ -17,16 +16,21 @@ class PurchasePriceSeeder extends Seeder
      */
     public function run()
     {
-
         //Initial Seed if no data
-        if ( PurchasePrice::count() < 30 ) {
+        if (PurchasePrice::count() < 30) {
             PurchasePrice::factory()
                 ->count(30)
-                ->sequence(fn($sequence) => ['created_at'=>'2022-08-01', 'value' => 1200, 'product_id' => $sequence->index + 1])
+                ->sequence(
+                    fn($sequence) => [
+                        'created_at' => '2022-08-01',
+                        'value'      => 1200,
+                        'product_id' => $sequence->index + 1
+                    ]
+                )
                 ->create();
         }
 
-        if ( Transaction::count()>=30 && Transaction::count()<200){
+        if (Transaction::count() >= 30 && Transaction::count() < 200) {
             SalesPrice::factory()
                 ->count(288)
                 ->sequence(
@@ -38,7 +42,5 @@ class PurchasePriceSeeder extends Seeder
                 )
                 ->create();
         }
-
     }
-
 }

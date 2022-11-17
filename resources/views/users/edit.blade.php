@@ -65,31 +65,109 @@
 
                                 <div class="row my-2">
                                     <div class="col-md-6 position-relative">
-                                        <x-input type="text" name="name" label="Name" id="name"
-                                                 value="{{$user->name??''}}"/>
+                                        <label for="name">Name</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fa-solid fa-quote-left"></i>
+                                            </span>
+                                            <input type="text"
+                                                   class="form-control
+                                           @if($errors->has('name')) is-invalid @endif"
+                                                   name="name" value="{{$user->name??old('name')}}"
+                                                   id="name"
+                                                   aria-describedby="name" required>
+                                            <div class="invalid-feedback" id="name">
+                                                @error('name')
+                                                {{$message}}
+                                                @enderror
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-6 form-group">
-                                        <x-input type="email" name="email" label="Email" id="email"
-                                                 value="{{$user->email??''}}"/>
+                                        <label for="email">Email</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fa-solid fa-envelope"></i>
+                                            </span>
+                                            <input type="email"
+                                                   class="form-control
+                                           @if($errors->has('email')) is-invalid @endif"
+                                                   name="email" value="{{$user->email??old('email')}}"
+                                                   id="email"
+                                                   aria-describedby="email" required>
+                                            <div class="invalid-feedback" id="email">
+                                                @error('email')
+                                                {{$message}}
+                                                @enderror
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="row my-2">
                                     <div class="col-md-6 form-group">
                                         @php($roles = array('Choose Role.'=>'0', 'Admin'=>'1', 'Users'=>'2'))
-                                        <x-input type="select" name="role_id" label="Role" id="role_id"
-                                                 value="{{$user->role_id}}" :keyVal="$roles"/>
+                                        <label for="role">Role</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fa-solid fa-user-tag"></i>
+                                            </span>
+                                            <select name="role" id="role"
+                                                    class="form-select
+                                                    @if($errors->has('role')) is-invalid @endif">
+                                                <option value="Invalid" disabled>
+                                                    Select role
+                                                </option>
+                                                <option value="Admin"
+                                                    @selected($user->roles[0]->name == "Admin")>
+                                                    Admin
+                                                </option>
+                                                <option value="User"
+                                                    @selected($user->roles[0]->name == "User")>
+                                                    User
+                                                </option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div class="col-md-6 form-group">
-                                        <x-input type="checkbox" name="checkbox" id="checkbox" label="Verify Email?" checked="{{$user->email_verified_at}}"/>
+                                        <label for="role">Email verification</label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <i class="fa-solid fa-question"></i>
+                                            </span>
+                                            <div class="btn-group" role="group"
+                                                 aria-label="Basic radio toggle button group">
+                                                <input type="radio"
+                                                       class="btn-check"
+                                                       name="verified"
+                                                       id="btnradio1"
+                                                       value="verified"
+                                                       autocomplete="off"
+                                                    @checked(!empty($user->email_verified_at))>
+                                                <label class="btn btn-outline-primary"
+                                                       id="ratioBtnWrapper1"
+                                                       for="btnradio1">Verified</label>
+
+                                                <input type="radio"
+                                                       class="btn-check"
+                                                       name="verified"
+                                                       id="btnradio2"
+                                                       value="unverified"
+                                                       autocomplete="off"
+                                                    @checked(empty($user->email_verified_at))>
+                                                <label class="btn btn-outline-danger" id="ratioBtnWrapper2"
+                                                       for="btnradio2">Not Verified</label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <hr>
                                 <div class="col-12 row mx-0 px-0 justify-content-center">
                                     <div class="col-md-6 col-12 row mx-0 g-2">
-                                        <button type="submit" class="btn btn-md bg-outline-green text-blue col-12 round-this">
+                                        <button type="submit"
+                                                class="btn btn-md bg-outline-green text-blue col-12 round-this">
                                             <i class="fa-solid fa-pen"></i> Update
                                         </button>
                                     </div>

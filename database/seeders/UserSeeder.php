@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserSeeder extends Seeder
 {
@@ -17,16 +17,25 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        //
-        $faker = Faker::create();
-        for ($i=0; $i<5; $i++){
-            $user = new User;
-            $user->name = $faker->name;
-            $user->email = $faker->email;
-            $user->role_id = 1;
-            $user->password = Hash::make($faker->password);
-            $user->save();
-        }
+        $faker        = Faker::create();
+        $usr           = new User();
+        $usr->name     = 'admin';
+        $usr->email    = 'admin@admin.com';
+        $usr->password = Hash::make('admin123');
+        $usr->save();
 
+        $roleAdmin = Role::findByName('Admin');
+        $usr->assignRole($roleAdmin);
+
+        for ($i = 0; $i < 5; $i++) {
+            $user           = new User();
+            $user->name     = $faker->name;
+            $user->email    = $faker->email;
+            $user->password = Hash::make("user$i$i$i");
+            $user->save();
+
+            $roleUser = Role::findByName('User');
+            $user->assignRole($roleUser);
+        }
     }
 }

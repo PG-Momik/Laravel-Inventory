@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
+use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,9 +13,9 @@ class RoleController extends Controller
 {
     /**
      * Returns role.index as view
-     * @return View
+     *
      */
-    public function index(): View
+    public function index()
     {
         $roles = Role::withCount('users')->get();
 
@@ -23,14 +23,15 @@ class RoleController extends Controller
     }
 
 
-    public function create(): View
-    {
+    public function create(){
+
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request $request
+     * @param Request $request
+     *
      * @return Response
      */
     public function store(Request $request)
@@ -41,7 +42,8 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  Role $role
+     * @param Role $role
+     *
      * @return View
      */
     public function show(Role $role): View
@@ -54,7 +56,8 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return Response
      */
     public function edit($id)
@@ -65,9 +68,10 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request $request
-     * @param  int     $id
-     * @return Response
+     * @param Request $request
+     * @param int $id
+     *
+     * @return void
      */
     public function update(Request $request, $id)
     {
@@ -77,7 +81,8 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param int $id
+     *
      * @return Response
      */
     public function destroy($id)
@@ -91,26 +96,29 @@ class RoleController extends Controller
      *
      * @param int $uid
      *
-     * @return mixed
+     * @return bool
      */
-    public function demote(int $uid):bool
+    public function demote(int $uid): bool
     {
-        $user          = User::findOrFail($uid);
-        $user->role_id = $user->role_id + 1;
+        $user = User::findOrFail($uid);
+        $user->removeRole('Admin');
+        $user->assignRole('User');
 
         return $user->update();
     }
 
     /**
      * Returns true if user is promoted
+     *
      * @param int $uid
      *
      * @return mixed
      */
     public function promote(int $uid): bool
     {
-        $user          = User::findOrFail($uid);
-        $user->role_id = $user->role_id - 1;
+        $user = User::findOrFail($uid);
+        $user->removeRole('User');
+        $user->assignRole('Admin');
 
         return $user->update();
     }

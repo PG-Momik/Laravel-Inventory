@@ -1,4 +1,5 @@
 <?php
+
 namespace Database\Seeders;
 
 use App\Models\SalesPrice;
@@ -7,7 +8,6 @@ use Illuminate\Database\Seeder;
 
 class SalesPriceSeeder extends Seeder
 {
-
     /**
      * Run the database seeds.
      *
@@ -17,7 +17,7 @@ class SalesPriceSeeder extends Seeder
     {
 
         //Initial Seed if no data
-        if ( SalesPrice::count() < 30 ) {
+        if (SalesPrice::count() < 30) {
             SalesPrice::factory()
                 ->count(30)
                 ->sequence(
@@ -29,7 +29,7 @@ class SalesPriceSeeder extends Seeder
                 )
                 ->create();
         }
-        if ( Transaction::count()>=30 && Transaction::count() < 200 ) {
+        if (Transaction::count() >= 30 && Transaction::count() < 200) {
             SalesPrice::factory()
                 ->count(288)
                 ->sequence(
@@ -41,7 +41,5 @@ class SalesPriceSeeder extends Seeder
                 )
                 ->create();
         }
-
     }
-
 }
