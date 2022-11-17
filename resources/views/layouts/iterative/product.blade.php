@@ -15,20 +15,18 @@
             <i class="fa-solid fa-eye"></i>
         </a>
 
-        @can('trash products')
-            <a href="" class="col no-underline">
-                <form action="{{route('products.destroy', ['product'=>$product])}}"
-                      method="post">
-                    @csrf
-                    @method('delete')
-                    <button
-                        class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 ">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+        <a href="" class="col no-underline">
+            <form action="{{route('products.destroy', ['product'=>$product])}}"
+                  method="post">
+                @csrf
+                @method('delete')
+                <button
+                    class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 ">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
 
-                </form>
-            </a>
-        @endcan
+            </form>
+        </a>
 
     </td>
 </tr>

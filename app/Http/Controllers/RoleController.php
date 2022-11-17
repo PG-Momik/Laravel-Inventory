@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use Spatie\Permission\Models\Role;;
+use Spatie\Permission\Models\Role;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -23,7 +23,9 @@ class RoleController extends Controller
     }
 
 
-    public function create(): View {}
+    public function create(){
+
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -69,7 +71,7 @@ class RoleController extends Controller
      * @param Request $request
      * @param int $id
      *
-     * @return Response
+     * @return void
      */
     public function update(Request $request, $id)
     {
