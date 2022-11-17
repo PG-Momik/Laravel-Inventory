@@ -24,8 +24,7 @@ class Product extends Model
      */
     public function registrant(): belongsTo
     {
-        return $this->belongsTo(User::class, 'registered_by', 'id')
-            ->select('id', 'name', 'email', 'role_id');
+        return $this->belongsTo(User::class, 'registered_by', 'id');
     }
 
     /**

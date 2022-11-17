@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class PermissionSeeder extends Seeder
 {
@@ -29,18 +29,15 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'edit categories']);
         Permission::create(['name' => 'edit roles']);
 
-
         Permission::create(['name' => 'trash users']);
         Permission::create(['name' => 'trash products']);
         Permission::create(['name' => 'trash categories']);
         Permission::create(['name' => 'trash roles']);
 
-
         Permission::create(['name' => 'restore users']);
         Permission::create(['name' => 'restore products']);
         Permission::create(['name' => 'restore categories']);
         Permission::create(['name' => 'restore roles']);
-
 
         Permission::create(['name' => 'delete users']);
         Permission::create(['name' => 'delete products']);

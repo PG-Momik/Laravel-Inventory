@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Factories\Sequence;
  */
 class ProductFactory extends Factory
 {
-protected $model = Product::class;
+    protected $model = Product::class;
     /**
      * Define the model's default state.
      *
@@ -24,16 +24,13 @@ protected $model = Product::class;
     {
         return [
 
-            'registered_by'=>User::all()->random(),
-            'quantity'=>100,
-            'discount'=>5,
-            'name'=>fake()->firstName(),
-            'description'=>fake()->text(200),
+            'registered_by' => User::all()->random(),
+            'quantity' => 100,
+            'discount' => 5,
+            'name' => fake()->firstName(),
+            'description' => fake()->text(200),
         ];
     }
-
 }
 
 //Product::factory()->count(10)->state(new Sequence(fn($sequence)=>['category_id'=>Category::all()->random()]))
-
-

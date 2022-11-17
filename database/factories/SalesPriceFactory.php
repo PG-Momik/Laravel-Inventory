@@ -19,8 +19,8 @@ class SalesPriceFactory extends Factory
     public function definition()
     {
         return [
-            'product_id'=>Product::all()->random(),
-            'value'=>1200,
+            'product_id' => Product::all()->random(),
+            'value' => 1200,
         ];
     }
 }

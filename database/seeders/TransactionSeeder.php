@@ -9,7 +9,6 @@ use Illuminate\Database\Seeder;
 
 class TransactionSeeder extends Seeder
 {
-
     /**
      * Run the database seeds.
      *
@@ -18,7 +17,7 @@ class TransactionSeeder extends Seeder
     public function run()
     {
         //Initial Seed if no data
-        if ( Transaction::count() < 30 ) {
+        if (Transaction::count() < 30) {
             Transaction::factory()->count(30)->sequence(
                 fn($sequence) => [
                     'product_id'        => $sequence->index + 1,
@@ -32,16 +31,12 @@ class TransactionSeeder extends Seeder
             )->create();
         }
 
-        if (Transaction::count()>=30 && Transaction::count() < 200 ) {
+        if (Transaction::count() >= 30 && Transaction::count() < 200) {
             Transaction::factory()->count(288)->sequence(
                 fn($sequence) => [
-                    'created_at'        => now()->subHours((288 - $sequence->index) * 8)
+                    'created_at' => now()->subHours((288 - $sequence->index) * 8)
                 ]
             )->create();
-
         }
-
     }
-
 }
-

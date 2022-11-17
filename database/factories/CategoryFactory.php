@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
  */
 class CategoryFactory extends Factory
 {
-    protected $model= Category::class;
+    protected $model = Category::class;
     /**
      * Define the model's default state.
      *

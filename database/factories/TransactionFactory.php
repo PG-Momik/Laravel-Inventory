@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class TransactionFactory extends Factory
 {
-
     /**
      * Define the model's default state.
      *
@@ -28,17 +27,15 @@ class TransactionFactory extends Factory
         $discount        = 0;
         $type            = fake()->randomElement(['Purchase', 'Sale']);
 
-        if ( Transaction::count() < 200 ) {
-
-            if ( $type == "Purchase" ) {
+        if (Transaction::count() < 200) {
+            if ($type == "Purchase") {
                 $purchasePriceId = PurchasePrice::factory()->create()->id;
             }
 
-            if ( $type == "Sale" ) {
+            if ($type == "Sale") {
                 $salesPriceId = SalesPrice::factory()->create()->id;
                 $discount     = 5;
             }
-
         }
 
         return [
@@ -51,5 +48,4 @@ class TransactionFactory extends Factory
             'quantity'          => fake()->numberBetween(1, 20),
         ];
     }
-
 }

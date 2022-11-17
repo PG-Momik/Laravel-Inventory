@@ -8,7 +8,6 @@ use Illuminate\Database\Seeder;
 
 class CategorySeeder extends Seeder
 {
-
     /**
      * Run the database seeds.
      *
@@ -19,7 +18,5 @@ class CategorySeeder extends Seeder
 
         //Initial Seed if no data.
         Category::factory()->count(10)->has(Product::factory()->count(3), 'products')->create();
-
     }
-
 }

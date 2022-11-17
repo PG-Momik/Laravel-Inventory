@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Role;
+use Spatie\Permission\Models\Role;;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
