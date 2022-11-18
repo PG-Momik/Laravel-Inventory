@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\User;
 use Exception;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -12,10 +14,17 @@ use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->authorizeResource(Category::class);
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @param  Request $request
+     * @param Request $request
+     *
      * @return View
      */
     public function index(Request $request): View
@@ -47,7 +56,8 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  Request $request
+     * @param Request $request
+     *
      * @return RedirectResponse
      */
     public function store(Request $request): RedirectResponse
@@ -67,7 +77,8 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  Category $category
+     * @param Category $category
+     *
      * @return View
      */
     public function show(Category $category): View
@@ -80,7 +91,8 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  Category $category
+     * @param Category $category
+     *
      * @return Response
      */
     public function edit(Category $category)
@@ -91,8 +103,9 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request  $request
-     * @param  Category $category
+     * @param Request $request
+     * @param Category $category
+     *
      * @return Response
      */
     public function update(Request $request, Category $category)
@@ -101,20 +114,94 @@ class CategoryController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified category from db.
      *
-     * @param  Category $category
-     * @return Response
+     * @param Category $category
+     *
+     * @return RedirectResponse
      */
-    public function destroy(Category $category)
+    public function destroy(Category $category): RedirectResponse
     {
-        //
+        try {
+            $category->delete();
+            session()->flash('warning', 'Category moved to trash');
+        } catch (Exception) {
+            session()->flash('warning', 'Something went wrong. Try Again.');
+        }
+
+        return redirect()->route('categories.index');
     }
+
+    /**
+     * Shows Trashed Data
+     *
+     * @param Request $request
+     *
+     * @return View
+     */
+    public function showTrash(Request $request): View
+    {
+        $searchKeyword = $request['search-field'] ?? '';
+        $categories    = Category::withCount('products')
+        ->onlyTrashed()
+            ->when(
+                !empty($searchKeyword),
+                function ($categories) use ($searchKeyword) {
+                    return $categories
+                        ->where('categories.name', 'LIKE', "%$searchKeyword%")
+                        ->orWhere('categories.email', 'LIKE', "%$searchKeyword%");
+                }
+            )->paginate(10);
+
+        return view('categories.trashed')->with(compact('categories', 'searchKeyword'));
+    }
+
+    /**
+     * Restore trashed category
+     *
+     * @param int $id
+     *
+     * @return RedirectResponse
+     */
+    public function restore(int $id): RedirectResponse
+    {
+        try {
+            $category = Category::withTrashed()->find($id);
+            $category->restore();
+            session()->flash('success', "User restored");
+        } catch (Exception) {
+            session()->flash('warning', 'Something went wrong.');
+        }
+
+        return redirect()->back();
+    }
+
+
+    /**
+     * Remove category from db
+     *
+     * @param int $id
+     *
+     * @return RedirectResponse
+     */
+    public function hardDelete(int $id): RedirectResponse
+    {
+        try {
+            $category = Category::withTrashed()->find($id);
+            $category->forceDelete();
+            session()->flash('success', 'Category record destroyed.');
+        } catch (Exception) {
+            session()->flash('warning', "Something went wrong. Try again.");
+        }
+
+        return redirect()->back();
+    }
+
 
     /**
      * Returns  json value needed for categories.category doughnut graph
      *
-     * @param int  $id
+     * @param int $id
      * @param bool $detailed
      *
      * @return bool|string
@@ -131,11 +218,13 @@ class CategoryController extends Controller
         $returnJson['sumOfOtherProducts']   = $sumOfOtherProducts;
 
         if ($detailed) {
-            $individualQuantities               = Product::where('category_id', '=', $id)->pluck('quantity', 'name');
+            $individualQuantities               = Product::where('category_id', '=', $id)->pluck(
+                'quantity',
+                'name'
+            );
             $returnJson['individualQuantities'] = $individualQuantities;
             unset($returnJson['sumOfRelatedProducts']);
         }
-
 
         return json_encode($returnJson);
     }

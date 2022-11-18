@@ -59,7 +59,7 @@
                 <div class="b grad" style="height:350px; border-radius: 0 0 20px 20px">
                     <div style="width: 80%; margin: 0 auto;">
                         <div class="p-5 bg-white round-this shadow-this-down">
-                            <form action="{{route('users.update', ['user'=>$user->id])}}" method="post">
+                            <form action="{{route('users.update', ['user'=>$user])}}" method="post">
                                 @csrf
                                 @method('put')
 

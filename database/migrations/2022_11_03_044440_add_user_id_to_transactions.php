@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::table('transactions', function (Blueprint $table) {
             $table->unsignedBigInteger('user_id')->after('type')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
 
             $table->unsignedBigInteger('product_id')->after('type')->nullable();
-            $table->foreign('product_id')->references('id')->on('products')->nullOnDelete();
+            $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
         });
     }
 

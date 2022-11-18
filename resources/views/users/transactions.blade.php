@@ -6,7 +6,7 @@
     <div class="grid-item">
 
         <div class="admin-grid">
-            <div style="min-height: 460px" class="a bg-purple round-this">
+            <div style="min-height: 460px" class="a bg-purple round-this border-black">
                 <div class="bg-purple px-5 pt-3 py-4" style="border-radius: 20px 20px 0 0">
 
                     {{--Top--}}
@@ -46,13 +46,15 @@
                     {{--Button Group--}}
                     <div class="row mx-0 d-flex gx-5">
                         <div class="col-xl-4 col-lg-6 row mx-0">
-                            <div class="col-lg-6 col-md-12">
-                                <a href="{{route('users.create')}}" class="no-underline">
-                                    <button class="btn btn-md bg-blue text-white col-12 round-this">
-                                        <i class="fa-solid fa-plus"></i> Add
-                                    </button>
-                                </a>
-                            </div>
+                            @can('create users')
+                                <div class="col-lg-6 col-md-12">
+                                    <a href="{{route('users.create')}}" class="no-underline">
+                                        <button class="btn btn-md bg-blue text-white col-12 round-this">
+                                            <i class="fa-solid fa-plus"></i> Add
+                                        </button>
+                                    </a>
+                                </div>
+                            @endcan
                             <div class="col-lg-6 col-md-12">
                                 <a href="{{route('users.trashed')}}" class="no-underline">
                                     <button class="btn btn-md-3 bg-yellow text-white col-12 round-this">
@@ -81,13 +83,13 @@
                             <ol class="list-group">
                                 <li class="list-group-item d-flex justify-content-between align-items-center col-12 row m-0 bg-dark text-white">
                                     <div class="me-auto col-md-2 col-12">
-                                        <div class="fw-bold fs-4">Item</div>
+                                        <div class="fw-bold fs-5">Item</div>
                                     </div>
                                     <div class="col-md-10 col-12 d-flex justify-content-center text-center">
-                                        <span class=" col-sm-6 col-md-3 col-12 py-1 fs-4">Price per unit</span>
-                                        <span class=" col-sm-6 col-md-3 col-12 py-1 fs-4">Discount</span>
-                                        <span class=" col-sm-6 col-md-3 col-12 py-1 fs-4">Quantity</span>
-                                        <span class=" col-sm-6 col-md-3 col-12 py-1 fs-4">Total</span>
+                                        <span class=" col-sm-6 col-md-3 col-12 py-1 fs-5">Price</span>
+                                        <span class=" col-sm-6 col-md-3 col-12 py-1 fs-5">Discount</span>
+                                        <span class=" col-sm-6 col-md-3 col-12 py-1 fs-5">Units</span>
+                                        <span class=" col-sm-6 col-md-3 col-12 py-1 fs-5">Total</span>
                                     </div>
                                 </li>
                                 @foreach($user->transactions as $transaction)
@@ -111,9 +113,10 @@
                                         $total = $beforeDiscount - (($beforeDiscount/100) * $discount);
                                     @endphp
 
-                                    <li class="list-group-item d-flex justify-content-between align-items-center {{$alertClass}} col-12 row m-0">
+
+                                    <li class="list-group-item d-flex justify-content-between align-items-center {{$alertClass}} col-12 row m-0 py-1">
                                         <div class="me-auto col-md-2 col-12">
-                                            <div class="fw-bold fs-4">
+                                            <div class="fw-bold">
                                                 <a href="{{route('products.show', ['product'=>$transaction->product_id])}}">
                                                     {{$transaction->product->name}}
                                                 </a>
@@ -122,12 +125,12 @@
                                         </div>
                                         <div class="col-md-10 col-12 d-flex justify-content-center text-center">
                                             <span
-                                                class=" col-sm-6 col-md-3 col-12 py-1 fs-4">{{$price}}</span>
+                                                class=" col-sm-6 col-md-3 col-12 py-1">{{$price}}</span>
                                             <span
-                                                class=" col-sm-6 col-md-3 col-12 py-1 fs-4">{{$discount}}</span>
+                                                class=" col-sm-6 col-md-3 col-12 py-1">{{$discount}}</span>
                                             <span
-                                                class=" col-sm-6 col-md-3 col-12 py-1 fs-4">{{$quantity}} </span>
-                                            <span class=" col-sm-6 col-md-3 col-12 py-1 fs-4">
+                                                class=" col-sm-6 col-md-3 col-12 py-1">{{$quantity}} </span>
+                                            <span class=" col-sm-6 col-md-3 col-12 py-1">
                                                 {{$total}}
                                             </span>
                                         </div>

@@ -92,6 +92,12 @@ Route::middleware(['auth'])->group(
         Route::resource('products', ProductController::class);
 
 
+        Route::match(['get', 'post'], '/categories/trash', [CategoryController::class, 'showTrash'])
+            ->name('categories.trashed');
+        Route::get('/categories/restore/{id}', [CategoryController::class, 'restore'])
+            ->name('categories.restore');
+        Route::get('/categories/delete/{id}', [CategoryController::class, 'hardDelete'])
+            ->name('categories.delete');
         Route::post('/categories/search', [CategoryController::class, 'index'])
             ->name('categories.search');
         Route::resource('categories', CategoryController::class);

@@ -49,13 +49,15 @@
                     {{--Button Group--}}
                     <div class="row mx-0 d-flex gx-5">
                         <div class="col-xl-4 col-lg-6 row mx-0">
-                            <div class="col-lg-6 col-md-12">
-                                <a href="{{route('products.create')}}" class="no-underline">
-                                    <button class="btn btn-md bg-blue text-white col-12 round-this">
-                                        <i class="fa-solid fa-plus"></i> Add
-                                    </button>
-                                </a>
-                            </div>
+                            @can('create products')
+                                <div class="col-lg-6 col-md-12">
+                                    <a href="{{route('products.create')}}" class="no-underline">
+                                        <button class="btn btn-md bg-blue text-white col-12 round-this">
+                                            <i class="fa-solid fa-plus"></i> Add
+                                        </button>
+                                    </a>
+                                </div>
+                            @endcan
                             <div class="col-lg-6 col-md-12">
                                 <a href="{{route('products.trashed')}}" class="no-underline">
                                     <button class="btn btn-md-3 bg-yellow text-white col-12 round-this">
@@ -190,25 +192,26 @@
                                 </div>
                             </div>
 
-                            {{--Table--}}
-                            <table class="table table-hover table-md">
+                            @can('viewAny products')
+                                {{--Table--}}
+                                <table class="table table-hover table-md">
 
-                                {{ alert() }}
+                                    {{ alert() }}
 
-                                <thead class="table-dark">
-                                <tr>
-                                    <th>Name
-                                    <th>Category</th>
-                                    <th class="text-center">In stock</th>
-                                    <th class="text-center">Action</th>
-                                </tr>
-                                </thead>
-                                <tbody id="tableBody">
-                                @each('layouts.iterative.product', $products, 'product', 'layouts.iterative.no_product')
-                                </tbody>
+                                    <thead class="table-dark">
+                                    <tr>
+                                        <th>Name
+                                        <th>Category</th>
+                                        <th class="text-center">In stock</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tableBody">
+                                    @each('layouts.iterative.product', $products, 'product', 'layouts.iterative.no_product')
+                                    </tbody>
 
-                            </table>
-
+                                </table>
+                            @endCan
                         </div>
                     </div>
                 </div>
@@ -346,6 +349,5 @@
             }
         </script>
     @endpush
-
 
 @endsection
