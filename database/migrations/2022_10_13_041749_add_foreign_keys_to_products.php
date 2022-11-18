@@ -16,10 +16,10 @@ return new class extends Migration
         Schema::table('products', function (Blueprint $table) {
             //
             $table->unsignedBigInteger('category_id')->after('image')->nullable();
-            $table->foreign('category_id')->references('id')->on('categories')->nullOnDelete();
+            $table->foreign('category_id')->references('id')->on('categories')->cascadeOnDelete();
 
             $table->unsignedBigInteger('registered_by')->after('image')->nullable();
-            $table->foreign('registered_by')->references('id')->on('users')->nullOnDelete();
+            $table->foreign('registered_by')->references('id')->on('users')->cascadeOnDelete();
         });
     }
 
