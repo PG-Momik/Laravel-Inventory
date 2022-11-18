@@ -11,6 +11,11 @@ use Illuminate\View\View;
 
 class RoleController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->authorizeResource(Role::class);
+    }
     /**
      * Returns role.index as view
      *
@@ -23,9 +28,10 @@ class RoleController extends Controller
     }
 
 
-    public function create(){
-
-    }
+    /**
+     * @return void
+     */
+    public function create(): void {}
 
     /**
      * Store a newly created resource in storage.
@@ -56,11 +62,11 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param Role $role
      *
      * @return Response
      */
-    public function edit($id)
+    public function edit(Role $role)
     {
         //
     }
@@ -69,11 +75,11 @@ class RoleController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param int $id
+     * @param Role $role
      *
      * @return void
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $role)
     {
         //
     }
@@ -85,7 +91,7 @@ class RoleController extends Controller
      *
      * @return Response
      */
-    public function destroy($id)
+    public function destroy(Role $role)
     {
         //
     }

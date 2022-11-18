@@ -12,6 +12,11 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->authorizeResource(User::class);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -79,16 +84,13 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param User $user
      *
      * @return RedirectResponse| View
      */
-    public function show($id): RedirectResponse | View
+    public function show(User $user): RedirectResponse | View
     {
-        $user = User::with('roles:id,name')
-            ->with('registeredProducts')
-            ->withCount('transactions')
-            ->findOrFail($id);
+        $user->load('roles:id,name', 'registeredProducts', 'transactions');
 
         return view('users.user')->with(compact('user'));
     }
@@ -96,13 +98,13 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param int $id
+     * @param User $user
      *
      * @return View
      */
-    public function edit(int $id): view
+    public function edit(User $user): view
     {
-        $user = User::with('roles:id,name')->find($id);
+        $user->load('roles:id,name');
 
         return view('users.edit')->with(compact('user'));
     }
@@ -111,14 +113,14 @@ class UserController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param int $id
+     * @param User $user
      *
      * @return RedirectResponse
      */
-    public function update(Request $request, int $id): RedirectResponse
+    public function update(Request $request, User $user): RedirectResponse
     {
         $request->validate(apply_validation_to(['name', 'email', 'role', 'verified'], 'update'));
-        $user        = User::find($id);
+
         $user->name  = $request->name;
         $user->email = $request->email;
 
@@ -206,13 +208,11 @@ class UserController extends Controller
         try {
             $user->delete();
             session()->flash('warning', 'User moved to trash');
-
-            return redirect()->back();
-        } catch (Exception $e) {
+        } catch (Exception) {
             session()->flash('warning', 'Something went wrong. Try Again.');
         }
 
-        return redirect()->route('users.trashed');
+        return redirect()->route('users.index');
     }
 
     /**

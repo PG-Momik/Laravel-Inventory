@@ -21,6 +21,11 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->authorizeResource(Transaction::class);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -163,9 +168,7 @@ class TransactionController extends Controller
      *
      * @return void
      */
-    public function create(): void
-    {
-    }
+    public function create(): void {}
 
     /**
      * Check transaction type

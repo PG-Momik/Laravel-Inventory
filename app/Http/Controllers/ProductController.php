@@ -17,6 +17,11 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Product::class);
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -112,13 +117,13 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  $id
+     * @param Product $product
      *
      * @return View
      */
-    public function show($id): View
+    public function show(Product $product): View
     {
-        $product = Product::with('registrant.roles')->with('category')->find($id);
+        $product->load('registrant.roles', 'category');
 
         return view('products.product')->with(compact('product'));
     }
@@ -249,7 +254,7 @@ class ProductController extends Controller
             session()->flash('warning', 'Something went wrong. Try Again.');
         }
 
-        return redirect()->back();
+        return redirect()->route('products.index');
     }
 
     /**
