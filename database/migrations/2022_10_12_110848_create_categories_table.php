@@ -29,4 +29,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('categories');
     }
-};  app/Providers/AuthServiceProvider.php resources/views/products/index.blade.php resources/views/users/edit.blade.php resources/views/users/index.blade.php resources/views/users/user.blade.php
+};
