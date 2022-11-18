@@ -13,14 +13,17 @@
 
                         <div class="col-xl-4 col-lg-4 p-0">
                             <span
-                                class="d-inline-flex nice-white-shadow px-4 align-items-end pb-1">
-                                <a href="{{route('products.index')}}" class="text-decoration-none">
+                                class="d-inline-flex px-4 align-items-end pb-1">
+                                <a href="{{route('products.index')}}" class="text-decoration-none nice-white-shadow">
                                     <span class="fs-3 p-0 text-dark">
                                         <b><u>Products</u></b>
                                     </span>
                                 </a>
                                     <span class="fs-3 ms-1 text-grey">/</span>
-                                <span class="fs-4 text-grey"><u>{{$product->name}}</u></span>
+                                <a href="{{route('products.show', ['product'=>$product])}}"
+                                   class="fs-4 text-grey nice-white-shadow">
+                                    <u class="text-white">{{$product->name}}</u>
+                                </a>
                             </span>
                         </div>
                         {{--Search Form--}}
@@ -49,6 +52,28 @@
                             </div>
 
                         </form>
+                    </div>
+
+                    {{--Button Group--}}
+                    <div class="row mx-0 d-flex gx-5">
+                        <div class="col-xl-4 col-lg-6 row mx-0">
+                            @can('create products')
+                                <div class="col-lg-6 col-md-12">
+                                    <a href="{{route('products.create')}}" class="no-underline">
+                                        <button class="btn btn-md bg-blue text-white col-12 round-this">
+                                            <i class="fa-solid fa-plus"></i> Add
+                                        </button>
+                                    </a>
+                                </div>
+                            @endcan
+                            <div class="col-lg-6 col-md-12">
+                                <a href="{{route('products.trashed')}}" class="no-underline">
+                                    <button class="btn btn-md-3 bg-yellow text-white col-12 round-this">
+                                        <i class="fa-solid fa-trash"></i> Trashed
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -132,21 +157,25 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-2 col-12 align-items-middle">
-                                        <a href="{{route('products.edit', ['product'=>$product])}}"
-                                           class="btn btn-md bg-outline-blue text-blue col-12 round-this my-1">
-                                            <i class="fa-solid fa-pen"></i> Edit
-                                        </a>
+                                        @can('edit users')
+                                            <a href="{{route('products.edit', ['product'=>$product])}}"
+                                               class="btn btn-md bg-outline-blue text-blue col-12 round-this my-1">
+                                                <i class="fa-solid fa-pen"></i> Edit
+                                            </a>
+                                        @endcan
 
-                                        <form action="{{route('products.destroy', ['product'=>$product->id])}}"
-                                              method="post"
-                                              class="my-1">
-                                            @csrf
-                                            @method('delete')
-                                            <button
-                                                class="btn btn-md-3 bg-outline-yellow text-yellow col-12 round-this">
-                                                <i class="fa-solid fa-trash"></i> Trash
-                                            </button>
-                                        </form>
+                                        @can('trash users')
+                                            <form action="{{route('products.destroy', ['product'=>$product->id])}}"
+                                                  method="post"
+                                                  class="my-1">
+                                                @csrf
+                                                @method('delete')
+                                                <button
+                                                    class="btn btn-md-3 bg-outline-yellow text-yellow col-12 round-this">
+                                                    <i class="fa-solid fa-trash"></i> Trash
+                                                </button>
+                                            </form>
+                                        @endcan
 
                                         <div class="text-center mt-2">
                                             {!! QrCode::size(160)->generate($product->id) !!}

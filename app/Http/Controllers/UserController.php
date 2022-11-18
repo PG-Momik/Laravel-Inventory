@@ -168,6 +168,7 @@ class UserController extends Controller
         $user = User::with('transactions.product')
             ->with('transactions.salesPriceDuringTransaction')
             ->with('transactions.purchasePriceDuringTransaction')
+            ->orderBy('created_at', 'desc')
             ->find($request['id']);
 
         return view('users.transactions')->with(compact('user'));

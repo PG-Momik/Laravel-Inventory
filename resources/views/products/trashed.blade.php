@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title', 'Products')
+@section('title', 'Trashed Products')
 @section('activeProducts', 'active-this')
 @section('right-side')
 
@@ -13,7 +13,7 @@
                     <div class="row mx-0 d-flex gx-5  align-items-center">
 
                         <div class="col-xl-4 col-lg-4">
-                            <h1>Products</h1>
+                            <h1>Trashed Products</h1>
                         </div>
 
                         {{--Search Form--}}
@@ -99,16 +99,24 @@
                                 @foreach($products as $product)
                                     <tr>
                                         <td>{{$product->name}}</td>
-                                        <td><a href="{{route('categories.show', ['category'=>$product->category])}}">{{$product->category->name}}</a></td>
+                                        <td>
+                                            <a href="{{route('categories.show', ['category'=>$product->category])}}">{{$product->category->name}}</a>
+                                        </td>
                                         <td>{{$product->quantity}}</td>
                                         <td>{{$product->deleted_at->diffForHumans()}}</td>
                                         <td class="d-flex" style="column-gap: 0.8vw">
-                                            <a href="{{route('products.delete', ['id'=>$product->id])}}" class="col no-underline btn btn-sm rounded-0 bg-outline-red">
-                                                <i class="fa-solid fa-delete-left"></i>
-                                            </a>
-                                            <a href="{{route('products.restore', ['id'=>$product->id])}}" class="col no-underline btn btn-sm rounded-0 bg-outline-green">
-                                                <i class="fa-solid fa-rotate-left"></i>
-                                            </a>
+                                            @can('delete products')
+                                                <a href="{{route('products.delete', ['id'=>$product->id])}}"
+                                                   class="col no-underline btn btn-sm rounded-0 btn-outline-danger">
+                                                    <i class="fa-solid fa-delete-left"></i>
+                                                </a>
+                                            @endcan
+                                            @can('restore products')
+                                                <a href="{{route('products.restore', ['id'=>$product->id])}}"
+                                                   class="col no-underline btn btn-sm rounded-0 btn-outline-success">
+                                                    <i class="fa-solid fa-rotate-left"></i>
+                                                </a>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endforeach

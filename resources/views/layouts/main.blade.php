@@ -127,17 +127,17 @@
                     </a>
                 </li>
                 <li class="nav-item d-links fs-4 justify-content-lg-start justify-content-center text-center
-                    @yield('activeUsers', '') ">
-                    <a href="{{route('users.index')}}" class="m-0 my-1 nav-link text-purple">
-                        <i class="fa-solid fa-users fs-4"></i>
-                        <span class="mx-2 d-none d-lg-inline">Users</span>
-                    </a>
-                </li>
-                <li class="nav-item d-links fs-4 justify-content-lg-start justify-content-center text-center
                     @yield('activeRoles', '') ">
                     <a href="{{route('roles.index')}}" class="m-0 my-1 nav-link text-purple">
                         <i class="fa-solid fa-user-tag fs-4"></i>
                         <span class="mx-2 d-none d-lg-inline">Roles</span>
+                    </a>
+                </li>
+                <li class="nav-item d-links fs-4 justify-content-lg-start justify-content-center text-center
+                    @yield('activeUsers', '') ">
+                    <a href="{{route('users.index')}}" class="m-0 my-1 nav-link text-purple">
+                        <i class="fa-solid fa-users fs-4"></i>
+                        <span class="mx-2 d-none d-lg-inline">Users</span>
                     </a>
                 </li>
                 <li class="nav-item  d-links fs-5 justify-content-lg-start justify-content-center text-center

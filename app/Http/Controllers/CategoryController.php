@@ -14,7 +14,6 @@ use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-    use SoftDeletes;
 
     public function __construct()
     {
@@ -134,6 +133,30 @@ class CategoryController extends Controller
     }
 
     /**
+     * Shows Trashed Data
+     *
+     * @param Request $request
+     *
+     * @return View
+     */
+    public function showTrash(Request $request): View
+    {
+        $searchKeyword = $request['search-field'] ?? '';
+        $categories    = Category::withCount('products')
+        ->onlyTrashed()
+            ->when(
+                !empty($searchKeyword),
+                function ($categories) use ($searchKeyword) {
+                    return $categories
+                        ->where('categories.name', 'LIKE', "%$searchKeyword%")
+                        ->orWhere('categories.email', 'LIKE', "%$searchKeyword%");
+                }
+            )->paginate(10);
+
+        return view('categories.trashed')->with(compact('categories', 'searchKeyword'));
+    }
+
+    /**
      * Restore trashed category
      *
      * @param int $id
@@ -195,7 +218,10 @@ class CategoryController extends Controller
         $returnJson['sumOfOtherProducts']   = $sumOfOtherProducts;
 
         if ($detailed) {
-            $individualQuantities               = Product::where('category_id', '=', $id)->pluck('quantity', 'name');
+            $individualQuantities               = Product::where('category_id', '=', $id)->pluck(
+                'quantity',
+                'name'
+            );
             $returnJson['individualQuantities'] = $individualQuantities;
             unset($returnJson['sumOfRelatedProducts']);
         }

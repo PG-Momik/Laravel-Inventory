@@ -8,25 +8,19 @@
     <td class="text-center">
         {{$product->quantity}}
     </td>
-    <td class="d-flex text-center" style="column-gap: 0.8vw">
-
+    <td class="d-flex text-center" style="column-gap: 0.5em">
         <a href="{{route('products.show', ['product'=>$product])}}"
-           class="col btn btn-sm btn-outline-primary rounded-0 px-2">
+           class="w-50 rounded-0 py-1 btn btn-outline-primary">
             <i class="fa-solid fa-eye"></i>
         </a>
-
-        <a href="" class="col no-underline">
-            <form action="{{route('products.destroy', ['product'=>$product])}}"
-                  method="post">
-                @csrf
-                @method('delete')
-                <button
-                    class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 ">
-                    <i class="fa-solid fa-trash"></i>
-                </button>
-
-            </form>
-        </a>
-
+        <form action="{{route('products.destroy', ['product'=>$product])}}"
+              method="post" class="w-50">
+            @csrf
+            @method('delete')
+            <button type="submit"
+                    class="w-100 rounded-0 py-1 btn btn-outline-warning">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </form>
     </td>
 </tr>

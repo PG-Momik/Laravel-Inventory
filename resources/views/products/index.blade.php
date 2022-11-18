@@ -49,13 +49,15 @@
                     {{--Button Group--}}
                     <div class="row mx-0 d-flex gx-5">
                         <div class="col-xl-4 col-lg-6 row mx-0">
-                            <div class="col-lg-6 col-md-12">
-                                <a href="{{route('products.create')}}" class="no-underline">
-                                    <button class="btn btn-md bg-blue text-white col-12 round-this">
-                                        <i class="fa-solid fa-plus"></i> Add
-                                    </button>
-                                </a>
-                            </div>
+                            @can('create products')
+                                <div class="col-lg-6 col-md-12">
+                                    <a href="{{route('products.create')}}" class="no-underline">
+                                        <button class="btn btn-md bg-blue text-white col-12 round-this">
+                                            <i class="fa-solid fa-plus"></i> Add
+                                        </button>
+                                    </a>
+                                </div>
+                            @endcan
                             <div class="col-lg-6 col-md-12">
                                 <a href="{{route('products.trashed')}}" class="no-underline">
                                     <button class="btn btn-md-3 bg-yellow text-white col-12 round-this">
@@ -189,7 +191,6 @@
                                     </div>
                                 </div>
                             </div>
-                            {{auth()->user()->hasPermissionTo('view products')?"can":"cannot"}}
 
                             @can('viewAny products')
                                 {{--Table--}}

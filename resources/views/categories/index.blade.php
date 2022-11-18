@@ -52,15 +52,17 @@
                     {{--Button Group--}}
                     <div class="row mx-0 d-flex gx-5">
                         <div class="col-xl-4 col-lg-6 row mx-0">
+                            @can('create categories')
+                                <div class="col-lg-6 col-md-12">
+                                    <a href="{{route('categories.create')}}" class="no-underline">
+                                        <button class="btn btn-md bg-blue text-white col-12 round-this">
+                                            <i class="fa-solid fa-plus"></i> Add
+                                        </button>
+                                    </a>
+                                </div>
+                            @endcan
                             <div class="col-lg-6 col-md-12">
-                                <a href="{{route('categories.create')}}" class="no-underline">
-                                    <button class="btn btn-md bg-blue text-white col-12 round-this">
-                                        <i class="fa-solid fa-plus"></i> Add
-                                    </button>
-                                </a>
-                            </div>
-                            <div class="col-lg-6 col-md-12">
-                                <a href="" class="no-underline">
+                                <a href="{{route('categories.trashed')}}" class="no-underline">
                                     <button class="btn btn-md-3 bg-yellow text-white col-12 round-this">
                                         <i class="fa-solid fa-trash"></i> Trashed
                                     </button>

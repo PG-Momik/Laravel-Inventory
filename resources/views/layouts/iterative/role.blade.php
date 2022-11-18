@@ -63,23 +63,21 @@
         </div>
     </td>
 
-    <td class="text-center align-middle" style="">
+    <td class="text-center" style="column-gap: 0.5em">
         <a href="{{route('roles.show', ['role'=>$role])}}"
-           class=" col-12 mx-0 btn btn-sm btn-outline-primary rounded-0 fs-6 my-1">
+           class="w-100 rounded-0 py-1 btn btn-outline-primary my-1">
             <i class="fa-solid fa-eye"></i>
         </a>
-
-        <a href="" class=" col-12 mx-0 no-underline">
+        @can('trash roles')
             <form action="{{route('roles.destroy', ['role'=>$role])}}"
-                  method="post">
+                  method="post" class="w-100 my-1">
                 @csrf
                 @method('delete')
-                <button
-                    class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 fs-6 my-1">
+                <button type="submit"
+                        class="w-100 rounded-0 py-1 btn btn-outline-warning">
                     <i class="fa-solid fa-trash"></i>
                 </button>
-
             </form>
-        </a>
+        @endcan
     </td>
 </tr>

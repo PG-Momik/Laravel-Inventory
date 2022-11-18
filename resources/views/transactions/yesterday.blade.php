@@ -24,7 +24,7 @@
                                         <b><u>Transactions</u></b>
                                     </span>
                                 </a>
-                                    <span class="fs-3 ms-1 text-grey">/</span>
+                                <span class="fs-3 ms-1 text-grey">/</span>
                                 <a href="{{route('yesterdays-transactions')}}"
                                    class="text-decoration-none nice-white-shadow">
                                     <u class="fs-4 text-white">Yesterday</u>

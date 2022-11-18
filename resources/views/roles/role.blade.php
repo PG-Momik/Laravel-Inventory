@@ -14,14 +14,18 @@
 
                         <div class="col-xl-4 col-lg-4 p-0">
                             <span
-                                class="d-inline-flex nice-white-shadow px-4 align-items-end pb-1">
-                                <a href="{{route('roles.index')}}" class="text-decoration-none">
+                                class="d-inline-flex px-4 align-items-end pb-1">
+                                <a href="{{route('roles.index')}}"
+                                   class="text-decoration-none nice-white-shadow">
                                     <span class="fs-3 p-0 text-dark">
                                         <b><u>Role</u></b>
                                     </span>
                                 </a>
                                     <span class="fs-3 ms-1 text-grey">/</span>
-                                <span class="fs-4 text-grey"><u>{{$role->name}}</u></span>
+                                <a href="{{route('roles.show', ['role'=>$role])}}"
+                                   class="fs-4 text-grey nice-white-shadow">
+                                    <u class="text-white">{{$role->name}}</u>
+                                </a>
                             </span>
                         </div>
 
@@ -109,22 +113,24 @@
                                                     <span class="col-md-6 col-12">{{$user->name}}</span>
                                                     <span class="col-md-6 col-12 text-end">
                                                         <a href="{{route('users.show', ['user'=>$user])}}"
-                                                            class="btn btn-sm btn-outline-primary rounded-0">
+                                                           class="btn btn-sm btn-outline-primary rounded-0">
                                                             <i class="fa-solid fa-eye px-4"></i>
                                                         </a>
-                                                        @if($role->id == 1)
-                                                            <button type="button"
-                                                                    class="btn btn-sm btn-outline-danger rounded-0"
-                                                                    onclick="demoteUser(this, {{$user->id}})">
+                                                        @can('update roles')
+                                                            @if($role->id == 1)
+                                                                <button type="button"
+                                                                        class="btn btn-sm btn-outline-danger rounded-0"
+                                                                        onclick="demoteUser(this, {{$user->id}})">
                                                                 Demote
                                                             </button>
-                                                        @else
-                                                            <button type="button"
-                                                                    class="btn btn-sm btn-outline-success rounded-0"
-                                                                    onclick="promoteUser(this, {{$user->id}})">
+                                                            @else
+                                                                <button type="button"
+                                                                        class="btn btn-sm btn-outline-success rounded-0"
+                                                                        onclick="promoteUser(this, {{$user->id}})">
                                                                 Promote
                                                             </button>
-                                                        @endif
+                                                            @endif
+                                                        @endcan
                                                     </span>
                                                 </div>
                                             @empty

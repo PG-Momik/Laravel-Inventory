@@ -46,13 +46,15 @@
                     {{--Button Group--}}
                     <div class="row mx-0 d-flex gx-5">
                         <div class="col-xl-4 col-lg-6 row mx-0">
-                            <div class="col-lg-6 col-md-12">
-                                <a href="{{route('users.create')}}" class="no-underline">
-                                    <button class="btn btn-md bg-blue text-white col-12 round-this">
-                                        <i class="fa-solid fa-plus"></i> Add
-                                    </button>
-                                </a>
-                            </div>
+                            @can('create users')
+                                <div class="col-lg-6 col-md-12">
+                                    <a href="{{route('users.create')}}" class="no-underline">
+                                        <button class="btn btn-md bg-blue text-white col-12 round-this">
+                                            <i class="fa-solid fa-plus"></i> Add
+                                        </button>
+                                    </a>
+                                </div>
+                            @endcan
                             <div class="col-lg-6 col-md-12">
                                 <a href="{{route('users.trashed')}}" class="no-underline">
                                     <button class="btn btn-md-3 bg-yellow text-white col-12 round-this">
@@ -191,60 +193,64 @@
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
 
                             {{--Table--}}
-                            <table class="table table-hover table-md">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-md">
 
-                                {{  alert() }}
+                                    {{  alert() }}
 
-                                <thead class="table-dark">
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Role</th>
-                                    <th class="text-center">Activities</th>
-                                    <th class="text-center">Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-
-                                @foreach($users as $user)
+                                    <thead class="table-dark">
                                     <tr>
-                                        <td>{{$user->name}}</td>
-                                        <td>{{$user->email}}</td>
-                                        <td>{{$user->roles[0]->name}}</td>
-                                        <td class="text-center">
-                                            <a href="{{route('users.transactions', ['id'=>$user->id])}}">
-                                                {{$user->transactions_count}}
-                                            </a>
-                                        </td>
-                                        <td class="d-flex text-center" style="column-gap: 0.8vw">
-                                            <a href="{{route('users.show', ['user'=>$user])}}"
-                                               class="col btn btn-sm btn-outline-primary rounded-0 px-2">
-                                                <i class="fa-solid fa-eye"></i>
-                                            </a>
-
-                                            <a href="" class="col no-underline">
-                                                <form action="{{route('users.destroy', ['user'=>$user])}}"
-                                                      method="post">
-                                                    @csrf
-                                                    @method('delete')
-                                                    <button
-                                                        class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 px-4">
-                                                        <i class="fa-solid fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </a>
-                                        </td>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th class="text-center">Transactions</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+
+                                    @foreach($users as $user)
+                                        <tr>
+                                            <td>{{$user->name}}</td>
+                                            <td>{{$user->email}}</td>
+                                            <td>{{$user->roles[0]->name}}</td>
+                                            <td class="text-center">
+                                                <a href="{{route('users.transactions', ['id'=>$user->id])}}">
+                                                    {{$user->transactions_count}}
+                                                </a>
+                                            </td>
+
+                                            <td class="d-flex text-center" style="column-gap: 0.5em">
+                                                <a href="{{route('users.show', ['user'=>$user])}}"
+                                                   class="w-50 rounded-0 py-1 btn btn-outline-primary">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
+
+                                                @can('trash users')
+                                                    <form action="{{route('users.destroy', ['user'=>$user])}}"
+                                                          method="post" class="w-50">
+                                                        @csrf
+                                                        @method('delete')
+                                                        <button type="submit"
+                                                                class="w-100 rounded-0 py-1 btn btn-outline-warning">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                @endcan
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
+                    <div class="mt-5 round-this mx-4 h-100">
+                    </div>
                 </div>
 
             </div>

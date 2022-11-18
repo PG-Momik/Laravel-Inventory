@@ -226,13 +226,15 @@ class ProductController extends Controller
     {
         $searchKeyword = $request['search-field'] ?? '';
 
-        if (empty($searchKeyword)) {
-            $products = Product::onlyTrashed()->paginate(10);
-        } else {
-            $products = Product::onlyTrashed()
-                ->where('products.name', 'LIKE', "%$searchKeyword%")
-                ->paginate(10);
-        }
+        $products = Product::with('category')
+            ->onlyTrashed()
+            ->when(
+                !empty($searchKeyword),
+                function ($products) use ($searchKeyword) {
+                    $products->where('products.name', 'LIKE', "%$searchKeyword%");
+                }
+            )
+            ->paginate(10);
 
         return view('products.trashed')->with(compact('products', 'searchKeyword'));
     }
@@ -264,8 +266,10 @@ class ProductController extends Controller
      *
      * @return RedirectResponse
      */
-    public function restore(int $id): RedirectResponse
-    {
+    public
+    function restore(
+        int $id
+    ): RedirectResponse {
         try {
             $product = Product::withTrashed()->find($id);
             $product->restore();
@@ -285,8 +289,10 @@ class ProductController extends Controller
      *
      * @return RedirectResponse
      */
-    public function hardDelete(int $id): RedirectResponse
-    {
+    public
+    function hardDelete(
+        int $id
+    ): RedirectResponse {
         try {
             $product = Product::withTrashed()->find($id);
             $product->forceDelete();
@@ -303,8 +309,10 @@ class ProductController extends Controller
      *
      * @return mixed
      */
-    public function filterProducts(Request $request): mixed
-    {
+    public
+    function filterProducts(
+        Request $request
+    ): mixed {
         return $this->filteredProducts($request['filterParams']);
     }
 
@@ -315,8 +323,10 @@ class ProductController extends Controller
      *
      * @return mixed
      */
-    public function filteredProducts(array $filterParams): mixed
-    {
+    public
+    function filteredProducts(
+        array $filterParams
+    ): mixed {
         $startFormat     = 'Y-m-d';
         $startDateString = implode(
             '-',
@@ -369,8 +379,10 @@ class ProductController extends Controller
         return $products;
     }
 
-    public function productDetails($id)
-    {
+    public
+    function productDetails(
+        $id
+    ) {
         return Product::find($id);
     }
 
@@ -382,8 +394,11 @@ class ProductController extends Controller
      *
      * @return JsonResponse
      */
-    public function getValuesForLineGraph(string $type, int $days = 7): JsonResponse
-    {
+    public
+    function getValuesForLineGraph(
+        string $type,
+        int    $days = 7
+    ): JsonResponse {
         $today  = Carbon::now()->endOfDay();
         $before = Carbon::now()->subDays($days)->startOfDay();
 

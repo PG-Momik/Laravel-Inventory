@@ -1,12 +1,12 @@
 @extends('layouts.main')
-@section('title', 'Users')
+@section('title', 'Trashed Users')
 @section('activeUsers', 'active-this')
 @section('right-side')
 
     <div class="grid-item">
 
         <div class="admin-grid">
-            <div style="min-height: 460px" class="a bg-purple round-this">
+            <div style="min-height: 460px" class="a bg-purple round-this border-black">
                 <div class="bg-purple px-5 pt-3 py-4" style="border-radius: 20px 20px 0 0">
 
                     {{--Top--}}
@@ -62,6 +62,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
 
@@ -71,42 +72,52 @@
                         <div class="p-5 bg-white round-this shadow-this-down">
 
                             {{--                            Pagination--}}
-                            <div class="col-12 text-dark">
-                                {{$users->links("pagination::bootstrap-5")}}
+                            <div class="row text-dark">
+                                <div class="col-12 text-dark">
+                                    {{$users->links("pagination::bootstrap-5")}}
+                                </div>
                             </div>
 
                             {{--                            Table--}}
-                            <table class="table table-hover table-md">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-md">
 
-                                {{alert()}}
+                                    {{alert()}}
 
-                                <thead class="table-dark">
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Trashed</th>
-                                    <th>Action</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-
-                                @foreach($users as $user)
+                                    <thead class="table-dark">
                                     <tr>
-                                        <td>{{$user->name}}</td>
-                                        <td>{{$user->email}}</td>
-                                        <td>{{$user->deleted_at->diffForHumans()}}</td>
-                                        <td class="d-flex" style="column-gap: 0.8vw">
-                                            <a href="{{route('users.delete', ['id'=>$user->id])}}" class="col no-underline btn btn-sm rounded-0 bg-outline-red">
-                                                <i class="fa-solid fa-delete-left"></i>
-                                            </a>
-                                            <a href="{{route('users.restore', ['id'=>$user->id])}}" class="col no-underline btn btn-sm rounded-0 bg-outline-green">
-                                                <i class="fa-solid fa-rotate-left"></i>
-                                            </a>
-                                        </td>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Trashed</th>
+                                        <th class="text-center">Action</th>
                                     </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+
+                                    @foreach($users as $user)
+                                        <tr>
+                                            <td>{{$user->name}}</td>
+                                            <td>{{$user->email}}</td>
+                                            <td>{{$user->deleted_at->diffForHumans()}}</td>
+                                            <td class="d-flex" style="column-gap: 0.8vw">
+                                                @can('delete users')
+                                                    <a href="{{route('users.delete', ['id'=>$user->id])}}"
+                                                       class="col no-underline btn btn-sm rounded-0 btn-outline-danger">
+                                                        <i class="fa-solid fa-delete-left"></i>
+                                                    </a>
+                                                @endcan
+                                                @can('restore users')
+                                                    <a href="{{route('users.restore', ['id'=>$user->id])}}"
+                                                       class="col no-underline btn btn-sm rounded-0 btn-outline-success">
+                                                        <i class="fa-solid fa-rotate-left"></i>
+                                                    </a>
+                                                @endcan
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 

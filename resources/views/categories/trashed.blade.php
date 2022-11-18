@@ -97,15 +97,19 @@
                                         <td>{{$category->products_count}}</td>
                                         <td>{{$category->deleted_at->diffForHumans()}}</td>
                                         <td class="d-flex" style="column-gap: 0.8vw">
-                                            <a href="{{route('categories.delete', ['id'=>$category->id])}}"
-                                               class="col no-underline btn btn-sm rounded-0 btn-outline-danger">
-                                                <i class="fa-solid fa-delete-left"></i>
-                                            </a>
+                                            @can('delete categories')
+                                                <a href="{{route('categories.delete', ['id'=>$category->id])}}"
+                                                   class="col no-underline btn btn-sm rounded-0 btn-outline-danger">
+                                                    <i class="fa-solid fa-delete-left"></i>
+                                                </a>
+                                            @endcan
 
-                                            <a href="{{route('categories.restore', ['id'=>$category->id])}}"
-                                               class="col no-underline btn btn-sm rounded-0 btn-outline-success">
-                                                <i class="fa-solid fa-rotate-left"></i>
-                                            </a>
+                                            @can('restore categories')
+                                                <a href="{{route('categories.restore', ['id'=>$category->id])}}"
+                                                   class="col no-underline btn btn-sm rounded-0 btn-outline-success">
+                                                    <i class="fa-solid fa-rotate-left"></i>
+                                                </a>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endforeach
