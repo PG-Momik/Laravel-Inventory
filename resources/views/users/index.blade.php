@@ -227,7 +227,7 @@
                                             </a>
 
                                             <a href="" class="col no-underline">
-                                                <form action="{{route('users.destroy', ['user'=>$user->id])}}"
+                                                <form action="{{route('users.destroy', ['user'=>$user])}}"
                                                       method="post">
                                                     @csrf
                                                     @method('delete')
@@ -235,7 +235,6 @@
                                                         class="btn btn-sm bg-outline-yellow rounded-0 text-yellow col-12 px-4">
                                                         <i class="fa-solid fa-trash"></i>
                                                     </button>
-
                                                 </form>
                                             </a>
                                         </td>

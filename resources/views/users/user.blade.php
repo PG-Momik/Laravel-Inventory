@@ -97,7 +97,7 @@
                                             </button>
                                         </a>
                                         <a href="" class="no-underline">
-                                            <form action="{{route('users.destroy', ['user'=>$user->id])}}" method="post">
+                                            <form action="{{route('users.destroy', ['user'=>$user])}}" method="post">
                                                 @csrf
                                                 @method('delete')
                                                 <button

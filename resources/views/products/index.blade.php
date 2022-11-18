@@ -189,26 +189,28 @@
                                     </div>
                                 </div>
                             </div>
+                            {{auth()->user()->hasPermissionTo('view products')?"can":"cannot"}}
 
-                            {{--Table--}}
-                            <table class="table table-hover table-md">
+                            @can('viewAny products')
+                                {{--Table--}}
+                                <table class="table table-hover table-md">
 
-                                {{ alert() }}
+                                    {{ alert() }}
 
-                                <thead class="table-dark">
-                                <tr>
-                                    <th>Name
-                                    <th>Category</th>
-                                    <th class="text-center">In stock</th>
-                                    <th class="text-center">Action</th>
-                                </tr>
-                                </thead>
-                                <tbody id="tableBody">
-                                @each('layouts.iterative.product', $products, 'product', 'layouts.iterative.no_product')
-                                </tbody>
+                                    <thead class="table-dark">
+                                    <tr>
+                                        <th>Name
+                                        <th>Category</th>
+                                        <th class="text-center">In stock</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="tableBody">
+                                    @each('layouts.iterative.product', $products, 'product', 'layouts.iterative.no_product')
+                                    </tbody>
 
-                            </table>
-
+                                </table>
+                            @endCan
                         </div>
                     </div>
                 </div>
@@ -346,6 +348,5 @@
             }
         </script>
     @endpush
-
 
 @endsection
