@@ -52,12 +52,6 @@ class DashboardController extends Controller
         return view('dashboard.index')->with(compact('cardsValues', 'cardInitialRoutes'));
     }
 
-
-    public function test(): view
-    {
-        return view('dashboard.test');
-    }
-
     /**
      * Returns collection of Transaction Model based on product id
      * Set $type = Purchase or Sales if Collection of Purchase or Sales transaction is needed
