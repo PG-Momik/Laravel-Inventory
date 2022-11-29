@@ -31,7 +31,7 @@ class CategoryController extends Controller
      */
     public function index(SearchRequest $request): View
     {
-        $searchKeyword = $request['search-field'] ?? '';
+        $searchKeyword = $request->validated('search-field') ?? '';
 
         $categories = Category::when(
             !empty($searchKeyword),
@@ -66,7 +66,7 @@ class CategoryController extends Controller
     {
         try {
             $category       = new Category();
-            $category->name = $request['name'];
+            $category->name = $request->validated('name');
             $category->save();
             session()->flash('success', 'Category added.');
         } catch (Exception) {
@@ -143,7 +143,7 @@ class CategoryController extends Controller
      */
     public function showTrash(SearchRequest $request): View
     {
-        $searchKeyword = $request['search-field'] ?? '';
+        $searchKeyword = $request->validated('search-field') ?? '';
         $categories    = Category::withCount('products')
             ->onlyTrashed()
             ->when(

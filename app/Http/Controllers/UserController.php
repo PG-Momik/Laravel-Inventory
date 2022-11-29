@@ -32,7 +32,7 @@ class UserController extends Controller
 
     public function index(SearchRequest $request): View
     {
-        $searchKeyword = $request['search-field'] ?? '';
+        $searchKeyword = $request->validated('search-field') ?? '';
 
         $users = User::when(
             !empty($searchKeyword),
@@ -192,7 +192,7 @@ class UserController extends Controller
      */
     public function showTrash(SearchRequest $request): View
     {
-        $searchKeyword = $request['search-field'] ?? '';
+        $searchKeyword = $request->validated('search-field') ?? '';
         if (empty($searchKeyword)) {
             $users = User::onlyTrashed()->paginate(10);
         } else {

@@ -33,7 +33,7 @@ class ProductController extends Controller
      */
     public function index(SearchRequest $request): View
     {
-        $searchKeyword = $request['search-field'] ?? '';
+        $searchKeyword = $request->validated('search-field') ?? '';
 
         $products = Product::with('category')
             ->when(
@@ -225,7 +225,7 @@ class ProductController extends Controller
      */
     public function showTrash(SearchRequest $request): View
     {
-        $searchKeyword = $request['search-field'] ?? '';
+        $searchKeyword = $request->validated('search-field') ?? '';
 
         $products = Product::with('category')
             ->onlyTrashed()
