@@ -121,8 +121,8 @@
                                             class="form-select
                                             @if($errors->has('role')) is-invalid @endif">
                                         <option value="Invalid">Select role</option>
-                                        <option value="Admin">Admin</option>
-                                        <option value="User">User</option>
+                                        <option value="1">Admin</option>
+                                        <option value="2">User</option>
                                     </select>
                                 </div>
                             </div>

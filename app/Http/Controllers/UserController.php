@@ -45,7 +45,7 @@ class UserController extends Controller
             ->with('roles')
             ->paginate(10);
 
-        return view('noob.users.index')->with(compact('users', 'searchKeyword'));
+        return view('users.index')->with(compact('users', 'searchKeyword'));
     }
 
     /**
@@ -55,7 +55,7 @@ class UserController extends Controller
      */
     public function create(): View
     {
-        return view('noob.users.add');
+        return view('users.add');
     }
 
     /**
@@ -94,7 +94,7 @@ class UserController extends Controller
     {
         $user->load('roles:id,name', 'registeredProducts', 'transactions');
 
-        return view('noob.users.user')->with(compact('user'));
+        return view('users.user')->with(compact('user'));
     }
 
     /**
@@ -108,7 +108,7 @@ class UserController extends Controller
     {
         $user->load('roles:id,name');
 
-        return view('noob.users.edit')->with(compact('user'));
+        return view('users.edit')->with(compact('user'));
     }
 
     /**
@@ -153,7 +153,7 @@ class UserController extends Controller
      */
     public function profile(): View
     {
-        return view('noob.dashboard.profile');
+        return view('dashboard.profile');
     }
 
 
@@ -174,7 +174,7 @@ class UserController extends Controller
             ->with('purchasePriceDuringTransaction')
             ->paginate(15);
 
-        return view('noob.users.transactions')
+        return view('users.transactions')
             ->with(
                 [
                     'user'         => $user,
@@ -202,7 +202,7 @@ class UserController extends Controller
                 ->paginate(10);
         }
 
-        return view('noob.users.trashed')->with(compact('users', 'searchKeyword'));
+        return view('users.trashed')->with(compact('users', 'searchKeyword'));
     }
 
 

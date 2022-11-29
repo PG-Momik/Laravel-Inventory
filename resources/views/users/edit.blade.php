@@ -119,11 +119,11 @@
                                                 <option value="Invalid" disabled>
                                                     Select role
                                                 </option>
-                                                <option value="Admin"
+                                                <option value="1"
                                                     @selected($user->roles[0]->name == "Admin")>
                                                     Admin
                                                 </option>
-                                                <option value="User"
+                                                <option value="2"
                                                     @selected($user->roles[0]->name == "User")>
                                                     User
                                                 </option>
