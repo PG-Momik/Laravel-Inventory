@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateProductRequest;
+use App\Http\Requests\SearchRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
@@ -23,11 +25,11 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * @param SearchRequest $request
      *
      * @return View
      */
-    public function index(Request $request): View
+    public function index(SearchRequest $request): View
     {
         $searchKeyword = $request['search-field'] ?? '';
 
@@ -56,18 +58,18 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param CreateProductRequest $request
      *
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CreateProductRequest $request): RedirectResponse
     {
         try {
             $category       = new Category();
             $category->name = $request['name'];
             $category->save();
             session()->flash('success', 'Category added.');
-        } catch (Exception $e) {
+        } catch (Exception) {
             session()->flash('warn', 'Something went wrong.');
         }
 
@@ -135,15 +137,15 @@ class CategoryController extends Controller
     /**
      * Shows Trashed Data
      *
-     * @param Request $request
+     * @param SearchRequest $request
      *
      * @return View
      */
-    public function showTrash(Request $request): View
+    public function showTrash(SearchRequest $request): View
     {
         $searchKeyword = $request['search-field'] ?? '';
         $categories    = Category::withCount('products')
-        ->onlyTrashed()
+            ->onlyTrashed()
             ->when(
                 !empty($searchKeyword),
                 function ($categories) use ($searchKeyword) {
