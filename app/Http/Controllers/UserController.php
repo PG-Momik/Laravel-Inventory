@@ -2,11 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\SearchRequest;
+use App\Http\Requests\UpdateUserRequest;
+use App\Models\Transaction;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
@@ -20,12 +25,12 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * @param SearchRequest $request
      *
      * @return View
      */
 
-    public function index(Request $request): View
+    public function index(SearchRequest $request): View
     {
         $searchKeyword = $request['search-field'] ?? '';
 
@@ -40,7 +45,7 @@ class UserController extends Controller
             ->with('roles')
             ->paginate(10);
 
-        return view('users.index')->with(compact('users', 'searchKeyword'));
+        return view('noob.users.index')->with(compact('users', 'searchKeyword'));
     }
 
     /**
@@ -50,32 +55,29 @@ class UserController extends Controller
      */
     public function create(): View
     {
-        return view('users.add');
+        return view('noob.users.add');
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param CreateUserRequest $request
      *
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CreateUserRequest $request): RedirectResponse
     {
-        $request->validate(apply_validation_to(['name', 'email', 'role']));
         $user           = new User();
-        $user->name     = $request['name'];
-        $user->email    = $request['email'];
-        $user->role     = $request['role'];
-        $user->password = $request['password'] ?? Hash::make('Password#123');
-
+        $user->name     = $request->validated('name');
+        $user->email    = $request->validated('email');
+        $user->password = $request->password ?? Hash::make('Password#123');
         try {
             $user->save();
-            $user->assignRole($request->role);
+            $user->assignRole($request->validated('role'));
 
             session()->flash('success', 'User added successfully.');
-        } catch (Exception $e) {
-            session()->flash('error', 'Something went wrong.');
+        } catch (Exception) {
+            session()->flash('danger', 'Something went wrong.');
         }
 
         return redirect()->back();
@@ -92,7 +94,7 @@ class UserController extends Controller
     {
         $user->load('roles:id,name', 'registeredProducts', 'transactions');
 
-        return view('users.user')->with(compact('user'));
+        return view('noob.users.user')->with(compact('user'));
     }
 
     /**
@@ -106,7 +108,7 @@ class UserController extends Controller
     {
         $user->load('roles:id,name');
 
-        return view('users.edit')->with(compact('user'));
+        return view('noob.users.edit')->with(compact('user'));
     }
 
     /**
@@ -117,18 +119,8 @@ class UserController extends Controller
      *
      * @return RedirectResponse
      */
-    public function update(Request $request, User $user): RedirectResponse
+    public function update(UpdateUserRequest $request, User $user): RedirectResponse
     {
-        $request->validate(apply_validation_to(['name', 'email', 'role', 'verified'], 'update'));
-
-        $user->name  = $request->name;
-        $user->email = $request->email;
-
-        //Removes user role.
-        //Since 1 user has only 1 role, first() captures the role.
-        $user->removeRole($user->roles->first());
-        $user->assignRole($request->role);
-
         if ($request->verified === "unverified") {
             $user->email_verified_at = null;
         }
@@ -137,11 +129,20 @@ class UserController extends Controller
         }
 
         try {
+            $user->name  = $request->validated('name');
+            $user->email = $request->validated('email');
             $user->update();
-        } catch (Exception $e) {
+
+            //Removes user role and reassigns role from request.
+            //Since 1 user has only 1 role, first() captures the role.
+            $user->roles = $request->validated('role');
+            $user->removeRole($user->roles()->first());
+            $user->assignRole($request->role);
+
+            session()->flash('success', "User info updated.");
+        } catch (Exception) {
             session()->flash('warning', "Something went wrong.");
         }
-        session()->flash('success', "User info updated.");
 
         return redirect()->back();
     }
@@ -152,7 +153,7 @@ class UserController extends Controller
      */
     public function profile(): View
     {
-        return view('dashboard.profile');
+        return view('noob.dashboard.profile');
     }
 
 
@@ -165,23 +166,31 @@ class UserController extends Controller
      */
     public function showTransactions(Request $request): View
     {
-        $user = User::with('transactions.product')
-            ->with('transactions.salesPriceDuringTransaction')
-            ->with('transactions.purchasePriceDuringTransaction')
-            ->orderBy('created_at', 'desc')
-            ->find($request['id']);
+        $user = User::find($request['id']);
 
-        return view('users.transactions')->with(compact('user'));
+        $transactions = Transaction::where('user_id', $request['id'])
+            ->with('product')
+            ->with('salesPriceDuringTransaction')
+            ->with('purchasePriceDuringTransaction')
+            ->paginate(15);
+
+        return view('noob.users.transactions')
+            ->with(
+                [
+                    'user'         => $user,
+                    'transactions' => $transactions
+                ]
+            );
     }
 
     /**
      * Shows Trashed Data
      *
-     * @param Request $request
+     * @param SearchRequest $request
      *
      * @return View
      */
-    public function showTrash(Request $request): View
+    public function showTrash(SearchRequest $request): View
     {
         $searchKeyword = $request['search-field'] ?? '';
         if (empty($searchKeyword)) {
@@ -193,7 +202,7 @@ class UserController extends Controller
                 ->paginate(10);
         }
 
-        return view('users.trashed')->with(compact('users', 'searchKeyword'));
+        return view('noob.users.trashed')->with(compact('users', 'searchKeyword'));
     }
 
 
@@ -255,5 +264,37 @@ class UserController extends Controller
         }
 
         return redirect()->back();
+    }
+
+
+    /**
+     * FOR AJAX REQ
+     *Returns true if layout toggle based on layout is successful for user
+     *
+     * @param User $user
+     * @param int $layout
+     *
+     * @return bool
+     */
+    public function toggleLayout(User $user, int $layout = 1): bool
+    {
+        $user->layout = $layout;
+
+        return $user->update();
+    }
+
+    /**
+     * FOR AJAX REQ
+     *Returns true if layout toggle based on layout is successful for user
+     *
+     * @param $id
+     *
+     * @return bool
+     */
+    public function markAsRead($id): bool
+    {
+        $notification = Notification::find($id);
+
+        return $notification->markAsRead();
     }
 }
