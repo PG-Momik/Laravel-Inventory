@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateProductRequest;
+use App\Http\Requests\SearchRequest;
+use App\Http\Requests\UpdateProductRequest;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\PurchasePrice;
@@ -11,7 +14,6 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
@@ -25,13 +27,13 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * @param SearchRequest $request
      *
      * @return View
      */
-    public function index(Request $request): View
+    public function index(SearchRequest $request): View
     {
-        $searchKeyword = $request['search-field'] ?? '';
+        $searchKeyword = $request->validated('search-field') ?? '';
 
         $products = Product::with('category')
             ->when(
@@ -59,20 +61,20 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param CreateProductRequest $request
      *
      * @return RedirectResponse
      */
-    public function store(Request $request): RedirectResponse
+    public function store(CreateProductRequest $request): RedirectResponse
     {
         try {
             $product                = new Product();
-            $product->category_id   = $request['category'];
             $product->registered_by = Auth::id();
-            $product->quantity      = $request['quantity'];
-            $product->discount      = $request['discount'];
-            $product->name          = $request['name'];
-            $product->description   = $request['description'];
+            $product->name          = $request->validated('name');
+            $product->category_id   = $request->validated('category');
+            $product->quantity      = $request->validated('quantity');
+            $product->discount      = $request->validated('discount');
+            $product->description   = $request->validated('description');
 
 
             $file = $request->file('productImage') ?? '';
@@ -85,15 +87,17 @@ class ProductController extends Controller
 
             $product->save();
 
-            $purchasePrice             = new PurchasePrice();
-            $purchasePrice->product_id = $product->id;
-            $purchasePrice->value      = $request['purchasePrice'];
-            $purchasePrice->save();
+            $purchasePrice = $this->priceFactory(
+                priceType: 'purchase',
+                product  : $product,
+                price    : $request->validated('purchasePrice')
+            );
 
-            $salesPrice             = new SalesPrice();
-            $salesPrice->product_id = $product->id;
-            $salesPrice->value      = $request['salesPrice'];
-            $salesPrice->save();
+            $salesPrice = $this->priceFactory(
+                priceType: 'sales',
+                product  : $product,
+                price    : $request->validated('salesPrice')
+            );
 
             $transaction                    = new Transaction();
             $transaction->user_id           = Auth::id();
@@ -101,12 +105,12 @@ class ProductController extends Controller
             $transaction->sales_price_id    = $salesPrice->id;
             $transaction->purchase_price_id = $purchasePrice->id;
             $transaction->type              = $transaction::TYPE['purchase'];
-            $transaction->quantity          = $request['quantity'];
-            $transaction->discount          = $request['discount'];
+            $transaction->quantity          = $request->validated('quantity');
+            $transaction->discount          = $request->validated('discount');
 
             $transaction->save();
             session()->flash('success', 'Product added.');
-        } catch (Exception $e) {
+        } catch (Exception) {
             session()->flash('warning', 'Something went wrong. Try again.');
         }
 
@@ -145,36 +149,33 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param UpdateProductRequest $request
      * @param Product $product
      *
      * @return RedirectResponse
      */
-    public function update(Request $request, Product $product): RedirectResponse
+    public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
-        //Request Validation goes
-
         if ($request['transactionType']) {
-            $class                 = $request['transactionType'] == Transaction::TYPE['purchase']
-                ? 'App\Models\PurchasePrice'
-                : 'App\Models\SalesPrice';
-            $changedColumn         = $request['transactionType'] == Transaction::TYPE['purchase']
-                ? 'purchase_price_id'
-                : 'sales_price_id';
-            $unchangedColumn       = $request['transactionType'] == Transaction::TYPE['purchase']
-                ? 'sales_price_id'
-                : 'purchase_price_id';
-            $latestUnchangedColumn = $request['transactionType'] == Transaction::TYPE['purchase']
-                ? 'latestSalesPrice'
-                : 'latestPurchasePrice';
+            if ($request['transactionType'] === Transaction::TYPE['purchase']) {
+                $class                 = 'App\Models\PurchasePrice';
+                $changedColumn         = 'purchase_price_id';
+                $unchangedColumn       = 'sales_price_id';
+                $latestUnchangedColumn = 'latestSalesPrice';
+            } else {
+                $class                 = 'App\Models\SalesPrice';
+                $changedColumn         = 'sales_price_id';
+                $unchangedColumn       = 'purchase_price_id';
+                $latestUnchangedColumn = 'latestPurchasePrice';
+            }
 
-            $changes = abs($request->quantity - $product->quantity);
+            $changes = abs($request->validated('quantity') - $product->quantity);
 
             $product->load($latestUnchangedColumn);
 
             $newChangedColumnValue             = new $class();
             $newChangedColumnValue->product_id = $product->id;
-            $newChangedColumnValue->value      = $request['price'];
+            $newChangedColumnValue->value      = $request->validated('price');
             $newChangedColumnValue->save();
 
             $transaction                   = new Transaction();
@@ -184,16 +185,16 @@ class ProductController extends Controller
             $transaction->$unchangedColumn = $product->$latestUnchangedColumn->id;
             $transaction->type             = $request['transactionType'];
             $transaction->quantity         = $changes;
-            $transaction->discount         = $request['discount'] ?? 0;
+            $transaction->discount         = $request->validated('discount') ?? 0;
 
             $transaction->save();
         }
 
-        $product->category_id = $request['category_id'];
-        $product->quantity    = $request['quantity'];
-        $product->discount    = $request['discount'] ?? $product->discount;
-        $product->name        = $request['name'];
-        $product->description = $request['description'];
+        $product->category_id = $request->validated('category_id');
+        $product->quantity    = $request->validated('quantity');
+        $product->discount    = $request->validated('discount') ?? $product->discount;
+        $product->name        = $request->validated('name');
+        $product->description = $request->validated('description');
 
 
         try {
@@ -218,13 +219,13 @@ class ProductController extends Controller
     /**
      * Returns products.trashed view with products where deleted_at exists
      *
-     * @param Request $request
+     * @param SearchRequest $request
      *
      * @return View
      */
-    public function showTrash(Request $request): View
+    public function showTrash(SearchRequest $request): View
     {
-        $searchKeyword = $request['search-field'] ?? '';
+        $searchKeyword = $request->validated('search-field') ?? '';
 
         $products = Product::with('category')
             ->onlyTrashed()
@@ -266,10 +267,8 @@ class ProductController extends Controller
      *
      * @return RedirectResponse
      */
-    public
-    function restore(
-        int $id
-    ): RedirectResponse {
+    public function restore(int $id): RedirectResponse
+    {
         try {
             $product = Product::withTrashed()->find($id);
             $product->restore();
@@ -289,10 +288,8 @@ class ProductController extends Controller
      *
      * @return RedirectResponse
      */
-    public
-    function hardDelete(
-        int $id
-    ): RedirectResponse {
+    public function hardDelete(int $id): RedirectResponse
+    {
         try {
             $product = Product::withTrashed()->find($id);
             $product->forceDelete();
@@ -305,14 +302,12 @@ class ProductController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param SearchRequest $request
      *
      * @return mixed
      */
-    public
-    function filterProducts(
-        Request $request
-    ): mixed {
+    public function filterProducts(SearchRequest $request): mixed
+    {
         return $this->filteredProducts($request['filterParams']);
     }
 
@@ -323,8 +318,7 @@ class ProductController extends Controller
      *
      * @return mixed
      */
-    public
-    function filteredProducts(
+    public function filteredProducts(
         array $filterParams
     ): mixed {
         $startFormat     = 'Y-m-d';
@@ -379,8 +373,7 @@ class ProductController extends Controller
         return $products;
     }
 
-    public
-    function productDetails(
+    public function productDetails(
         $id
     ) {
         return Product::find($id);
@@ -394,10 +387,9 @@ class ProductController extends Controller
      *
      * @return JsonResponse
      */
-    public
-    function getValuesForLineGraph(
+    public function getValuesForLineGraph(
         string $type,
-        int    $days = 7
+        int $days = 7
     ): JsonResponse {
         $today  = Carbon::now()->endOfDay();
         $before = Carbon::now()->subDays($days)->startOfDay();
@@ -419,4 +411,35 @@ class ProductController extends Controller
 
         return response()->json($returnArray);
     }
+
+
+    /**
+     * Returns an instance of either sales price or purchase price depending on param.
+     *
+     * @param string $priceType
+     * @param Product $product
+     * @param $price
+     *
+     * @return SalesPrice|PurchasePrice
+     */
+    public function priceFactory(string $priceType, Product $product, $price): SalesPrice | PurchasePrice
+    {
+        if ($priceType == 'sales') {
+            $object             = new SalesPrice();
+            $object->product_id = $product->id;
+            $object->value      = $price;
+            $object->save();
+
+            return $object;
+        }
+
+        $object             = new PurchasePrice();
+        $object->product_id = $product->id;
+        $object->value      = $price;
+        $object->save();
+
+        return $object;
+    }
+
+    public function transactionFactory() {}
 }

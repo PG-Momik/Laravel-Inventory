@@ -157,7 +157,8 @@
                                                     <div>
                                                         <div class="">
                                                             <img src="{{asset('images/camera.png')}}"
-                                                                 id="actualImage" alt="No Image Available" style="width: 180px">
+                                                                 id="actualImage" alt="No Image Available"
+                                                                 style="width: 180px">
                                                         </div>
                                                         <div class="text-pm-grey" id="noImageText">No Image Available
                                                         </div>
@@ -184,7 +185,7 @@
                                 </div>
 
 
-                                <!--Modal : Product added-->
+                                <!--Modal : Product Update-->
                                 <div class="modal fade" id="changesModal" tabindex="-1"
                                      aria-labelledby="changesModalLabel" aria-hidden="true">
                                     <div class="modal-dialog">
@@ -197,8 +198,11 @@
                                                         aria-label="Close"></button>
                                             </div>
                                             <div class="modal-body">
-                                                <p>It seems you've made a <span id="transactionType"></span> of <span
-                                                        id="transactionUnits"></span> units.</p>
+                                                <p>
+                                                    It seems you've made a
+                                                    <span id="transactionType"></span>
+                                                    of
+                                                    <span id="transactionUnits"></span> units.</p>
                                                 <input type="number" name='price' id="priceField"
                                                        class="row m-0 col-12 form-control" autocomplete="off" required>
 
