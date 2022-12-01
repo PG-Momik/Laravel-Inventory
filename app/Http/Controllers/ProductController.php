@@ -319,9 +319,8 @@ class ProductController extends Controller
      *
      * @return mixed
      */
-    public function filteredProducts(
-        array $filterParams
-    ): mixed {
+    public function filteredProducts(array $filterParams): mixed
+    {
         $startFormat     = 'Y-m-d';
         $startDateString = implode(
             '-',
@@ -374,9 +373,8 @@ class ProductController extends Controller
         return $products;
     }
 
-    public function productDetails(
-        $id
-    ) {
+    public function productDetails($id)
+    {
         return Product::find($id);
     }
 
@@ -388,10 +386,8 @@ class ProductController extends Controller
      *
      * @return JsonResponse
      */
-    public function getValuesForLineGraph(
-        string $type,
-        int $days = 7
-    ): JsonResponse {
+    public function getValuesForLineGraph(string $type, int $days = 7): JsonResponse
+    {
         $today  = Carbon::now()->endOfDay();
         $before = Carbon::now()->subDays($days)->startOfDay();
 
@@ -399,7 +395,7 @@ class ProductController extends Controller
 
         $foreignKey   = $type . '_price_id';
         $transactions = Transaction::with($neededRelationship . ":id,value")
-            ->where('type', Transaction::TYPE[$type])
+            ->where('type', TransactionType::ALL[$type])
             ->whereBetween('created_at', [$before, $today])
             ->get(['id', $foreignKey, 'created_at']);
 
@@ -442,5 +438,4 @@ class ProductController extends Controller
         return $object;
     }
 
-    public function transactionFactory() {}
 }

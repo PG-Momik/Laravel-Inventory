@@ -279,7 +279,7 @@ class DashboardController extends Controller
             );
         }
 
-        return $only == 'Purchase'
+        return $only == TransactionType::PURCHASE
             ? response()->json(['annualPurchases' => $annualPurchases])
             : response()->json(['annualSales' => $annualSales]);
     }
