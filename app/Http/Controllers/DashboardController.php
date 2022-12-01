@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Models\TransactionType;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
@@ -22,17 +23,16 @@ class DashboardController extends Controller
     public function index(): View
     {
         try {
-            $yesterdaysQty = $this->yesterdaysQtyFor(Transaction::TYPE['purchase'])
-                +
-                $this->yesterdaysQtyFor(Transaction::TYPE['sales']);
+            $yesterdaysQty = $this->yesterdaysQtyFor(TransactionType::PURCHASE)
+                + $this->yesterdaysQtyFor(TransactionType::SALE);
 
             $monthlyTransactionQtyAvg = $this->extractAverage(
-                $this->monthlyAverageQtyFor(Transaction::TYPE['purchase']),
-                $this->monthlyAverageQtyFor(Transaction::TYPE['sales'])
+                $this->monthlyAverageQtyFor(TransactionType::PURCHASE),
+                $this->monthlyAverageQtyFor(TransactionType::SALE)
             );
 
-            $overallPurchaseTransactionQty = $this->overallQtyFor(Transaction::TYPE['purchase']);
-            $overallSalesTransactionQty    = $this->overallQtyFor(Transaction::TYPE['sales']);
+            $overallPurchaseTransactionQty = $this->overallQtyFor(TransactionType::PURCHASE);
+            $overallSalesTransactionQty    = $this->overallQtyFor(TransactionType::SALE);
         } catch (Exception $e) {
         }
 
@@ -260,8 +260,8 @@ class DashboardController extends Controller
      */
     public function getOverallAnnualTransactions(string $only = ''): JsonResponse
     {
-        $sales           = $this->getOverallAnnual(Transaction::TYPE['sales'])->toArray();
-        $purchases       = $this->getOverallAnnual(Transaction::TYPE['purchase'])->toArray();
+        $sales           = $this->getOverallAnnual(TransactionType::SALE)->toArray();
+        $purchases       = $this->getOverallAnnual(TransactionType::PURCHASE)->toArray();
         $annualPurchases = [];
         $annualSales     = [];
 
@@ -331,18 +331,18 @@ class DashboardController extends Controller
         return match ($cardNo) {
             0 => response()->json(
                 [
-                    'yesterdaysPurchaseQuantity' => $this->yesterdaysQtyFor(Transaction::TYPE['purchase']),
-                    'yesterdaysSalesQuantity'    => $this->yesterdaysQtyFor(Transaction::TYPE['sales']),
+                    'yesterdaysPurchaseQuantity' => $this->yesterdaysQtyFor(TransactionType::PURCHASE),
+                    'yesterdaysSalesQuantity'    => $this->yesterdaysQtyFor(TransactionType::SALE),
                 ]
             ),
             1 => response()->json(
                 [
-                    'monthlyPurchaseQuantityAverage' => $this->monthlyAverageQtyFor(Transaction::TYPE['purchase']),
-                    'monthlySalesQuantityAverage'    => $this->monthlyAverageQtyFor(Transaction::TYPE['sales']),
+                    'monthlyPurchaseQuantityAverage' => $this->monthlyAverageQtyFor(TransactionType::PURCHASE),
+                    'monthlySalesQuantityAverage'    => $this->monthlyAverageQtyFor(TransactionType::SALE),
                 ]
             ),
-            2 => $this->getOverallAnnualTransactions(Transaction::TYPE['purchase']),
-            3 => $this->getOverallAnnualTransactions(Transaction::TYPE['sales']),
+            2 => $this->getOverallAnnualTransactions(TransactionType::PURCHASE),
+            3 => $this->getOverallAnnualTransactions(TransactionType::SALE),
             default => response()->json(['message' => 'Not found.'], 404),
         };
     }
