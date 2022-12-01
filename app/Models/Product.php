@@ -34,7 +34,7 @@ class Product extends Model
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(Category::class, 'category_id', 'id')->withTrashed()->select('id', 'name');
+        return $this->belongsTo(Category::class, 'category_id', 'id')->withTrashed();
     }
 
     /**
@@ -62,9 +62,7 @@ class Product extends Model
      */
     public function latestPurchasePrice(): HasOne
     {
-        return $this->hasOne(PurchasePrice::class, 'product_id', 'id')
-            ->select('id', 'product_id', 'value')
-            ->latest('created_at');
+        return $this->hasOne(PurchasePrice::class, 'product_id', 'id')->latest('created_at');
     }
 
     /**
@@ -83,8 +81,6 @@ class Product extends Model
      */
     public function latestSalesPrice(): HasOne
     {
-        return $this->hasOne(SalesPrice::class, 'product_id', 'id')
-            ->select('id', 'product_id', 'value')
-            ->latest('created_at');
+        return $this->hasOne(SalesPrice::class, 'product_id', 'id')->latest('created_at');
     }
 }

@@ -37,13 +37,17 @@ class TransactionController extends Controller
         $categories = Category::all();
 
         $tenRecentPurchases = Transaction::where('type', '=', TransactionType::PURCHASE)
-            ->with(['product', 'salesPriceDuringTransaction', 'purchasePriceDuringTransaction'])
+            ->with(
+                ['product:id,name', 'salesPriceDuringTransaction:id,value', 'purchasePriceDuringTransaction:id,value']
+            )
             ->latest('created_at')
             ->take(5)
             ->get();
 
         $tenRecentSales = Transaction::where('type', '=', TransactionType::SALE)
-            ->with(['product', 'salesPriceDuringTransaction', 'purchasePriceDuringTransaction'])
+            ->with(
+                ['product:id,name', 'salesPriceDuringTransaction:id,value', 'purchasePriceDuringTransaction:id,value']
+            )
             ->latest('created_at')
             ->take(5)
             ->get();
@@ -192,7 +196,10 @@ class TransactionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $product = Product::with(['latestPurchasePrice', 'latestSalesPrice'])->find($request['productId']);
+        $product = Product::with(
+            ['latestPurchasePrice:id,value', 'latestSalesPrice:id,value']
+        )
+            ->find($request['productId']);
 
         $transactionType = $request['transactionType'];
 

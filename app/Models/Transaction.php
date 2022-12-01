@@ -32,8 +32,7 @@ class Transaction extends Model
      */
     public function product(): hasOne
     {
-        return $this->hasOne(Product::class, 'id', 'product_id')
-            ->select('id', 'category_id', 'registered_by', 'quantity', 'discount', 'name', 'description', 'image');
+        return $this->hasOne(Product::class, 'id', 'product_id');
     }
 
     /**
