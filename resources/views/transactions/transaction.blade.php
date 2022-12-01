@@ -68,7 +68,7 @@
                                     <dt class="col-lg-6 col-12">Transaction by</dt>
                                     <dd class="col-lg-6 col-12">
                                         <a href="{{route('users.show', ['user'=>$transaction->product])}}">
-                                        {{$transaction->user->name}}
+                                            {{$transaction->user->name}}
                                         </a>
                                     </dd>
                                     <hr>
@@ -78,7 +78,7 @@
                                         Rs. {{$transaction->purchasePriceDuringTransaction->value}}
                                     </dd>
 
-                                    @if($transaction->type == $TransactionType::SALE)
+                                    @if($transaction->type == App\Models\TransactionType::SALE)
                                         <hr>
                                         <dt class="col-lg-6 col-12">Sold For:</dt>
                                         <dd class="col-lg-6 col-12">
@@ -91,7 +91,7 @@
                                         {{$transaction->quantity}} units
                                     </dd>
 
-                                    @if($transaction->type == $TransactionType::SALE)
+                                    @if($transaction->type == App\Models\TransactionType::SALE)
                                         <dt class="col-lg-6 col-12">Applied Discount</dt>
                                         <dd class="col-lg-6 col-12">
                                             {{$transaction->discount}} %
@@ -107,7 +107,7 @@
                                             $discount = 0;
                                             $quantity = $transaction->quantity;
 
-                                            if($transaction->type == $TransactionType::PURCHASE){
+                                            if($transaction->type == App\Models\TransactionType::PURCHASE){
                                                 $price = $transaction->purchasePriceDuringTransaction->value;
                                             }else{
                                                 $price = $transaction->salesPriceDuringTransaction->value;

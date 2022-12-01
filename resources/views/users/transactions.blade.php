@@ -73,11 +73,11 @@
                         <div class="p-5 bg-white round-this shadow-this-down">
 
 
-                            {{--                            Table--}}
+                            {{--Table--}}
                             {{alert()}}
 
                             <div class="col-12 text-dark">
-                                {{--                                Pagination Fix here--}}
+                                {{$transactions->links("pagination::bootstrap-5")}}
                             </div>
 
                             <ol class="list-group">
@@ -92,7 +92,7 @@
                                         <span class=" col-sm-6 col-md-3 col-12 py-1 fs-5">Total</span>
                                     </div>
                                 </li>
-                                @foreach($user->transactions as $transaction)
+                                @foreach($transactions as $transaction)
 
                                     @php
                                         $total    = 0;
@@ -101,7 +101,7 @@
                                         $quantity = $transaction->quantity;
                                         $alertClass = '';
 
-                                        if($transaction->type == $TransactionType::PURCHASE){
+                                        if($transaction->type == App\Models\TransactionType::PURCHASE){
                                             $price = $transaction->purchasePriceDuringTransaction->value;
                                             $alertClass = 'list-group-item-success';
                                         }else{

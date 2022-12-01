@@ -114,7 +114,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param UpdateUserRequest $request
      * @param User $user
      *
      * @return RedirectResponse
@@ -169,18 +169,10 @@ class UserController extends Controller
         $user = User::find($request['id']);
 
         $transactions = Transaction::where('user_id', $request['id'])
-            ->with('product')
-            ->with('salesPriceDuringTransaction')
-            ->with('purchasePriceDuringTransaction')
+            ->with(['product', 'salesPriceDuringTransaction', 'purchasePriceDuringTransaction'])
             ->paginate(15);
 
-        return view('users.transactions')
-            ->with(
-                [
-                    'user'         => $user,
-                    'transactions' => $transactions
-                ]
-            );
+        return view('users.transactions')->with(['user' => $user, 'transactions' => $transactions]);
     }
 
     /**

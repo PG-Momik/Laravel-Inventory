@@ -30,24 +30,20 @@ class TransactionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return mixed
+     * @return View
      */
-    public function index(): mixed
+    public function index(): View
     {
         $categories = Category::all();
 
         $tenRecentPurchases = Transaction::where('type', '=', TransactionType::PURCHASE)
-            ->with('product')
-            ->with('salesPriceDuringTransaction')
-            ->with('purchasePriceDuringTransaction')
+            ->with(['product', 'salesPriceDuringTransaction', 'purchasePriceDuringTransaction'])
             ->latest('created_at')
             ->take(5)
             ->get();
 
         $tenRecentSales = Transaction::where('type', '=', TransactionType::SALE)
-            ->with('product')
-            ->with('salesPriceDuringTransaction')
-            ->with('purchasePriceDuringTransaction')
+            ->with(['product', 'salesPriceDuringTransaction', 'purchasePriceDuringTransaction'])
             ->latest('created_at')
             ->take(5)
             ->get();
@@ -74,13 +70,17 @@ class TransactionController extends Controller
      */
     public function yesterdaysTransactions(string $type = ''): View
     {
-        $transactions = Transaction::with('product:id,name')
-            ->with('purchasePriceDuringTransaction:id,value')
-            ->with('salesPriceDuringTransaction:id,value')
+        $transactions = Transaction::with(
+            [
+                'product:id,name',
+                'purchasePriceDuringTransaction:id,value',
+                'salesPriceDuringTransaction:id,value'
+            ]
+        )
             ->whereDate('created_at', Carbon::yesterday())
             ->when(
                 !empty($type)
-                and in_array(ucfirst($type), Transaction::TYPE),
+                and in_array(ucfirst($type), TransactionType::ALL),
                 function ($transaction) use ($type) {
                     return $transaction->where('type', $type);
                 }
@@ -101,9 +101,13 @@ class TransactionController extends Controller
      */
     public function monthlyTransactions(int $month, string $type = ''): View
     {
-        $transactions    = Transaction::with('product:id,name')
-            ->with('purchasePriceDuringTransaction:id,value')
-            ->with('salesPriceDuringTransaction:id,value')
+        $transactions    = Transaction::with(
+            [
+                'product:id,name',
+                'purchasePriceDuringTransaction:id,value',
+                'salesPriceDuringTransaction:id,value'
+            ]
+        )
             ->whereMonth('created_at', $month)
             ->when(
                 !empty($type),
@@ -138,9 +142,13 @@ class TransactionController extends Controller
      */
     public function yearlyTransactions(int $year, string $type = ''): View
     {
-        $transactions = Transaction::with('product:id,name')
-            ->with('purchasePriceDuringTransaction:id,value')
-            ->with('salesPriceDuringTransaction:id,value')
+        $transactions = Transaction::with(
+            [
+                'product:id,name',
+                'purchasePriceDuringTransaction:id,value',
+                'salesPriceDuringTransaction:id,value'
+            ]
+        )
             ->whereYear('created_at', $year)
             ->when(
                 !empty($type),
@@ -184,14 +192,12 @@ class TransactionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $product = Product::with('latestPurchasePrice')->with('latestSalesPrice')->find($request['productId']);
+        $product = Product::with(['latestPurchasePrice', 'latestSalesPrice'])->find($request['productId']);
 
         $transactionType = $request['transactionType'];
 
         $transaction                    = new Transaction();
-        $transaction->type              = $transactionType == 1
-            ? TransactionType::PURCHASE
-            : TransactionType::SALE;
+        $transaction->type              = $transactionType == 1 ? TransactionType::PURCHASE : TransactionType::SALE;
         $transaction->user_id           = Auth::user()->id;
         $transaction->product_id        = $product->id;
         $transaction->sales_price_id    = $product->latestSalesPrice->id;
