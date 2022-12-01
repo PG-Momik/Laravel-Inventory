@@ -17,6 +17,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Auth;
 
@@ -196,9 +197,7 @@ class TransactionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $product = Product::with(
-            ['latestPurchasePrice:id,value', 'latestSalesPrice:id,value']
-        )
+        $product = Product::with(['latestPurchasePrice:id,value', 'latestSalesPrice:id,value'])
             ->find($request['productId']);
 
         $transactionType = $request['transactionType'];
@@ -235,7 +234,7 @@ class TransactionController extends Controller
             $discount   = $transaction->discount;
         }
 
-
+        DB::beginTransaction();
         try {
             $product->quantity = $product->quantity + ($modifier * $request[$quantity]);
 
@@ -260,8 +259,10 @@ class TransactionController extends Controller
                 Notification::send($users, new AlmostOutOfStock($product));
             }
 
+            DB::commit();
             session()->flash('success', 'Transaction entry made.');
-        } catch (Exception $e) {
+        } catch (Exception) {
+            DB::rollBack();
             session()->flash('error', 'Something went wrong. Transaction entry not made.');
         }
 

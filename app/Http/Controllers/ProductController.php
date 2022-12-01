@@ -16,6 +16,7 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class ProductController extends Controller
@@ -68,6 +69,7 @@ class ProductController extends Controller
      */
     public function store(CreateProductRequest $request): RedirectResponse
     {
+        DB::beginTransaction();
         try {
             $product                = new Product();
             $product->registered_by = Auth::id();
@@ -110,8 +112,10 @@ class ProductController extends Controller
             $transaction->discount          = $request->validated('discount');
 
             $transaction->save();
+            DB::commit();
             session()->flash('success', 'Product added.');
         } catch (Exception) {
+            DB::rollBack();
             session()->flash('warning', 'Something went wrong. Try again.');
         }
 
@@ -157,6 +161,7 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
+        DB::beginTransaction();
         if ($request['transactionType']) {
             if ($request['transactionType'] === TransactionType::PURCHASE) {
                 $class                 = 'App\Models\PurchasePrice';
@@ -208,8 +213,10 @@ class ProductController extends Controller
             }
 
             $product->update();
+            DB::commit();
             session()->flash('success', "Product info updated.");
-        } catch (Exception $e) {
+        } catch (Exception) {
+            DB::rollBack();
             session()->flash('warning', "Something went wrong.");
         }
 
