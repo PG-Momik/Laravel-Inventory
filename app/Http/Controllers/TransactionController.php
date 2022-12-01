@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Transaction;
+use App\Models\TransactionType;
 use App\Models\User;
 use App\Notifications\AlmostOutOfStock;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -35,7 +36,7 @@ class TransactionController extends Controller
     {
         $categories = Category::all();
 
-        $tenRecentPurchases = Transaction::where('type', '=', Transaction::TYPE['purchase'])
+        $tenRecentPurchases = Transaction::where('type', '=', TransactionType::PURCHASE)
             ->with('product')
             ->with('salesPriceDuringTransaction')
             ->with('purchasePriceDuringTransaction')
@@ -43,7 +44,7 @@ class TransactionController extends Controller
             ->take(5)
             ->get();
 
-        $tenRecentSales = Transaction::where('type', '=', Transaction::TYPE['sales'])
+        $tenRecentSales = Transaction::where('type', '=', TransactionType::SALE)
             ->with('product')
             ->with('salesPriceDuringTransaction')
             ->with('purchasePriceDuringTransaction')
@@ -189,8 +190,8 @@ class TransactionController extends Controller
 
         $transaction                    = new Transaction();
         $transaction->type              = $transactionType == 1
-            ? $transaction::TYPE['purchase']
-            : $transaction::TYPE['sales'];
+            ? TransactionType::PURCHASE
+            : TransactionType::SALE;
         $transaction->user_id           = Auth::user()->id;
         $transaction->product_id        = $product->id;
         $transaction->sales_price_id    = $product->latestSalesPrice->id;

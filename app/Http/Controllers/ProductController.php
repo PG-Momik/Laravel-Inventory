@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\PurchasePrice;
 use App\Models\SalesPrice;
 use App\Models\Transaction;
+use App\Models\TransactionType;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -104,7 +105,7 @@ class ProductController extends Controller
             $transaction->product_id        = $product->id;
             $transaction->sales_price_id    = $salesPrice->id;
             $transaction->purchase_price_id = $purchasePrice->id;
-            $transaction->type              = $transaction::TYPE['purchase'];
+            $transaction->type              = TransactionType::PURCHASE;
             $transaction->quantity          = $request->validated('quantity');
             $transaction->discount          = $request->validated('discount');
 
@@ -157,7 +158,7 @@ class ProductController extends Controller
     public function update(UpdateProductRequest $request, Product $product): RedirectResponse
     {
         if ($request['transactionType']) {
-            if ($request['transactionType'] === Transaction::TYPE['purchase']) {
+            if ($request['transactionType'] === TransactionType::PURCHASE) {
                 $class                 = 'App\Models\PurchasePrice';
                 $changedColumn         = 'purchase_price_id';
                 $unchangedColumn       = 'sales_price_id';

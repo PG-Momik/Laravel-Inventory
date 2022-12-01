@@ -86,7 +86,7 @@ class User extends Authenticatable
     public function purchases(): HasMany
     {
         return $this->hasMany(Transaction::class, 'user_id', 'id')
-            ->where('type', '=', Transaction::TYPE['purchase']);
+            ->where('type', '=', TransactionType::PURCHASE);
     }
 
     /**
@@ -97,7 +97,7 @@ class User extends Authenticatable
     public function sales(): HasMany
     {
         return $this->hasMany(Transaction::class, 'user_id', 'id')
-            ->where('type', '=', Transaction::TYPE['sales']);
+            ->where('type', '=', TransactionType::SALE);
     }
 }
 

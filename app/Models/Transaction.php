@@ -13,10 +13,6 @@ class Transaction extends Model
 
     protected $table      = "transactions";
     protected $primaryKey = "id";
-    public const TYPE = array(
-        'purchase' => 'Purchase',
-        'sales'    => 'Sale'
-    );
 
 
     /**
