@@ -60,3 +60,21 @@
   - email: admin@admin.com
   - password: admin123
 
+# Screenshots
+## Casual
+### Dashboard
+![](screenshots/noob-dashboard.png)
+### Transactions
+![](screenshots/noob-transactions.png)
+### Roles
+![](screenshots/noob-roles.png)
+### Users
+![](screenshots/noob-users.png)
+### Products
+![](screenshots/noob-products.png)
+### Categories
+![](screenshots/noob-category.png)
+
+## Premium
+### Dashboard
+![](screenshots/pro-dashboard.png)
