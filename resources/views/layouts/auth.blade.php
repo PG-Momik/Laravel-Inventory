@@ -15,7 +15,8 @@
 </head>
 <body class="">
 
-<nav class="navbar navbar-expand-lg navbar-light bg-dark d-flex d-flex justify-content-end px-4 mb-2 bg-grey" style="box-shadow: 0px 2px 8px 0px">
+<nav class="navbar navbar-expand-lg navbar-light bg-dark d-flex d-flex justify-content-end px-4 mb-2 bg-grey"
+     style="box-shadow: 0px 2px 8px 0px">
     <div class="d-flex justify-content-end">
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
             <ul class="navbar-nav">
@@ -23,18 +24,18 @@
                     <a class="nav-link fs-5 text-white" href="{{route('home')}}">Home</a>
                 </li>
                 @guest
-                    <li class="nav-item">
-                        <a class="nav-link fs-5 text-white" href="{{route('login')}}">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link fs-5 text-white" href="{{ route('register') }}">Register</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5 text-white" href="{{route('login')}}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5 text-white" href="{{route('register') }}">Register</a>
+                </li>
                 @endguest
 
                 @auth
-                    <li class="nav-item">
-                        <a class="nav-link fs-5 text-white" href="{{ route('dashboard.index') }}">Dashboard</a>
-                    </li>
+                <li class="nav-item">
+                    <a class="nav-link fs-5 text-white" href="{{route('dashboard.index') }}">Dashboard</a>
+                </li>
                 @endauth
             </ul>
         </div>

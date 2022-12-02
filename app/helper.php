@@ -62,14 +62,14 @@ if (!function_exists('alert')) {
     function alert(): void
     {
         if (Session()->has('success')) {
-            echo "<p class='alert alert-success'>" . session()->get('success') . "</p>";
+            echo "<p class='alert alert-success mx-3'>" . session()->get('success') . "</p>";
         }
 
         if (Session()->has('warning')) {
-            echo "<p class='alert alert-warning'>" . session()->get('warning') . "</p>";
+            echo "<p class='alert alert-warning mx-3'>" . session()->get('warning') . "</p>";
         }
         if (Session()->has('error')) {
-            echo "<p class='alert alert-fail'>" . session()->get('error') . "</p>";
+            echo "<p class='alert alert-fail mx-3'>" . session()->get('error') . "</p>";
         }
     }
 }
@@ -102,5 +102,12 @@ if (!function_exists('showDropdownNavigation')) {
             echo "</ul>";
             echo "</div>";
         }
+    }
+}
+
+if (!function_exists('layoutPrefix')) {
+    function layoutPrefix(): string
+    {
+        return auth()->user()->layout == 1 ? "noob" : "pro";
     }
 }

@@ -35,7 +35,7 @@ class DashboardController extends Controller
             $overallSalesTransactionQty    = $this->overallQtyFor(TransactionType::SALE);
         } catch (Exception $e) {
         }
-
+        $currentYear       = Carbon::now()->format('Y');
         $cardsValues       = [
             'yesterdaysTransactionQuantity'     => $yesterdaysQty ?? 0,
             'monthlyTransactionQuantityAverage' => $monthlyTransactionQtyAvg ?? 0,
@@ -49,7 +49,14 @@ class DashboardController extends Controller
             route('yearly-transactions', ['year' => Carbon::now()->format('Y'), 'type' => 'sale'])
         ];
 
-        return view('dashboard.index')->with(compact('cardsValues', 'cardInitialRoutes'));
+        return view(layoutPrefix() . ".dashboard.index")
+            ->with(
+                compact(
+                    'cardsValues',
+                    'cardInitialRoutes',
+                    'currentYear'
+                )
+            );
     }
 
     /**
@@ -74,7 +81,7 @@ class DashboardController extends Controller
 
     /**
      * Returns monthly purchase or sale transaction quantity of a year as an assoc array,
-     * [month => sumOfTransactionQuanityThatMonth]
+     * [month => sumOfTransactionQuantityThatMonth]
      * Used by getOneYearsMonthlyTransactions()
      *
      * @param  $type
@@ -118,8 +125,7 @@ class DashboardController extends Controller
      */
     public function overallQtyFor(string $type): int
     {
-        return Transaction::where('type', '=', $type)
-            ->sum('quantity') ?? 0;
+        return Transaction::where('type', '=', $type)->sum('quantity') ?? 0;
     }
 
     /**
@@ -336,6 +342,37 @@ class DashboardController extends Controller
         } catch (Exception $e) {
             return 0;
         }
+    }
+
+    /**
+     * Returns an array of sum of daily transaction of each day in a year/current year.
+     *
+     * @param string $year
+     *
+     * @return JsonResponse
+     */
+    public function getMyAnnualTransactionQuantityOnly(string $year = ''): JsonResponse
+    {
+        if (empty($year)) {
+            $year = Carbon::now()->format('Y');
+        }
+        $purchases = DB::table('transactions')
+            ->select(DB::raw('MONTH(created_at) as date, sum(quantity) as sum'))
+            ->whereRaw("YEAR(created_at) = $year AND type = 'Purchase'")
+            ->groupByRaw('MONTH(created_at)')
+            ->pluck('sum', 'date');
+        $sales     = DB::table('transactions')
+            ->select(DB::raw('MONTH(created_at) as date, sum(quantity) as sum'))
+            ->whereRaw("YEAR(created_at) = $year AND type = 'Sale'")
+            ->groupByRaw('MONTH(created_at)')
+            ->pluck('sum', 'date');
+
+        return response()->json(
+            [
+                'purchases' => $purchases,
+                'sales'     => $sales,
+            ]
+        );
     }
 
     /**

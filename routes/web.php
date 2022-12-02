@@ -20,6 +20,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get(
+    '/test',
+    function () {
+        return view('pro.dashboard.index');
+    }
+);
 
 Route::middleware(['auth'])->group(
     function () {
@@ -39,6 +45,10 @@ Route::middleware(['auth'])->group(
                         ->name('pie-data');
                     Route::get('/detailed-data-for-card/{card}', [DashboardController::class, 'getValueForCard'])
                         ->name('card-data');
+                    Route::get(
+                        '/data-for-my-annual-transaction/{year?}',
+                        [DashboardController::class, 'getMyAnnualTransactionQuantityOnly']
+                    )->name('my-annual-data');
                 }
             );
 
@@ -52,6 +62,8 @@ Route::middleware(['auth'])->group(
         Route::get('/users/delete/{id}', [UserController::class, 'hardDelete'])
             ->name('users.delete');
         Route::post('/users/search', [UserController::class, 'index'])
+            ->name('users.search');
+        Route::get('/users/search', fn() => redirect()->route('users.index'))
             ->name('users.search');
         Route::resource('users', UserController::class);
 
@@ -71,6 +83,8 @@ Route::middleware(['auth'])->group(
             ->name('products.delete');
         Route::post('/products/search', [ProductController::class, 'index'])
             ->name('products.search');
+        Route::get('/products/search', fn() => redirect()->route('products.index'))
+            ->name('products.search');
         Route::get('/products/details/{id}', [ProductController::class, 'productDetails'])
             ->name('products.details');
         Route::get('product-{type}-prices-line-graph/{days?}', [ProductController::class, 'getValuesForLineGraph'])
@@ -85,6 +99,8 @@ Route::middleware(['auth'])->group(
         Route::get('/categories/delete/{id}', [CategoryController::class, 'hardDelete'])
             ->name('categories.delete');
         Route::post('/categories/search', [CategoryController::class, 'index'])
+            ->name('categories.search');
+        Route::get('/categories/search', fn() => redirect()->route('categories.index'))
             ->name('categories.search');
         Route::resource('categories', CategoryController::class);
 
@@ -105,6 +121,8 @@ Route::middleware(['auth'])->group(
         Route::resource('profile', ProfileController::class);
 
 
+        Route::get('/ajax/toggle-layout/{user}/{layout?}', [UserController::class, 'toggleLayout']);
+        Route::get('/ajax/mark-as-read/{id}', [UserController::class, 'markAsRead']);
         Route::get('/ajax/category/{id}/products', [TransactionController::class, 'categoryProducts'])
             ->name('category-based-products');
         Route::post('/ajax/products/filter', [ProductController::class, 'filterProducts'])
