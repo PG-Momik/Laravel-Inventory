@@ -53,45 +53,6 @@ class DashboardController extends Controller
     }
 
     /**
-     * Returns collection of Transaction Model based on product id
-     * Set $type = Purchase or Sales if Collection of Purchase or Sales transaction is needed
-     * Set $quantity = true if the return type needs to be only quantity of $type
-     * Set $aggregate = avg if average quantity per transaction is needed. Default behaviour is sum
-     *
-     * @param  $productId
-     * @param string $type
-     * @param bool $quantity
-     * @param string $aggregate
-     *
-     * @return float|int|Collection
-     */
-    public function transactionDetails(
-        $productId,
-        string $type = '',
-        bool $quantity = false,
-        string $aggregate = 'sum'
-    ): float | int | Collection {
-        $transactions = Transaction::query();
-        $transactions->where('product_id', '=', $productId);
-        $transactions->when(
-            !empty($type),
-            function ($transactions) use ($type) {
-                $transactions->where('type', '=', $type);
-            }
-        );
-
-        if ($quantity) {
-            if ($aggregate != 'sum') {
-                return $transactions->get()->avg('quantity');
-            }
-
-            return $transactions->get()->sum('avg');
-        }
-
-        return $transactions->get();
-    }
-
-    /**
      * Returns daily purchase or sale transaction quantity of a month as an assoc array,
      * [day => sumOfTransactionQuanityThatDay]
      * Used by getOneMonthsDailyTransactions()
