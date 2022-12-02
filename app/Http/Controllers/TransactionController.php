@@ -182,7 +182,10 @@ class TransactionController extends Controller
      *
      * @return void
      */
-    public function create(): void {}
+    public function create(): void
+    {
+        //
+    }
 
     /**
      * Check transaction type
@@ -197,7 +200,7 @@ class TransactionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $product = Product::with(['latestPurchasePrice:id,value', 'latestSalesPrice:id,value'])
+        $product = Product::with(['latestPurchasePrice:id,product_id,value', 'latestSalesPrice:id,product_id,value'])
             ->find($request['productId']);
 
         $transactionType = $request['transactionType'];
@@ -314,7 +317,7 @@ class TransactionController extends Controller
      *
      * @return Response
      */
-    public function destroy($id): Response
+    public function destroy(int $id): Response
     {
         //
     }
