@@ -83,23 +83,22 @@
 
             <div class="row my-2">
                 <div class="col-md-6 form-group">
-                    @php($roles = array('Choose Role.'=>'0', 'Admin'=>'1', 'Users'=>'2'))
                     <label for="role">Role</label>
                     <div class="input-group">
-                                            <span class="input-group-text">
-                                                <i class="fa-solid fa-user-tag"></i>
-                                            </span>
+                        <span class="input-group-text">
+                            <i class="fa-solid fa-user-tag"></i>
+                        </span>
                         <select name="role" id="role"
                                 class="form-select
-                                                    @if($errors->has('role')) is-invalid @endif">
+                                @if($errors->has('role')) is-invalid @endif">
                             <option value="Invalid" disabled>
                                 Select role
                             </option>
-                            <option value="Admin"
+                            <option value="1"
                                 @selected($user->roles[0]->name == "Admin")>
                                 Admin
                             </option>
-                            <option value="User"
+                            <option value="2"
                                 @selected($user->roles[0]->name == "User")>
                                 User
                             </option>

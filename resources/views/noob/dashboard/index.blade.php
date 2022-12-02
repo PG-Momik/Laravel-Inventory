@@ -7,7 +7,6 @@
 @section('child-page-title', "Dashboard")
 
 @section('content')
-    {{--White card goes here--}}
 
     {{--Expandable Row--}}
     <div class="row mx-0 p-4" id="expandable-row">

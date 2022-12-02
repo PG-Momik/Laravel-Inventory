@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
@@ -19,7 +18,7 @@ return new class extends Migration
             $table->foreign('category_id')->references('id')->on('categories')->cascadeOnDelete();
 
             $table->unsignedBigInteger('registered_by')->after('image')->nullable();
-            $table->foreign('registered_by')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('registered_by')->references('id')->on('users')->nullOnDelete();
         });
     }
 

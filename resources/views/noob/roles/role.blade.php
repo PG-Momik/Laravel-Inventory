@@ -1,162 +1,140 @@
 @extends('layouts.noob_layout')
-@section('title', $role->name)
+
+@section('title', "Roles")
+
 @section('activeRoles', 'active-this')
-@section('right-side')
 
-    <div class="grid-item">
+@section('child-page-title-when-nested')
+    <span class="d-inline-flex align-items-end pb-1">
+        <a href="{{route('roles.index')}}" class="text-decoration-none">
+            <span class="fs-3 p-0 text-dark">
+                <b><u>Roles</u></b>
+            </span>
+        </a>
+        <span class="fs-3 ms-1 text-grey">/</span>
+        <a href="{{route('roles.show', ['role'=>$role])}}" class="fs-4 text-grey"
+           style="color: white"><u>{{$role->name}}</u></a>
+    </span>
+@endsection
 
-        <div class="admin-grid">
-            <div style="min-height: 460px" class="a round-this border-black grad">
-                <div class="bg-purple px-5 pt-3 py-4" style="border-radius: 20px 20px 0 0">
-                    {{-- <div class="col-xl-12 col-lg-6 col-md-4 col-sm-3 col-2"> Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consectetur eaque nesciunt omnis porro possimus quis? Cupiditate dignissimos ipsa iste, iusto, non pariatur, possimus quasi quo reprehenderit sint suscipit veniam!</div>--}}
+@section('search-bar')
+@endsection
 
-                    <div class="row mx-0 d-flex gx-5 align-items-center">
+@section('button-group')
+@endsection
 
-                        <div class="col-xl-4 col-lg-4 p-0">
-                            <span
-                                class="d-inline-flex px-4 align-items-end pb-1">
-                                <a href="{{route('roles.index')}}"
-                                   class="text-decoration-none nice-white-shadow">
-                                    <span class="fs-3 p-0 text-dark">
-                                        <b><u>Role</u></b>
-                                    </span>
-                                </a>
-                                    <span class="fs-3 ms-1 text-grey">/</span>
-                                <a href="{{route('roles.show', ['role'=>$role])}}"
-                                   class="fs-4 text-grey nice-white-shadow">
-                                    <u class="text-white">{{$role->name}}</u>
-                                </a>
+@section('content')
+
+    <div class="row p-4">
+        <div class="col-lg-6 col-12 px-2">
+            <div class="shadow p-3 rounded">
+                <h2>Privileges</h2>
+                <table class="table table-bordered w-equal text-center">
+
+                    <tr class="bg-dark text-white">
+                        <th></th>
+                        <th>Add</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+
+                    <tr>
+                        <td>User</td>
+                        <td>
+                            <i class="fa-solid fa-check fs-5"></i>
+                        </td>
+                        <td>
+                            <i class="fa-solid fa-check fs-5"></i>
+                        </td>
+                        <td>
+                            {!! $role->id==1?'<i class="fa-solid fa-check fs-5"></i>':'<i class="fa-solid fa-xmark fs-5"></i>'!!}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Product</td>
+                        <td>
+                            <i class="fa-solid fa-check fs-5"></i>
+                        </td>
+                        <td>
+                            <i class="fa-solid fa-check fs-5"></i>
+                        </td>
+                        <td>
+                            {!! $role->id==1?'<i class="fa-solid fa-check fs-5"></i>':'<i class="fa-solid fa-xmark fs-5"></i>'!!}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Category</td>
+                        <td>
+                            <i class="fa-solid fa-check fs-5"></i>
+                        </td>
+                        <td>
+                            {!! $role->id==1?'<i class="fa-solid fa-check fs-5"></i>':'<i class="fa-solid fa-xmark fs-5"></i>'!!}
+                        </td>
+                        <td>
+                            {!! $role->id==1?'<i class="fa-solid fa-check fs-5"></i>':'<i class="fa-solid fa-xmark fs-5"></i>'!!}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Transaction</td>
+                        <td>
+                            <i class="fa-solid fa-check fs-5"></i>
+                        </td>
+                        <td>
+                            {!! $role->id==1?'<i class="fa-solid fa-check fs-5"></i>':'<i class="fa-solid fa-xmark fs-5"></i>'!!}
+                        </td>
+                        <td>
+                            {!!'<i class="fa-solid fa-xmark fs-5"></i>'!!}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-lg-6 col-12 px-2 my-2">
+            <div class="shadow p-3 rounded py-3">
+                <h2>Users with this role:</h2>
+                <hr>
+                <div class="list-group">
+                    @forelse($role->users as $user)
+                        <div
+                            class="list-group-item row mx-0 px-0 d-flex justify-content-between">
+                            <span class="col-md-6 col-12">{{$user->name}}</span>
+                            <span class="col-md-6 col-12 text-end">
+                                    <a href="{{route('users.show', ['user'=>$user])}}"
+                                       class="btn btn-sm btn-outline-primary rounded-0">
+                                        <i class="fa-solid fa-eye px-4"></i>
+                                    </a>
+                                    @can('update roles')
+                                    @if($role->id == 1)
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger rounded-0"
+                                                onclick="demoteUser(this, {{$user->id}})">
+                                                Demote
+                                        </button>
+                                    @else
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-success rounded-0"
+                                                onclick="promoteUser(this, {{$user->id}})">
+                                                Promote
+                                        </button>
+                                    @endif
+                                @endcan
                             </span>
                         </div>
-
-                    </div>
+                    @empty
+                        <div class="list-group-item">No User</div>
+                    @endforelse
+                </div>
+                <br>
+                <br>
+                <hr>
+                <div class="text-light">
+                    <canvas id="myChart" class="text-light"></canvas>
                 </div>
 
-                {{--White Card Goes Here--}}
-                <div class="b grad" style="height:350px; border-radius: 0 0 20px 20px">
-                    <div style="width: 80%; margin: 0 auto;">
-                        <div class="p-5 bg-white round-this shadow-this-down">
-                            <div class="row">
-                                <div class="col-lg-6 col-12 px-2">
-                                    <div class="shadow p-3 rounded">
-                                        <h1>Role: {{$role->name}}</h1>
-                                        <hr>
-                                        <h2>Privileges</h2>
-                                        <table class="table table-bordered w-equal text-center">
-
-                                            <tr class="bg-dark text-white">
-                                                <th></th>
-                                                <th>Add</th>
-                                                <th>Edit</th>
-                                                <th>Delete</th>
-                                            </tr>
-
-                                            <tr>
-                                                <td>User</td>
-                                                <td>
-                                                    <i class="fa-solid fa-check fs-5"></i>
-                                                </td>
-                                                <td>
-                                                    <i class="fa-solid fa-check fs-5"></i>
-                                                </td>
-                                                <td>
-                                                    {!! $role->id==1?'<i class="fa-solid fa-check fs-5"></i>':'<i class="fa-solid fa-xmark fs-5"></i>'!!}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Product</td>
-                                                <td>
-                                                    <i class="fa-solid fa-check fs-5"></i>
-                                                </td>
-                                                <td>
-                                                    <i class="fa-solid fa-check fs-5"></i>
-                                                </td>
-                                                <td>
-                                                    {!! $role->id==1?'<i class="fa-solid fa-check fs-5"></i>':'<i class="fa-solid fa-xmark fs-5"></i>'!!}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Category</td>
-                                                <td>
-                                                    <i class="fa-solid fa-check fs-5"></i>
-                                                </td>
-                                                <td>
-                                                    {!! $role->id==1?'<i class="fa-solid fa-check fs-5"></i>':'<i class="fa-solid fa-xmark fs-5"></i>'!!}
-                                                </td>
-                                                <td>
-                                                    {!! $role->id==1?'<i class="fa-solid fa-check fs-5"></i>':'<i class="fa-solid fa-xmark fs-5"></i>'!!}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Transaction</td>
-                                                <td>
-                                                    <i class="fa-solid fa-check fs-5"></i>
-                                                </td>
-                                                <td>
-                                                    {!! $role->id==1?'<i class="fa-solid fa-check fs-5"></i>':'<i class="fa-solid fa-xmark fs-5"></i>'!!}
-                                                </td>
-                                                <td>
-                                                    {!!'<i class="fa-solid fa-xmark fs-5"></i>'!!}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-12 px-2 my-2">
-                                    <div class="shadow p-3 rounded py-3">
-                                        <h2>Users with this role:</h2>
-                                        <hr>
-                                        <div class="list-group">
-                                            @forelse($role->users as $user)
-                                                <div
-                                                    class="list-group-item row mx-0 px-0 d-flex justify-content-between">
-                                                    <span class="col-md-6 col-12">{{$user->name}}</span>
-                                                    <span class="col-md-6 col-12 text-end">
-                                                        <a href="{{route('users.show', ['user'=>$user])}}"
-                                                           class="btn btn-sm btn-outline-primary rounded-0">
-                                                            <i class="fa-solid fa-eye px-4"></i>
-                                                        </a>
-                                                        @can('update roles')
-                                                            @if($role->id == 1)
-                                                                <button type="button"
-                                                                        class="btn btn-sm btn-outline-danger rounded-0"
-                                                                        onclick="demoteUser(this, {{$user->id}})">
-                                                                Demote
-                                                            </button>
-                                                            @else
-                                                                <button type="button"
-                                                                        class="btn btn-sm btn-outline-success rounded-0"
-                                                                        onclick="promoteUser(this, {{$user->id}})">
-                                                                Promote
-                                                            </button>
-                                                            @endif
-                                                        @endcan
-                                                    </span>
-                                                </div>
-                                            @empty
-                                                <div class="list-group-item">No User</div>
-                                            @endforelse
-                                        </div>
-                                        <br>
-                                        <br>
-                                        <hr>
-                                        <div class="text-light">
-                                            <canvas id="myChart" class="text-light"></canvas>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
             </div>
-
         </div>
-
-
     </div>
+
 
     <style>
 

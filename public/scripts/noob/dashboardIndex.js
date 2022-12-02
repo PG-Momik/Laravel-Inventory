@@ -50,7 +50,14 @@ function ajaxPieChartValues(type = '') {
     $.ajax({
         url: url,
         success: function (result) {
-            drawPieChart(result, type);
+            if (result.length === 0) {
+                let canvas = document.getElementById("pieChart");
+                let ctx = canvas.getContext("2d");
+                ctx.font = "24px Arial";
+                ctx.fillText("No products exist.", 10, 40);
+            } else {
+                drawPieChart(result, type);
+            }
         }
 
     })

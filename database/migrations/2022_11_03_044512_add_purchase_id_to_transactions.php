@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('transactions', function (Blueprint $table) {
             $table->unsignedBigInteger('purchase_price_id')->after('type')->nullable();
-            $table->foreign('purchase_price_id')->references('id')->on('purchase_prices')->cascadeOnDelete();
+            $table->foreign('purchase_price_id')->references('id')->on('purchase_prices')->nullOnDelete();
         });
     }
 

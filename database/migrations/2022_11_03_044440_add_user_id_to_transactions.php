@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
 
             $table->unsignedBigInteger('product_id')->after('type')->nullable();
-            $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
+            $table->foreign('product_id')->references('id')->on('products')->nullOnDelete();
         });
     }
 

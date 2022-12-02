@@ -174,7 +174,7 @@ class UserController extends Controller
             ->with('purchasePriceDuringTransaction')
             ->paginate(15);
 
-        return view('users.transactions')->with(compact('user', 'transactions'));
+        return view('noob.users.transactions')->with(compact('user', 'transactions'));
     }
 
     /**
