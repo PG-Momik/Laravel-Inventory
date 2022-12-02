@@ -6,7 +6,7 @@
     $arrowIcon = "<i class='fa-solid fa-arrow-up mx-2'></i>";
 
     //This error doesnt matter. $type will be passed from component class
-    if($type == 'purchase'){
+    if($type == App\Models\TransactionType::PURCHASE){
         $bgColor = "bg-green";
         $displayText = 'Purchases';
         $textColor = "text-success";
@@ -34,7 +34,8 @@
                            class="text-decoration-none text-dark">
                             <div class="row d-flex justify-content-between">
                                 <div class="col-lg-6 text-dark">
-                                    <strong>{{$transaction->product->name}}</strong></div>
+                                    <strong>{!! $transaction->product->name??"<small class='text-danger'>Deleted Product.</small>" !!}</strong>
+                                </div>
                                 <div class="col-lg-6">x{{$transaction->quantity}} Qty</div>
                                 <div class="col-lg-6">{{$transaction->discount}}% off</div>
                                 <div class="col-lg-6">

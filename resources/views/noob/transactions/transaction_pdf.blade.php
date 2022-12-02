@@ -18,7 +18,8 @@
 <br>
 <div class="">
     <span><strong>Date:</strong></span>
-    <span class="" style=" border-bottom: 1px dotted #000; text-decoration: none;">{{$transaction->created_at->format('l jS \of F')}}</span>
+    <span class=""
+          style=" border-bottom: 1px dotted #000; text-decoration: none;">{{$transaction->created_at->format('l jS \of F')}}</span>
 </div>
 
 <br>
@@ -40,7 +41,7 @@
         $discount = 0;
         $quantity = $transaction->quantity;
 
-        if($transaction->type == TransactionType::PURCHASE){
+        if($transaction->type == App\Models\TransactionType::PURCHASE){
             $price = $transaction->purchasePriceDuringTransaction->value;
         }else{
             $price = $transaction->salesPriceDuringTransaction->value;
@@ -53,7 +54,13 @@
     <tr>
         <td>1</td>
         <td>{{$transaction->product_id}}</td>
-        <td>{{$transaction->product->name}}</td>
+        <td>
+            @if($transaction->product)
+                {{$transaction->product->name}}
+            @else
+                <small class="text-danger">Deleted Product.</small>
+            @endif
+        </td>
         <td>{{$quantity}}</td>
         <td>{{$price}}</td>
         <td>{{$discount??0}}</td>

@@ -44,7 +44,7 @@
                 <dt class="col-md-4 col-12"><i class="fa-sharp fa-solid fa-tags"></i> Categories
                 </dt>
                 <dd class="col-md-8 col-12">
-                    {{$product->category->name}}
+                    {!!$product->category->name??"<small class='text-danger'>Deleted User.</small>" !!}
                 </dd>
 
                 <dt class="col-md-4"><i class="fa-solid fa-boxes-stacked"></i> In Stock</dt>
@@ -75,7 +75,7 @@
                 <dt class="col-sm-4 ">
                     <i class="fa-solid fa-person"></i> Products Registered By
                 </dt>
-                <dd class="col-sm-8">{{$product->registrant->name}}</dd>
+                <dd class="col-sm-8">{!! $product->registrant->name??"<small class='text-danger'>Deleted User.</small>"!!}</dd>
                 <dt class="col-sm-4 ">
                     <i class="fa-solid fa-calendar-days"></i> Products Registered On
                 </dt>

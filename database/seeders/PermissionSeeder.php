@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class PermissionSeeder extends Seeder
 {
@@ -17,7 +18,7 @@ class PermissionSeeder extends Seeder
     public function run()
     {
         // Reset cached roles and permissions
-        app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+        app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
         Permission::create(['name' => 'viewAny users']);
         Permission::create(['name' => 'view users']);
@@ -31,6 +32,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'viewAny roles']);
         Permission::create(['name' => 'view roles']);
         Permission::create(['name' => 'create roles']);
+        Permission::create(['name' => 'edit roles']);
         Permission::create(['name' => 'update roles']);
         Permission::create(['name' => 'trash roles']);
         Permission::create(['name' => 'restore roles']);
@@ -39,6 +41,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'viewAny products']);
         Permission::create(['name' => 'view products']);
         Permission::create(['name' => 'create products']);
+        Permission::create(['name' => 'edit products']);
         Permission::create(['name' => 'update products']);
         Permission::create(['name' => 'trash products']);
         Permission::create(['name' => 'restore products']);
@@ -47,6 +50,7 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'viewAny categories']);
         Permission::create(['name' => 'view categories']);
         Permission::create(['name' => 'create categories']);
+        Permission::create(['name' => 'edit categories']);
         Permission::create(['name' => 'update categories']);
         Permission::create(['name' => 'trash categories']);
         Permission::create(['name' => 'restore categories']);
@@ -65,11 +69,13 @@ class PermissionSeeder extends Seeder
                 'viewAny users',
                 'view users',
                 'create users',
+                'edit users',
                 'update users',
 
                 'viewAny products',
                 'view products',
                 'create products',
+                'edit products',
                 'update products',
 
                 'viewAny categories',

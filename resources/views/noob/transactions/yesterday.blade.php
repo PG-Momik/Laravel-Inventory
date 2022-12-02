@@ -7,13 +7,12 @@
 @section('child-page-title', "Transactions")
 
 @section('child-pagination', $transactions->links("pagination::bootstrap-5"))
-@section('content')
 
-    {{--Pagination--}}
+@section('content')
 
     <div class="row p-4 pt-0 mt-1 mb-2">
         {{--DROPDOWN--}}
-        <div class="d-flex col-lg-4 col-12">
+        <div class="d-flex col-lg-4 col-12 mb-2">
             <select name="" id="typeSelect" class="form-select col height-40">
                 <option value="" @selected(empty($type))>All</option>
                 <option value="purchase" @selected($type=='purchase')>Purchases</option>
@@ -53,7 +52,13 @@
                             <small>{{$transaction->created_at->format('jS \of F, Y')}}</small>
                         </td>
                         <td>{{$transaction->quantity}}</td>
-                        <td>{{$transaction->product->name}}</td>
+                        <td>
+                            @if($transaction->product)
+                                {{$transaction->product->name}}
+                            @else
+                                <small class="text-danger">Deleted Product.</small>
+                            @endif
+                        </td>
                         <td>{{$transaction->discount}}</td>
                         <td>{{$transaction->type=="Purchase"
                                             ? $transaction->purchasePriceDuringTransaction->value

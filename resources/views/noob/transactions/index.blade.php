@@ -8,7 +8,6 @@
 
 @section('content')
 
-
     {{--White card goes here--}}
 
     {{--Navigation Button Group--}}
@@ -38,14 +37,14 @@
     <div class="row mb-4 px-4">
         {{--Recent sales--}}
         <div class="col-md-6 col-12">
-            <x-ten-recent-transactions :tenTransactions=$tenRecentPurchases type="sales"></x-ten-recent-transactions>
+            <x-ten-recent-transactions :tenTransactions=$tenRecentSales type="Sale"></x-ten-recent-transactions>
 
         </div>
         {{--/Recent sales--}}
 
         {{--Recent purchases--}}
         <div class="col-md-6 col-12">
-            <x-ten-recent-transactions :tenTransactions=$tenRecentSales type="purchase"></x-ten-recent-transactions>
+            <x-ten-recent-transactions :tenTransactions=$tenRecentPurchases type="Purchase"></x-ten-recent-transactions>
         </div>
         {{--/Recent purchases--}}
     </div>

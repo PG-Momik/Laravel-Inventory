@@ -96,10 +96,10 @@
                                    autocomplete="off"
                                    required>
                             <div class="input-group-prepend">
-                                                    <span class="input-group-text btn-success calcPlusBtn"
-                                                          onclick="add(0)">
-                                                        <i class="fa-solid fa-plus py-1"></i>
-                                                    </span>
+                                <span class="input-group-text btn-success calcPlusBtn"
+                                      onclick="add(0)">
+                                    <i class="fa-solid fa-plus py-1"></i>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -109,7 +109,7 @@
                     <label for="">Product Description</label>
                     <textarea name="description" class="form-control" aria-label="With textarea"
                               rows="6">{{$product->description}}
-                                            </textarea>
+                    </textarea>
                 </div>
 
                 <div class="col-lg-3">
@@ -124,8 +124,7 @@
                                     <img src="{{asset('storage/images/'.$product->image)}}"
                                          alt="Cannot render image."
                                          style="width: 180px"
-                                         id="actualImage"
-                                    >
+                                         id="actualImage">
                                     <input type="file"
                                            name="productImage"
                                            id="imageUploadField" style="opacity: 0">

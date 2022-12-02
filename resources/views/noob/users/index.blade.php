@@ -35,7 +35,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                @foreach($users as $user)
+                @forelse($users as $user)
                     <tr>
                         <td class="">{{$user->name}}</td>
                         <td class="">{{$user->roles[0]->name}}</td>
@@ -64,7 +64,11 @@
                             @endcan
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr class="text-center">
+                        <td colspan="4" class="text-center"><b>No user exists.</b></td>
+                    </tr>
+                @endforelse
                 </tbody>
             </table>
         </div>
