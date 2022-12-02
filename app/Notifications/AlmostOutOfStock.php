@@ -36,7 +36,7 @@ class AlmostOutOfStock extends Notification
 
     public function toArray($notifiable)
     {
-        if ( $this->product->quantity === 0 ) {
+        if ($this->product->quantity === 0) {
             return "Product: " . $this->product->name . " is out of stock.";
         }
 

@@ -21,7 +21,7 @@ class PurchasePriceFactory extends Factory
     {
         return [
             'product_id' => Product::all()->random(),
-            'value'      => 1200,
+            'value'      => rand(1100, 1200),
         ];
     }
 }

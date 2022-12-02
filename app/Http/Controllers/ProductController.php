@@ -47,7 +47,7 @@ class ProductController extends Controller
             )
             ->paginate(10);
 
-        return view('products.index')->with(compact('products', 'searchKeyword'));
+        return view('noob.products.index')->with(compact('products', 'searchKeyword'));
     }
 
     /**
@@ -57,7 +57,7 @@ class ProductController extends Controller
      */
     public function create(): View
     {
-        return view('products.add')->with(['categories' => Category::get()]);
+        return view('noob.products.add')->with(['categories' => Category::get()]);
     }
 
     /**
@@ -134,7 +134,7 @@ class ProductController extends Controller
     {
         $product->load('registrant.roles', 'category');
 
-        return view('products.product')->with(compact('product'));
+        return view('noob.products.product')->with(compact('product'));
     }
 
     /**
@@ -148,7 +148,7 @@ class ProductController extends Controller
     {
         $categories = Category::get();
 
-        return view('products.edit')->with(compact('product', 'categories'));
+        return view('noob.products.edit')->with(compact('product', 'categories'));
     }
 
     /**
@@ -245,7 +245,7 @@ class ProductController extends Controller
             )
             ->paginate(10);
 
-        return view('products.trashed')->with(compact('products', 'searchKeyword'));
+        return view('noob.products.trashed')->with(compact('products', 'searchKeyword'));
     }
 
 

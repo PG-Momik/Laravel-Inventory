@@ -24,7 +24,7 @@ class RoleController extends Controller
     {
         $roles = Role::withCount('users')->get();
 
-        return view('roles.index')->with(compact('roles'));
+        return view('noob.roles.index')->with(compact('roles'));
     }
 
 
@@ -56,7 +56,7 @@ class RoleController extends Controller
     {
         $role->load('users');
 
-        return view('roles.role')->with(compact('role'));
+        return view('noob.roles.role')->with(compact('role'));
     }
 
     /**

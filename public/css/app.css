@@ -99,7 +99,7 @@
 }
 
 .border-this {
-    border: 1px solid red;
+    border: 1px solid black;
 }
 
 .nice-white-shadow{
@@ -260,8 +260,8 @@
 /*Dashboard */
 
 .curvy-sides {
-    border-right: 4px solid rgba(57, 173, 245, 0.6);
-    border-left: 4px solid rgba(255, 17, 17, 0.6);
+    border-left: 4px solid rgba(37, 36, 36, 0.8);
+    border-right: 4px solid rgba(37, 36, 36, 0.8);
     border-radius: 0 20px 0 20px;
 }
 
@@ -271,8 +271,6 @@
 
 .shadow-on-hover:hover {
     background: white;
-    border-left: 4px solid rgba(146, 34, 245, 0.8);
-    border-right: 4px solid rgba(146, 34, 245, 0.8);
     border-radius: 0;
     box-shadow: 0 0 10px #6b7280;
 }

@@ -35,6 +35,7 @@ class TransactionController extends Controller
      */
     public function index(): View
     {
+
         $categories = Category::all();
 
         $tenRecentPurchases = Transaction::where('type', '=', TransactionType::PURCHASE)
@@ -55,7 +56,7 @@ class TransactionController extends Controller
 
         $dropdownOptions = $this->dropdownOptions();
 
-        return view('transactions.index')
+        return view(layoutPrefix() . '.transactions.index')
             ->with(
                 compact(
                     'categories',
@@ -93,7 +94,7 @@ class TransactionController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('transactions.yesterday')->with(compact('transactions', 'type'));
+        return view('noob.transactions.yesterday')->with(compact('transactions', 'type'));
     }
 
     /**
@@ -126,7 +127,7 @@ class TransactionController extends Controller
         $activeMonth     = $month;
         $activeMonthText = Carbon::create($year, $month)->format('M');
 
-        return view('transactions.monthly')->with(
+        return view('noob.transactions.monthly')->with(
             compact(
                 'transactions',
                 'type',
@@ -167,7 +168,7 @@ class TransactionController extends Controller
         $oldestTransaction = Transaction::oldest()->first('created_at');
         $oldestYear        = $oldestTransaction->created_at->format('Y');
 
-        return view('transactions.annual')->with(
+        return view('noob.transactions.annual')->with(
             compact(
                 'transactions',
                 'type',
@@ -283,7 +284,7 @@ class TransactionController extends Controller
     {
         $transaction->load('user', 'product.category', 'salesPriceDuringTransaction', 'purchasePriceDuringTransaction');
 
-        return view('transactions.transaction')->with(compact('transaction'));
+        return view('noob.transactions.transaction')->with(compact('transaction'));
     }
 
     /**
@@ -359,7 +360,7 @@ class TransactionController extends Controller
             ->paginate(10);
         $type         = $type . "s";
 
-        return view('transactions.typed_transactions')->with(compact('transactions', 'type'));
+        return view('noob.transactions.typed_transactions')->with(compact('transactions', 'type'));
     }
 
     /**

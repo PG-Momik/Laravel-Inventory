@@ -20,7 +20,7 @@ class SalesPriceFactory extends Factory
     {
         return [
             'product_id' => Product::all()->random(),
-            'value' => 1200,
+            'value' => rand(1700, 2500),
         ];
     }
 }

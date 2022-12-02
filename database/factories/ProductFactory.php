@@ -25,7 +25,7 @@ class ProductFactory extends Factory
         return [
 
             'registered_by' => User::all()->random(),
-            'quantity' => 100,
+            'quantity' => rand(50, 100),
             'discount' => 5,
             'name' => fake()->firstName(),
             'description' => fake()->text(200),

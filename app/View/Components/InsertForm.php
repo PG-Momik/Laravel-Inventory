@@ -3,6 +3,7 @@
 namespace App\View\Components;
 
 use Illuminate\View\Component;
+use Illuminate\View\View;
 
 class InsertForm extends Component
 {
@@ -19,10 +20,10 @@ class InsertForm extends Component
     /**
      * Get the view / contents that represent the component.
      *
-     * @return \Illuminate\Contracts\View\View|\Closure|string
+     * @return View
      */
-    public function render()
+    public function render():View
     {
-        return view('components.insert-form');
+        return view('noob.components.insert-form');
     }
 }

@@ -17,26 +17,10 @@ class TransactionSeeder extends Seeder
     public function run()
     {
         //Initial Seed if no data
-        if (Transaction::count() < 30) {
-            Transaction::factory()->count(30)->sequence(
+            Transaction::factory()->count(4480)->sequence(
                 fn($sequence) => [
-                    'product_id'        => $sequence->index + 1,
-                    'type'              => 'Purchase',
-                    'purchase_price_id' => $sequence->index + 1,
-                    'sales_price_id'    => $sequence->index + 1,
-                    'quantity'          => 100,
-                    'discount'          => 0,
-                    'created_at'        => '2022-08-01'
+                    'created_at' => now()->subHours((4480 - $sequence->index) * 2)
                 ]
             )->create();
-        }
-
-        if (Transaction::count() >= 30 && Transaction::count() < 200) {
-            Transaction::factory()->count(288)->sequence(
-                fn($sequence) => [
-                    'created_at' => now()->subHours((288 - $sequence->index) * 8)
-                ]
-            )->create();
-        }
     }
 }

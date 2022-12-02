@@ -42,7 +42,7 @@ class CategoryController extends Controller
             ->withCount('products')
             ->paginate(10);
 
-        return view('categories.index')->with(compact('categories'));
+        return view('noob.categories.index')->with(compact('categories'));
     }
 
     /**
@@ -52,7 +52,7 @@ class CategoryController extends Controller
      */
     public function create(): View
     {
-        return view('categories.add');
+        return view('noob.categories.add');
     }
 
     /**
@@ -87,7 +87,7 @@ class CategoryController extends Controller
     {
         $category->load('products.latestPurchasePrice', 'products.latestSalesPrice');
 
-        return view('categories.category')->with(['category' => $category]);
+        return view('noob.categories.category')->with(['category' => $category]);
     }
 
     /**
@@ -155,7 +155,7 @@ class CategoryController extends Controller
                 }
             )->paginate(10);
 
-        return view('categories.trashed')->with(compact('categories', 'searchKeyword'));
+        return view('noob.categories.trashed')->with(compact('categories', 'searchKeyword'));
     }
 
     /**
