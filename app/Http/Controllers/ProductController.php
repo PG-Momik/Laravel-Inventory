@@ -37,7 +37,7 @@ class ProductController extends Controller
     {
         $searchKeyword = $request->validated('search-field') ?? '';
 
-        $products = Product::with('category')
+        $products   = Product::with('category')
             ->when(
                 !empty($searchKeyword),
                 function ($products) use ($searchKeyword) {
@@ -46,8 +46,9 @@ class ProductController extends Controller
                 }
             )
             ->paginate(10);
+        $categories = Category::pluck('name', 'id');
 
-        return view('noob.products.index')->with(compact('products', 'searchKeyword'));
+        return view('noob.products.index')->with(compact('products', 'searchKeyword', 'categories'));
     }
 
     /**
@@ -328,61 +329,58 @@ class ProductController extends Controller
      */
     public function filteredProducts(array $filterParams): mixed
     {
-        $startFormat     = 'Y-m-d';
-        $startDateString = implode(
-            '-',
-            [$filterParams['startYear'], $filterParams['startMonth'], $filterParams['startDay']]
-        );
-
-        if (isZero($filterParams['startYear'])) {
-            $startDateString = implode('-', [$filterParams['startMonth'], $filterParams['startDay']]);
-            $startFormat     = 'm-d';
-        }
-        $startDate = Carbon::createFromFormat($startFormat, $startDateString)->startOfDay();
-
-        $endFormat     = 'Y-m-d';
-        $endDateString = implode('-', [$filterParams['endYear'], $filterParams['endMonth'], $filterParams['endDay']]);
-
-        if (isZero($filterParams['endYear'])) {
-            $endDateString = implode('-', [$filterParams['endMonth'], $filterParams['endDay']]);
-            $endFormat     = 'm-d';
-        }
-        $endDate = Carbon::createFromFormat($endFormat, $endDateString)->endOfDay();
+        $dateFormat = 'Y-m-d';
+        $startDate  = $filterParams['startDate'] ?? 0;
+        $endDate    = $filterParams['endDate'] ?? 0;
 
         try {
             $products = Product::with('category');
 
             $products = $filterParams['quantity'] > 0
-                ? $products->where('quantity', '=', $filterParams['quantity'])
+                ? $products->where('quantity', '>=', $filterParams['quantity'])
                 : $products;
 
             if (!empty($filterParams['category_ids'])) {
                 $products = $products->whereIn('category_id', $filterParams['category_ids']);
             }
-
-            switch ([$startDateString == '0-0', $endDateString == '0-0']) {
+            /**
+             * if date is zero do not use it for query
+             * therefore when one date is zero and one is not zero,
+             * find record where date is equal to or greater/smaller than non-zero date
+             *
+             * if both are not zero, find record in between the range.
+             * */
+            switch ([isZero($startDate), isZero($endDate)]) {
                 case [false, true]:
-                    $products = $products->whereMonth('created_at', '>=', $startDate);
+                    $startDate = Carbon::createFromFormat($dateFormat, $filterParams['startDate'])->startOfDay();
+                    $products  = $products->whereDate('created_at', '>=', $startDate);
                     break;
                 case [true, false]:
-                    $products = $products->whereMonth('created_at', '<=', $endDate);
+                    $endDate  = Carbon::createFromFormat($dateFormat, $filterParams['endDate'])->endOfDay();
+                    $products = $products->whereDate('created_at', '<=', $endDate);
                     break;
                 case [false, false]:
-                    $products = $products->whereBetween('created_at', [$startDate, $endDate]);
+                    $startDate = Carbon::createFromFormat($dateFormat, $filterParams['startDate'])->startOfDay();
+                    $endDate   = Carbon::createFromFormat($dateFormat, $filterParams['endDate'])->endOfDay();
+                    $products  = $products->whereBetween('created_at', [$startDate, $endDate]);
                     break;
             }
-
             $products = $products->get();
-        } catch (Exception $e) {
+        } catch (Exception) {
             return false;
         }
 
         return $products;
     }
 
-    public function productDetails($id)
+    /**
+     * @param $id
+     *
+     * @return mixed
+     */
+    public function productDetails($id): mixed
     {
-        return Product::find($id);
+        return Product::findOrFail($id);
     }
 
     /**
