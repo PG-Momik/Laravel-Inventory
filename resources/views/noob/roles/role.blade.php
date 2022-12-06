@@ -135,17 +135,6 @@
         </div>
     </div>
 
-
-    <style>
-
-        .slowly-disappear {
-            visibility: hidden;
-            transition: all 0.8s ease-out;
-            opacity: 0
-        }
-
-    </style>
-
     @push('other-scripts')
 
         <script src="{{asset('scripts/noob/utilities.js')}}"></script>

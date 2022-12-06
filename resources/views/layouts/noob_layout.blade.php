@@ -45,10 +45,9 @@
                             <ul class="dropdown-menu dropdown-menu-end">
                                 @forelse(auth()->user()->unReadNotifications as $notification)
                                     <li>
-                                        <button class="dropdown-item unread">
-                                            {{--onclick="javascript:markAsRead({{$notification->id}})">--}}
+                                        <button class="dropdown-item unread"
+                                                onclick="markAsRead(this,'{{$notification->id}}')">
                                             {{$notification->data}}
-                                            {{$notification->markAsRead()}}
                                         </button>
                                     </li>
                                 @empty
@@ -277,28 +276,33 @@
 
     function toggleLayoutTo(type) {
         let url = `/ajax/toggle-layout/{{auth()->id()}}/${type}`
-        $.ajax({
-            url: url,
-            success: function (result) {
-                if (result && confirm("Do you want to implement changes now?") === true) {
-                    window.location.reload();
+        $.ajax(
+            {
+                url: url,
+                success: function (result) {
+                    if (result && confirm("Do you want to implement changes now?") === true) {
+                        window.location.reload();
+                    }
+
                 }
-
             }
-        });
+        );
     }
 
-    function markAsRead(id) {
-        console.log(id);
+    function markAsRead(source, id) {
         let url = `/ajax/mark-as-read/${id}`;
-        $.ajax({
-            url: url,
-            success: function (result) {
-                console.log(result);
+        $.ajax(
+            {
+                url: url,
+                success: function (result) {
+                    if (result) {
+                        window.location.reload()
+                        //or re-render notification box rather than reload page.
+                    }
+                }
             }
-        })
+        )
     }
-
 
 </script>
 @stack('other-scripts')

@@ -12,6 +12,7 @@ use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
@@ -279,7 +280,7 @@ class UserController extends Controller
 
     /**
      * FOR AJAX REQ
-     *Returns true if layout toggle based on layout is successful for user
+     *Marks notification as read
      *
      * @param $id
      *
@@ -287,8 +288,14 @@ class UserController extends Controller
      */
     public function markAsRead($id): bool
     {
-        $notification = Notification::find($id);
+        $notification = Auth::user()->notifications->where('id', $id);
 
-        return $notification->markAsRead();
+        if ($notification) {
+            $notification->markAsRead();
+
+            return true;
+        }
+
+        return false;
     }
 }
