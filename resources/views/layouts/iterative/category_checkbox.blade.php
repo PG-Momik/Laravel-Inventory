@@ -1,10 +1,10 @@
 <div class="col-4">
-    <label
-        for="id{{$product->id}}">{{$product->category->name}}</label>
     <input type="checkbox"
            name="category"
-           id="id{{$product->id}}"
+           id="id{{$key}}"
            class="form-check-input categoryCheckbox"
-           value="{{$product->id}}"
+           value="{{$key}}"
            autocomplete="off">
+    {{$category}}
+
 </div>
