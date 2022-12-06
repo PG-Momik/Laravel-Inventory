@@ -137,11 +137,13 @@ class UserController extends Controller
             //Removes user role and reassigns role from request.
             //Since 1 user has only 1 role, first() captures the role.
             $user->roles = $request->validated('role');
+
             $user->removeRole($user->roles()->first());
             $user->assignRole($request->role);
 
             session()->flash('success', "User info updated.");
-        } catch (Exception) {
+        } catch (Exception $e) {
+            dd($e->getMessage());
             session()->flash('warning', "Something went wrong.");
         }
 
@@ -212,12 +214,12 @@ class UserController extends Controller
     {
         try {
             $user->delete();
-            session()->flash('warning', 'User moved to trash');
+            session()->flash('success', 'User record destroyed.');
         } catch (Exception) {
             session()->flash('warning', 'Something went wrong. Try Again.');
         }
 
-        return redirect()->route('users.index');
+        return redirect()->back();
     }
 
     /**
@@ -233,7 +235,7 @@ class UserController extends Controller
             $user = User::withTrashed()->find($id);
             $user->restore();
             session()->flash('success', "User restored");
-        } catch (Exception $e) {
+        } catch (Exception) {
             session()->flash('warning', 'Something went wrong.');
         }
 
@@ -251,10 +253,14 @@ class UserController extends Controller
     public function hardDelete(int $id): RedirectResponse
     {
         try {
-            $user = User::withTrashed()->find($id);
-            $user->forceDelete();
-            session()->flash('success', 'User record destroyed.');
-        } catch (Exception $e) {
+            $user = User::withTrashed()->findOrFail($id);
+            if (auth()->user()->can('delete users') && auth()->id() != $user->id) {
+                $user->forceDelete();
+                session()->flash('success', 'User record destroyed.');
+            } else {
+                session()->flash('danger', 'Cannot trash self.');
+            }
+        } catch (Exception) {
             session()->flash('warning', "Something went wrong. Try again.");
         }
 

@@ -26,7 +26,7 @@ class UpdateUserRequest extends FormRequest
         return [
             "name"  => "required",
             "email" => "required|email",
-            "role"  => "required|in:1,2",
+            "role"  => "required|numeric",
         ];
     }
 }
