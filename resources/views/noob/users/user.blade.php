@@ -12,7 +12,8 @@
             </span>
         </a>
         <span class="fs-3 ms-1 text-grey">/</span>
-        <a href="{{route('users.show', ['user'=>$user])}}" class="fs-4 text-grey" style="color: white"><u>{{$user['name']}}</u></a>
+        <a href="{{route('users.show', ['user'=>$user])}}" class="fs-4 text-grey"
+           style="color: white"><u>{{$user['name']}}</u></a>
     </span>
 @endsection
 
@@ -57,7 +58,7 @@
                     @php($col = ceil(12/$size))
                     <span class="d-block col-md-{{$col}} col-6">
                         <a href="{{route('products.show', ['product'=>$products])}}"
-                       class="text-wrap">{{$products->name}}</a>
+                           class="text-wrap">{{$products->name}}</a>
                     </span>
                 @endforeach
             </dd>
@@ -71,7 +72,7 @@
                             </button>
                         </a>
                     @endcan
-                    @can('trash users')
+                    @if(auth()->user()->can('trash users') && auth()->id() != $user->id)
                         <a href="" class="no-underline">
                             <form action="{{route('users.destroy', ['user'=>$user])}}"
                                   method="post">
@@ -83,7 +84,7 @@
                                 </button>
                             </form>
                         </a>
-                    @endcan
+                    @endif
 
                 </div>
             </dd>

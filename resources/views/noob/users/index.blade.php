@@ -51,7 +51,7 @@
                                 <i class="fa-solid fa-eye"></i>
                             </a>
 
-                            @can('trash users')
+                            @if(auth()->user()->can('trash users') && auth()->id() != $user->id)
                                 <form action="{{route('users.destroy', ['user'=>$user])}}"
                                       method="post" class="w-50">
                                     @csrf
@@ -61,7 +61,7 @@
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
-                            @endcan
+                            @endif
                         </td>
                     </tr>
                 @empty

@@ -69,7 +69,11 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $user->can('trash users');
+        if ($user->can('trash users') && $user->id != $model->id) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -95,6 +99,10 @@ class UserPolicy
      */
     public function forceDelete(User $user, User $model): bool
     {
-        return $user->can('delete users');
+        if ($user->can('delete users') && $user->id != $model->id) {
+            return true;
+        }
+
+        return false;
     }
 }
