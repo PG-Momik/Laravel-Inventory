@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\View\View;
 
@@ -130,6 +131,8 @@ class UserController extends Controller
         }
 
         try {
+            DB::beginTransaction();
+
             $user->name  = $request->validated('name');
             $user->email = $request->validated('email');
             $user->update();
@@ -142,8 +145,10 @@ class UserController extends Controller
             $user->assignRole($request->role);
 
             session()->flash('success', "User info updated.");
-        } catch (Exception $e) {
-            dd($e->getMessage());
+
+            DB::commit();
+        } catch (Exception) {
+            DB::rollBack();
             session()->flash('warning', "Something went wrong.");
         }
 
