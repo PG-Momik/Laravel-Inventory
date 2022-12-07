@@ -37,6 +37,31 @@ class UserRoutesTest extends TestCase
     }
 
     /**
+     * Test that add form route cannot be reached by unauthorized users.
+     *
+     * @return void
+     */
+    public function testAddFormRouteCannotBeReachedByUnauthUsers(): void
+    {
+        $response = $this->get(route('users.create'));
+        $response->assertRedirect(route('login'));
+    }
+
+    /**
+     * Test that store route cannot be reached by unauthorized users.
+     *
+     * @return void
+     */
+    public function testStoreRouteCannotBeReachedByUnauthUsers(): void
+    {
+        $this->seed(PermissionSeeder::class);
+
+        $user     = User::factory()->create()->assignRole('User');
+        $response = $this->post(route('users.store', $user));
+        $response->assertRedirect(route('login'));
+    }
+
+    /**
      * Test that edit form route cannot be reached by unauthorized users.
      *
      * @return void
