@@ -2,12 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Http\Requests\UpdateUserRequest;
-use App\Models\Product;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
@@ -15,108 +12,102 @@ class UserTest extends TestCase
 {
     use RefreshDatabase;
 
-
-    public function testUserCanSeeAllUsers()
+    /**
+     * Test that user can see all users.
+     *
+     * @return void
+     */
+    public function testUserCanSeeAllUsers(): void
     {
         $this->seed(PermissionSeeder::class);
-
-        $response = $this->get(route('users.index'));
-        $response->assertRedirect(route('login'));
-
         $user     = User::factory()->create()->assignRole('User');
         $response = $this->actingAs($user)->get(route('users.index'));
         $response->assertStatus(200);
     }
 
-    public function testUserCanSeeAnyUser()
+    /**
+     * Test that user can fetch and see a user.
+     *
+     * @return void
+     */
+    public function testUserCanSeeAnyUser(): void
     {
         $this->seed(PermissionSeeder::class);
-
-        $user     = User::factory()->create()->assignRole('User');
-        $response = $this->get(route('users.show', $user));
-        $response->assertRedirect(route('login'));
 
         $user     = User::factory()->create()->assignRole('User');
         $response = $this->actingAs($user)->get(route('users.show', $user));
         $response->assertStatus(200);
     }
 
-    public function testUserCannotFetchOutOfBoundUserFromId()
+    /**
+     * Test that user cannot fetch out of bound user.
+     *
+     * @return void
+     */
+    public function testUserCannotFetchOutOfBoundUserFromId(): void
     {
         $this->seed(PermissionSeeder::class);
         User::factory()->count(5)->create();
-
-        $response = $this->get(route('users.show', ['user' => 100]));
-        $response->assertRedirect(route('login'));
 
         $user     = User::factory()->create()->assignRole('User');
         $response = $this->actingAs($user)->get(route('users.show', ['user' => 100]));
         $response->assertStatus(404);
     }
 
-    public function testUserCanAccessEditForm()
+    /**
+     * Test that user can reach the edit user form.
+     *
+     * @return void
+     */
+    public function testUserCanAccessEditForm(): void
     {
         $this->seed(PermissionSeeder::class);
-
-        $user     = User::factory()->create()->assignRole('User');
-        $response = $this->get(route('users.edit', $user));
-        $response->assertRedirect(route('login'));
 
         $user     = User::factory()->create()->assignRole('User');
         $response = $this->actingAs($user)->get(route('users.edit', $user));
         $response->assertStatus(200);
     }
 
-    public function testUserCanUpdateSelf()
+    /**
+     * Test that user can update own details.
+     *
+     * @return void
+     */
+    public function testUserCanUpdateSelf(): void
     {
         $this->seed(PermissionSeeder::class);
 
-        $user     = User::factory()->create()->assignRole('User');
-        $response = $this->get(route('users.update', $user));
-        $response->assertRedirect(route('login'));
-
-        $user = User::factory()->create()->assignRole('User');
-        $role = Role::first();
-//        dd($role->toArray());
+        $user       = User::factory()->create()->assignRole('User');
+        $role       = Role::first();
         $user->name = "APPLE BOI";
         $user->role = $role->id;
-//        $this->mock(UpdateUserRequest::class, function ($mock) {
-//            $mock->shouldReceive('passes')->andReturn(true);
-//        });
-        $response = $this->actingAs($user)->from(route('users.edit', ['user' => $user]))
+        $response   = $this->actingAs($user)->from(route('users.edit', ['user' => $user]))
             ->put(route('users.update', ['user' => $user]), $user->toArray());
         $response->assertSessionHas('success')->assertRedirect(route('users.edit', ['user' => $user]));
     }
 
-
-    public function testUserCannotTrashSelf()
+    /**
+     * Test that user cannot trash own-self.
+     *
+     * @return void
+     */
+    public function testUserCannotTrashSelf(): void
     {
         $this->seed(PermissionSeeder::class);
-
-        $response = $this->delete(route('users.destroy', ['user' => 1]));
-        $response->assertRedirect(route('login'));
 
         $user     = User::factory()->create()->assignRole('User');
         $response = $this->actingAs($user)->delete(route('users.destroy', ['user' => $user->id]));
         $response->assertStatus(403);
     }
 
-//    public function testUserCannotTrashOtherUser()
-//    {
-//        $this->seed(PermissionSeeder::class);
-//
-//        $user      = User::factory()->create()->assignRole('User');
-//        $otherUser = User::factory()->create()->assignRole('User');
-//        $response  = $this->actingAs($user)->delete(route('users.destroy', ['user' => $otherUser]));
-//        $response->assertStatus(403);
-//    }
-
-    public function testUserCannotPermaDeleteSelf()
+    /**
+     * Test that user cannot perma delete own-self.
+     *
+     * @return void
+     */
+    public function testUserCannotPermaDeleteSelf(): void
     {
         $this->seed(PermissionSeeder::class);
-
-        $response = $this->get(route('users.delete', ['id' => 1]));
-        $response->assertRedirect(route('login'));
 
         $user     = User::factory()->create()->assignRole('User');
         $response = $this->actingAs($user)->from(route('users.trashed'))
@@ -124,14 +115,36 @@ class UserTest extends TestCase
         $response->assertRedirect(route('users.trashed'))->assertSessionHas('danger');
     }
 
-//    public function testUserCannotPermaDeleteOtherUser()
-//    {
-//        $this->seed(PermissionSeeder::class);
-//
-//        $user      = User::factory()->create()->assignRole('User');
-//        $otherUser = User::factory()->create()->assignRole('User');
-////        dd($user->getPermissionsViaRoles()->toArray());
-//        $response = $this->actingAs($user)->delete(route('users.delete', ['user' => $otherUser]));
-//        $response->assertStatus(403);
-//    }
+    /**
+     * @return void
+     */
+    public function testUserCanCreateUser(): void
+    {
+        $this->seed(PermissionSeeder::class);
+
+        $role            = Role::findByName('User');
+        $user            = User::factory()->create()->assignRole('User');
+        $otherUser       = User::factory()->make()->assignRole('User');
+        $otherUser->role = $role->id;
+
+        $response = $this->actingAs($user)->from(route('users.create'))
+            ->post(route('users.store', ['user' => $otherUser]), $otherUser->toArray());
+        $response->assertRedirect(route('users.create'))->assertSessionHas('success');
+    }
+    /**
+     * @return void
+     */
+    public function testUserCannotCreateAdmin(): void
+    {
+        $this->seed(PermissionSeeder::class);
+
+        $role            = Role::findByName('Admin');
+        $user            = User::factory()->create()->assignRole('User');
+        $otherUser       = User::factory()->make()->assignRole('Admin');
+        $otherUser->role = $role->id;
+
+        $response = $this->actingAs($user)->from(route('users.create'))
+            ->post(route('users.store', ['user' => $otherUser]), $otherUser->toArray());
+        $response->assertStatus(403);
+    }
 }

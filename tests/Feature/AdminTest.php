@@ -14,64 +14,71 @@ class AdminTest extends TestCase
     use RefreshDatabase;
 
 
-    public function testAdminCanSeeAllUsers()
+    /**
+     * Test that admin can see all users.
+     *
+     * @return void
+     */
+    public function testAdminCanSeeAllUsers(): void
     {
         $this->seed(PermissionSeeder::class);
-
-        $response = $this->get(route('users.index'));
-        $response->assertRedirect(route('login'));
 
         $user     = User::factory()->create()->assignRole('Admin');
         $response = $this->actingAs($user)->get(route('users.index'));
         $response->assertStatus(200);
     }
 
-    public function testAdminCanSeeAnyUser()
+    /**
+     * Test that admin can fetch and see a user.
+     *
+     * @return void
+     */
+    public function testAdminCanSeeAnyUser(): void
     {
         $this->seed(PermissionSeeder::class);
-
-        $user     = User::factory()->create()->assignRole('User');
-        $response = $this->get(route('users.show', $user));
-        $response->assertRedirect(route('login'));
 
         $user     = User::factory()->create()->assignRole('Admin');
         $response = $this->actingAs($user)->get(route('users.show', $user));
         $response->assertStatus(200);
     }
 
-    public function testAdminCannotFetchOutOfBoundUserFromId()
+    /**
+     * Test that admin cannot fetch out of bound user.
+     *
+     * @return void
+     */
+    public function testAdminCannotFetchOutOfBoundUserFromId(): void
     {
         $this->seed(PermissionSeeder::class);
         User::factory()->count(5)->create();
-
-        $response = $this->get(route('users.show', ['user' => 100]));
-        $response->assertRedirect(route('login'));
 
         $user     = User::factory()->create()->assignRole('Admin');
         $response = $this->actingAs($user)->get(route('users.show', ['user' => 100]));
         $response->assertStatus(404);
     }
 
-    public function testAdminCanAccessEditForm()
+    /**
+     * Test that admin can reach the edit user form.
+     *
+     * @return void
+     */
+    public function testAdminCanAccessEditForm(): void
     {
         $this->seed(PermissionSeeder::class);
-
-        $user     = User::factory()->create()->assignRole('User');
-        $response = $this->get(route('users.edit', $user));
-        $response->assertRedirect(route('login'));
 
         $user     = User::factory()->create()->assignRole('Admin');
         $response = $this->actingAs($user)->get(route('users.edit', $user));
         $response->assertStatus(200);
     }
 
-    public function testAdminCanUpdateSelf()
+    /**
+     * Test that admin can update own details.
+     *
+     * @return void
+     */
+    public function testAdminCanUpdateSelf(): void
     {
         $this->seed(PermissionSeeder::class);
-
-        $user     = User::factory()->create()->assignRole('User');
-        $response = $this->get(route('users.update', $user));
-        $response->assertRedirect(route('login'));
 
         $role       = Role::first();
         $user       = User::factory()->create()->assignRole('Admin');
@@ -82,13 +89,14 @@ class AdminTest extends TestCase
         $response->assertSessionHas('success')->assertRedirect(route('users.edit', ['user' => $user]));
     }
 
-
-    public function testAdminCannotTrashSelf()
+    /**
+     * Test that admin cannot trash own-self.
+     *
+     * @return void
+     */
+    public function testAdminCannotTrashSelf(): void
     {
         $this->seed(PermissionSeeder::class);
-
-        $response = $this->delete(route('users.destroy', ['user' => 1]));
-        $response->assertRedirect(route('login'));
 
         $user     = User::factory()->create()->assignRole('Admin');
         $response = $this->actingAs($user)->delete(route('users.destroy', ['user' => $user->id]));
@@ -104,12 +112,15 @@ class AdminTest extends TestCase
 //        $response->assertStatus(200);
 //    }
 
-    public function testAdminCannotPermaDeleteSelf()
+
+    /**
+     * Test that admin cannot perma delete own-self.
+     *
+     * @return void
+     */
+    public function testAdminCannotPermaDeleteSelf(): void
     {
         $this->seed(PermissionSeeder::class);
-
-        $response = $this->get(route('users.delete', ['id' => 1]));
-        $response->assertRedirect(route('login'));
 
         $user     = User::factory()->create()->assignRole('Admin');
         $response = $this->actingAs($user)->from(route('users.trashed'))
@@ -126,4 +137,40 @@ class AdminTest extends TestCase
 //        $response  = $this->actingAs($user)->delete(route('users.delete', ['user' => $otherUser]));
 //        $response->assertStatus(200);
 //    }
+    /**
+     * Test that admin can create users.
+     *
+     * @return void
+     */
+    public function testAdminCanCreateUser(): void
+    {
+        $this->seed(PermissionSeeder::class);
+
+        $role            = Role::findByName('User');
+        $user            = User::factory()->create()->assignRole('Admin');
+        $otherUser       = User::factory()->make()->assignRole('User');
+        $otherUser->role = $role->id;
+
+        $response = $this->actingAs($user)->from(route('users.create'))
+            ->post(route('users.store', ['user' => $otherUser]), $otherUser->toArray());
+        $response->assertRedirect(route('users.create'));
+    }
+    /**
+     * Test that admin can create admin.
+     *
+     * @return void
+     */
+    public function testAdminCanCreateAdmin(): void
+    {
+        $this->seed(PermissionSeeder::class);
+
+        $role            = Role::findByName('Admin');
+        $user            = User::factory()->create()->assignRole('Admin');
+        $otherUser       = User::factory()->make()->assignRole('Admin');
+        $otherUser->role = $role->id;
+
+        $response = $this->actingAs($user)->from(route('users.create'))
+            ->post(route('users.store', ['user' => $otherUser]), $otherUser->toArray());
+        $response->assertRedirect(route('users.create'));
+    }
 }
