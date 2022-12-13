@@ -40,7 +40,7 @@
             <dd class="col-sm-9">
                 {{$user->roles[0]->name}}
             </dd>
-            {{--                                {{dd($user)}}--}}
+            {{--{{dd($user)}}--}}
 
             <dt class="col-sm-3">Email Verified</dt>
             <dd class="col-sm-9">{!!  $user->email_verified_at?? "<span class='text-danger fw-2'>Not Verified</span>"!!}</dd>

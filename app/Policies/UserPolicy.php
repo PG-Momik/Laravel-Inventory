@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
+use Spatie\Permission\Models\Role;
 
 class UserPolicy
 {
@@ -43,7 +44,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('update users');
+        return $user->can('create users');
     }
 
     /**
@@ -86,7 +87,11 @@ class UserPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        return $user->can('restore users');
+        if ($user->can('restore users')) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

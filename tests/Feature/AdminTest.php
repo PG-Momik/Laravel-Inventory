@@ -5,10 +5,11 @@ namespace Tests\Feature;
 use App\Models\User;
 use Database\Seeders\PermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
 
-class UserTest extends TestCase
+class AdminTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -27,33 +28,33 @@ class UserTest extends TestCase
     }
 
     /**
-     * Test that user can see all users.
+     * Test that admin can see all users.
      *
      * @return void
      */
-    public function testUserCanSeeAllUsers(): void
+    public function testAdminCanSeeAllUsers(): void
     {
         $response = $this->actingAs($this->user)->get(route('users.index'));
         $response->assertStatus(200);
     }
 
     /**
-     * Test that user can fetch and see a user.
+     * Test that admin can fetch and see a user.
      *
      * @return void
      */
-    public function testUserCanSeeAnyUser(): void
+    public function testAdminCanSeeAnyUser(): void
     {
         $response = $this->actingAs($this->user)->get(route('users.show', $this->user));
         $response->assertStatus(200);
     }
 
     /**
-     * Test that user cannot fetch out of bound user.
+     * Test that admin cannot fetch out of bound user.
      *
      * @return void
      */
-    public function testUserCannotFetchOutOfBoundUserFromId(): void
+    public function testAdminCannotFetchOutOfBoundUserFromId(): void
     {
         User::factory()->count(5)->create();
 
@@ -62,24 +63,23 @@ class UserTest extends TestCase
     }
 
     /**
-     * Test that user can reach the edit user form.
+     * Test that admin can reach the edit user form.
      *
      * @return void
      */
-    public function testUserCanAccessEditForm(): void
+    public function testAdminCanAccessEditForm(): void
     {
         $response = $this->actingAs($this->user)->get(route('users.edit', $this->user));
         $response->assertStatus(200);
     }
 
     /**
-     * Test that user can update own details.
+     * Test that admin can update own details.
      *
      * @return void
      */
-    public function testUserCanUpdateSelf(): void
+    public function testAdminCanUpdateSelf(): void
     {
-        $this->user       = User::factory()->create()->assignRole('User');
         $role             = Role::first();
         $this->user->name = "APPLE BOI";
         $this->user->role = $role->id;
@@ -89,22 +89,22 @@ class UserTest extends TestCase
     }
 
     /**
-     * Test that user cannot trash own-self.
+     * Test that admin cannot trash own-self.
      *
      * @return void
      */
-    public function testUserCannotTrashSelf(): void
+    public function testAdminCannotTrashSelf(): void
     {
         $response = $this->actingAs($this->user)->delete(route('users.destroy', ['user' => $this->user->id]));
         $response->assertStatus(403);
     }
 
     /**
-     * Test that user cannot perma delete own-self.
+     * Test that admin cannot perma delete own-self.
      *
      * @return void
      */
-    public function testUserCannotPermaDeleteSelf(): void
+    public function testAdminCannotPermaDeleteSelf(): void
     {
         $response = $this->actingAs($this->user)->from(route('users.trashed'))
             ->get(route('users.delete', ['id' => $this->user->id]));
@@ -112,9 +112,11 @@ class UserTest extends TestCase
     }
 
     /**
+     * Test that admin can create users.
+     *
      * @return void
      */
-    public function testUserCannotCreateUser(): void
+    public function testAdminCanCreateUser(): void
     {
         $role            = Role::findByName('User');
         $otherUser       = User::factory()->make()->assignRole('User');
@@ -122,13 +124,15 @@ class UserTest extends TestCase
 
         $response = $this->actingAs($this->user)->from(route('users.create'))
             ->post(route('users.store', ['user' => $otherUser]), $otherUser->toArray());
-        $response->assertStatus(403);
+        $response->assertRedirect(route('users.create'));
     }
 
     /**
+     * Test that admin can create admin.
+     *
      * @return void
      */
-    public function testUserCannotCreateAdmin(): void
+    public function testAdminCanCreateAdmin(): void
     {
         $role            = Role::findByName('Admin');
         $otherUser       = User::factory()->make()->assignRole('Admin');
@@ -136,16 +140,16 @@ class UserTest extends TestCase
 
         $response = $this->actingAs($this->user)->from(route('users.create'))
             ->post(route('users.store', ['user' => $otherUser]), $otherUser->toArray());
-        $response->assertStatus(403);
+        $response->assertRedirect(route('users.create'));
     }
 
     /**
-     * Create User instance with user role.
+     * Create User instance with admin role.
      *
      * @return User
      */
     private function createUser(): User
     {
-        return User::factory()->create()->assignRole('User');
+        return User::factory()->create()->assignRole('Admin');
     }
 }
