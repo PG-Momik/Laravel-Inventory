@@ -68,7 +68,6 @@ class PermissionSeeder extends Seeder
             [
                 'viewAny users',
                 'view users',
-                'create users',
                 'edit users',
                 'update users',
 

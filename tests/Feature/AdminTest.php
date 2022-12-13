@@ -13,6 +13,19 @@ class AdminTest extends TestCase
 {
     use RefreshDatabase;
 
+    private User $user;
+
+    /**
+     * Setup Permission seeder and create User instance.
+     *
+     * */
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->seed(PermissionSeeder::class);
+        $this->user = $this->createUser();
+    }
 
     /**
      * Test that admin can see all users.
@@ -21,10 +34,7 @@ class AdminTest extends TestCase
      */
     public function testAdminCanSeeAllUsers(): void
     {
-        $this->seed(PermissionSeeder::class);
-
-        $user     = User::factory()->create()->assignRole('Admin');
-        $response = $this->actingAs($user)->get(route('users.index'));
+        $response = $this->actingAs($this->user)->get(route('users.index'));
         $response->assertStatus(200);
     }
 
@@ -35,10 +45,7 @@ class AdminTest extends TestCase
      */
     public function testAdminCanSeeAnyUser(): void
     {
-        $this->seed(PermissionSeeder::class);
-
-        $user     = User::factory()->create()->assignRole('Admin');
-        $response = $this->actingAs($user)->get(route('users.show', $user));
+        $response = $this->actingAs($this->user)->get(route('users.show', $this->user));
         $response->assertStatus(200);
     }
 
@@ -49,11 +56,9 @@ class AdminTest extends TestCase
      */
     public function testAdminCannotFetchOutOfBoundUserFromId(): void
     {
-        $this->seed(PermissionSeeder::class);
         User::factory()->count(5)->create();
 
-        $user     = User::factory()->create()->assignRole('Admin');
-        $response = $this->actingAs($user)->get(route('users.show', ['user' => 100]));
+        $response = $this->actingAs($this->user)->get(route('users.show', ['user' => 100]));
         $response->assertStatus(404);
     }
 
@@ -64,10 +69,7 @@ class AdminTest extends TestCase
      */
     public function testAdminCanAccessEditForm(): void
     {
-        $this->seed(PermissionSeeder::class);
-
-        $user     = User::factory()->create()->assignRole('Admin');
-        $response = $this->actingAs($user)->get(route('users.edit', $user));
+        $response = $this->actingAs($this->user)->get(route('users.edit', $this->user));
         $response->assertStatus(200);
     }
 
@@ -78,15 +80,12 @@ class AdminTest extends TestCase
      */
     public function testAdminCanUpdateSelf(): void
     {
-        $this->seed(PermissionSeeder::class);
-
-        $role       = Role::first();
-        $user       = User::factory()->create()->assignRole('Admin');
-        $user->name = "APPLE BOI";
-        $user->role = $role->id;
-        $response   = $this->actingAs($user)->from(route('users.edit', ['user' => $user]))
-            ->put(route('users.update', ['user' => $user]), $user->toArray());
-        $response->assertSessionHas('success')->assertRedirect(route('users.edit', ['user' => $user]));
+        $role             = Role::first();
+        $this->user->name = "APPLE BOI";
+        $this->user->role = $role->id;
+        $response         = $this->actingAs($this->user)->from(route('users.edit', ['user' => $this->user]))
+            ->put(route('users.update', ['user' => $this->user]), $this->user->toArray());
+        $response->assertSessionHas('success')->assertRedirect(route('users.edit', ['user' => $this->user]));
     }
 
     /**
@@ -96,22 +95,9 @@ class AdminTest extends TestCase
      */
     public function testAdminCannotTrashSelf(): void
     {
-        $this->seed(PermissionSeeder::class);
-
-        $user     = User::factory()->create()->assignRole('Admin');
-        $response = $this->actingAs($user)->delete(route('users.destroy', ['user' => $user->id]));
+        $response = $this->actingAs($this->user)->delete(route('users.destroy', ['user' => $this->user->id]));
         $response->assertStatus(403);
     }
-
-//    public function testAdminCanTrashOtherUser()
-//    {
-//        $this->seed(PermissionSeeder::class);
-//        $user      = User::factory()->create()->assignRole('Admin');
-//        $otherUser = User::factory()->create()->assignRole('User');
-//        $response  = $this->actingAs($user)->delete(route('users.destroy', ['user' => $otherUser]));
-//        $response->assertStatus(200);
-//    }
-
 
     /**
      * Test that admin cannot perma delete own-self.
@@ -120,23 +106,11 @@ class AdminTest extends TestCase
      */
     public function testAdminCannotPermaDeleteSelf(): void
     {
-        $this->seed(PermissionSeeder::class);
-
-        $user     = User::factory()->create()->assignRole('Admin');
-        $response = $this->actingAs($user)->from(route('users.trashed'))
-            ->get(route('users.delete', ['id' => $user->id]));
+        $response = $this->actingAs($this->user)->from(route('users.trashed'))
+            ->get(route('users.delete', ['id' => $this->user->id]));
         $response->assertRedirect(route('users.trashed'))->assertSessionHas('danger');
     }
 
-//    public function testAdminCanPermaDeleteOtherUserOrAdmin()
-//    {
-//        $this->seed(PermissionSeeder::class);
-//
-//        $user      = User::factory()->create()->assignRole('Admin');
-//        $otherUser = User::factory()->create()->assignRole('User');
-//        $response  = $this->actingAs($user)->delete(route('users.delete', ['user' => $otherUser]));
-//        $response->assertStatus(200);
-//    }
     /**
      * Test that admin can create users.
      *
@@ -144,17 +118,15 @@ class AdminTest extends TestCase
      */
     public function testAdminCanCreateUser(): void
     {
-        $this->seed(PermissionSeeder::class);
-
         $role            = Role::findByName('User');
-        $user            = User::factory()->create()->assignRole('Admin');
         $otherUser       = User::factory()->make()->assignRole('User');
         $otherUser->role = $role->id;
 
-        $response = $this->actingAs($user)->from(route('users.create'))
+        $response = $this->actingAs($this->user)->from(route('users.create'))
             ->post(route('users.store', ['user' => $otherUser]), $otherUser->toArray());
         $response->assertRedirect(route('users.create'));
     }
+
     /**
      * Test that admin can create admin.
      *
@@ -162,15 +134,22 @@ class AdminTest extends TestCase
      */
     public function testAdminCanCreateAdmin(): void
     {
-        $this->seed(PermissionSeeder::class);
-
         $role            = Role::findByName('Admin');
-        $user            = User::factory()->create()->assignRole('Admin');
         $otherUser       = User::factory()->make()->assignRole('Admin');
         $otherUser->role = $role->id;
 
-        $response = $this->actingAs($user)->from(route('users.create'))
+        $response = $this->actingAs($this->user)->from(route('users.create'))
             ->post(route('users.store', ['user' => $otherUser]), $otherUser->toArray());
         $response->assertRedirect(route('users.create'));
+    }
+
+    /**
+     * Create User instance with admin role.
+     *
+     * @return User
+     */
+    private function createUser(): User
+    {
+        return User::factory()->create()->assignRole('Admin');
     }
 }
